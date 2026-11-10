@@ -22,7 +22,10 @@ defmodule Encomendei.SalesTest do
       product = product_fixture(price_cents: 5000)
 
       # Tentativa de forjar o preço é ignorada
-      attrs = valid_attrs(product, %{"items" => [%{"product_id" => product.id, "quantity" => 2, "unit_price_cents" => 1}]})
+      attrs =
+        valid_attrs(product, %{
+          "items" => [%{"product_id" => product.id, "quantity" => 2, "unit_price_cents" => 1}]
+        })
 
       assert {:ok, order} = Sales.place_order(attrs)
       assert order.total_cents == 10_000
@@ -52,13 +55,19 @@ defmodule Encomendei.SalesTest do
     test "rejeita data de entrega no passado" do
       product = product_fixture()
       past = DateTime.add(DateTime.utc_now(), -1, :day)
-      assert {:error, %Ecto.Changeset{} = cs} = Sales.place_order(valid_attrs(product, %{"delivery_at" => past}))
+
+      assert {:error, %Ecto.Changeset{} = cs} =
+               Sales.place_order(valid_attrs(product, %{"delivery_at" => past}))
+
       assert "deve ser uma data futura" in errors_on(cs).delivery_at
     end
 
     test "rejeita cliente sem telefone válido" do
       product = product_fixture()
-      assert {:error, %Ecto.Changeset{} = cs} = Sales.place_order(valid_attrs(product, %{"phone" => "123"}))
+
+      assert {:error, %Ecto.Changeset{} = cs} =
+               Sales.place_order(valid_attrs(product, %{"phone" => "123"}))
+
       assert errors_on(cs).phone != []
     end
 
@@ -98,8 +107,17 @@ defmodule Encomendei.SalesTest do
 
   test "list_orders/1 filtra por status e ordena pela entrega" do
     product = product_fixture()
-    {:ok, late} = Sales.place_order(valid_attrs(product, %{"delivery_at" => DateTime.add(DateTime.utc_now(), 5, :day)}))
-    {:ok, soon} = Sales.place_order(valid_attrs(product, %{"delivery_at" => DateTime.add(DateTime.utc_now(), 1, :day)}))
+
+    {:ok, late} =
+      Sales.place_order(
+        valid_attrs(product, %{"delivery_at" => DateTime.add(DateTime.utc_now(), 5, :day)})
+      )
+
+    {:ok, soon} =
+      Sales.place_order(
+        valid_attrs(product, %{"delivery_at" => DateTime.add(DateTime.utc_now(), 1, :day)})
+      )
+
     {:ok, _} = Sales.update_status(late, :in_production)
 
     assert [first, second] = Sales.list_orders()

@@ -105,7 +105,8 @@ defmodule Encomendei.Sales do
   end
 
   defp upsert_customer(attrs) do
-    changeset = Customer.changeset(%Customer{}, %{name: fetch(attrs, :name), phone: fetch(attrs, :phone)})
+    changeset =
+      Customer.changeset(%Customer{}, %{name: fetch(attrs, :name), phone: fetch(attrs, :phone)})
 
     case Ecto.Changeset.apply_action(changeset, :validate) do
       {:ok, %{phone: phone, name: name}} ->
@@ -145,7 +146,7 @@ defmodule Encomendei.Sales do
   defp qty(item) do
     case fetch(item, :quantity) do
       n when is_integer(n) -> n
-      s when is_binary(s) -> (Integer.parse(s) |> elem_or_zero())
+      s when is_binary(s) -> Integer.parse(s) |> elem_or_zero()
       _ -> 0
     end
   end

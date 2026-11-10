@@ -12,7 +12,12 @@ defmodule EncomendeiWeb.StoreLive do
     {:ok,
      socket
      |> assign(page_title: "Cardápio", products: products, cart: %{}, error: nil)
-     |> assign(form: to_form(%{"name" => "", "phone" => "", "delivery_at" => "", "notes" => ""}, as: :checkout))}
+     |> assign(
+       form:
+         to_form(%{"name" => "", "phone" => "", "delivery_at" => "", "notes" => ""},
+           as: :checkout
+         )
+     )}
   end
 
   @impl true
@@ -49,17 +54,22 @@ defmodule EncomendeiWeb.StoreLive do
         {:noreply, push_navigate(socket, to: ~p"/pedido/#{order.id}")}
 
       {:error, reason} ->
-        {:noreply, assign(socket, form: to_form(params, as: :checkout), error: error_message(reason))}
+        {:noreply,
+         assign(socket, form: to_form(params, as: :checkout), error: error_message(reason))}
     end
   end
 
   defp error_message(:empty_cart), do: "Adicione ao menos um item ao carrinho."
-  defp error_message(:unavailable_product), do: "Algum item não está mais disponível. Atualize a página."
+
+  defp error_message(:unavailable_product),
+    do: "Algum item não está mais disponível. Atualize a página."
 
   defp error_message(%Ecto.Changeset{} = cs) do
     cs
     |> Ecto.Changeset.traverse_errors(fn {msg, _} -> msg end)
-    |> Enum.map_join(" ", fn {field, msgs} -> "#{field_label(field)}: #{Enum.join(msgs, ", ")}." end)
+    |> Enum.map_join(" ", fn {field, msgs} ->
+      "#{field_label(field)}: #{Enum.join(msgs, ", ")}."
+    end)
   end
 
   defp error_message(_), do: "Não foi possível registrar o pedido. Tente novamente."
@@ -80,7 +90,9 @@ defmodule EncomendeiWeb.StoreLive do
     ~H"""
     <Layouts.app flash={@flash}>
       <h1 class="text-3xl font-bold">Cardápio</h1>
-      <p class="text-base-content/70">Escolha os produtos, informe a data de entrega e envie sua encomenda.</p>
+      <p class="text-base-content/70">
+        Escolha os produtos, informe a data de entrega e envie sua encomenda.
+      </p>
 
       <p :if={@products == []} class="py-8 text-center">Nenhum produto disponível no momento.</p>
 
@@ -90,11 +102,26 @@ defmodule EncomendeiWeb.StoreLive do
           <p :if={product.description} class="text-sm">{product.description}</p>
           <p class="font-bold">{money(product.price_cents)}</p>
           <div class="flex items-center gap-2">
-            <button type="button" class="btn btn-sm" phx-click="remove" phx-value-id={product.id}
-              aria-label={"Remover um #{product.name}"} disabled={qty(@cart, product) == 0}>−</button>
-            <span class="w-8 text-center" aria-live="polite" aria-label={"Quantidade de #{product.name}"}>{qty(@cart, product)}</span>
-            <button type="button" class="btn btn-sm btn-primary" phx-click="add" phx-value-id={product.id}
-              aria-label={"Adicionar um #{product.name}"}>+</button>
+            <button
+              type="button"
+              class="btn btn-sm"
+              phx-click="remove"
+              phx-value-id={product.id}
+              aria-label={"Remover um #{product.name}"}
+              disabled={qty(@cart, product) == 0}
+            >−</button>
+            <span
+              class="w-8 text-center"
+              aria-live="polite"
+              aria-label={"Quantidade de #{product.name}"}
+            >{qty(@cart, product)}</span>
+            <button
+              type="button"
+              class="btn btn-sm btn-primary"
+              phx-click="add"
+              phx-value-id={product.id}
+              aria-label={"Adicionar um #{product.name}"}
+            >+</button>
           </div>
         </li>
       </ul>
@@ -103,10 +130,27 @@ defmodule EncomendeiWeb.StoreLive do
         <h2 id="titulo-pedido" class="text-xl font-semibold">Seu pedido</h2>
         <p aria-live="polite" class="font-bold">Total: {money(total(@cart, @products))}</p>
 
-        <.form for={@form} id="checkout-form" phx-change="validate" phx-submit="submit" class="space-y-2">
+        <.form
+          for={@form}
+          id="checkout-form"
+          phx-change="validate"
+          phx-submit="submit"
+          class="space-y-2"
+        >
           <.input field={@form[:name]} label="Nome" required autocomplete="name" />
-          <.input field={@form[:phone]} type="tel" label="Telefone com DDD (WhatsApp)" required autocomplete="tel" />
-          <.input field={@form[:delivery_at]} type="datetime-local" label="Data e hora da entrega" required />
+          <.input
+            field={@form[:phone]}
+            type="tel"
+            label="Telefone com DDD (WhatsApp)"
+            required
+            autocomplete="tel"
+          />
+          <.input
+            field={@form[:delivery_at]}
+            type="datetime-local"
+            label="Data e hora da entrega"
+            required
+          />
           <.input field={@form[:notes]} type="textarea" label="Observações (opcional)" />
 
           <p :if={@error} role="alert" class="text-error">{@error}</p>

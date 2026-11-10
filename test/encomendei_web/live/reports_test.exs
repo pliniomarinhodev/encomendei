@@ -16,7 +16,12 @@ defmodule EncomendeiWeb.ReportsTest do
     assert html =~ "Ainda não há vendas"
 
     {:ok, _} =
-      Sales.place_order(%{"name" => "Ana", "phone" => "19988887777", "delivery_at" => DateTime.add(DateTime.utc_now(), 1, :day), "items" => [%{"product_id" => bolo.id, "quantity" => 2}]})
+      Sales.place_order(%{
+        "name" => "Ana",
+        "phone" => "19988887777",
+        "delivery_at" => DateTime.add(DateTime.utc_now(), 1, :day),
+        "items" => [%{"product_id" => bolo.id, "quantity" => 2}]
+      })
 
     html = render(lv)
     assert html =~ "R$ 96,00"
@@ -27,11 +32,19 @@ defmodule EncomendeiWeb.ReportsTest do
     bolo = product_fixture(name: "=HYPERLINK(\"x\")", price_cents: 1050)
 
     {:ok, _} =
-      Sales.place_order(%{"name" => "+Ana", "phone" => "19988887777", "delivery_at" => DateTime.add(DateTime.utc_now(), 1, :day), "items" => [%{"product_id" => bolo.id, "quantity" => 3}]})
+      Sales.place_order(%{
+        "name" => "+Ana",
+        "phone" => "19988887777",
+        "delivery_at" => DateTime.add(DateTime.utc_now(), 1, :day),
+        "items" => [%{"product_id" => bolo.id, "quantity" => 3}]
+      })
 
     conn = conn |> admin_conn() |> get(~p"/admin/relatorios/pedidos.csv")
     assert response_content_type(conn, :csv) =~ "text/csv"
-    assert get_resp_header(conn, "content-disposition") == [~S|attachment; filename="pedidos.csv"|]
+
+    assert get_resp_header(conn, "content-disposition") == [
+             ~S|attachment; filename="pedidos.csv"|
+           ]
 
     body = response(conn, 200)
     assert body =~ ~S|"pedido","entrega","status"|

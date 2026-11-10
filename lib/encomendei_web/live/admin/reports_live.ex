@@ -74,14 +74,23 @@ defmodule EncomendeiWeb.Admin.ReportsLive do
         <table :if={@top != []} class="table">
           <caption class="sr-only">Ranking de produtos por quantidade vendida</caption>
           <thead>
-            <tr><th scope="col">Produto</th><th scope="col">Quantidade</th><th scope="col">Faturamento</th></tr>
+            <tr>
+              <th scope="col">Produto</th><th scope="col">Quantidade</th><th scope="col">
+                Faturamento
+              </th>
+            </tr>
           </thead>
           <tbody>
             <tr :for={p <- @top}>
               <th scope="row" class="font-normal">{p.name}</th>
               <td>
                 <div class="flex items-center gap-2">
-                  <div class="h-3 rounded bg-primary" style={"width: #{max(pct(p.quantity, @max_qty), 2)}%"} aria-hidden="true"></div>
+                  <div
+                    class="h-3 rounded bg-primary"
+                    style={"width: #{max(pct(p.quantity, @max_qty), 2)}%"}
+                    aria-hidden="true"
+                  >
+                  </div>
                   <span class="whitespace-nowrap">{p.quantity}</span>
                 </div>
               </td>
@@ -97,7 +106,9 @@ defmodule EncomendeiWeb.Admin.ReportsLive do
         <table :if={@weekly != []} class="table">
           <caption class="sr-only">Pedidos e faturamento por semana</caption>
           <thead>
-            <tr><th scope="col">Semana</th><th scope="col">Pedidos</th><th scope="col">Faturamento</th></tr>
+            <tr>
+              <th scope="col">Semana</th><th scope="col">Pedidos</th><th scope="col">Faturamento</th>
+            </tr>
           </thead>
           <tbody>
             <tr :for={w <- @weekly}>
@@ -105,7 +116,12 @@ defmodule EncomendeiWeb.Admin.ReportsLive do
               <td>{w.orders}</td>
               <td>
                 <div class="flex items-center gap-2">
-                  <div class="h-3 rounded bg-primary" style={"width: #{max(pct(w.revenue_cents, @max_rev), 2)}%"} aria-hidden="true"></div>
+                  <div
+                    class="h-3 rounded bg-primary"
+                    style={"width: #{max(pct(w.revenue_cents, @max_rev), 2)}%"}
+                    aria-hidden="true"
+                  >
+                  </div>
                   <span class="whitespace-nowrap">{money(w.revenue_cents)}</span>
                 </div>
               </td>

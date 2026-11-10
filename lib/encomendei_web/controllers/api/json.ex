@@ -2,7 +2,13 @@ defmodule EncomendeiWeb.API.JSON do
   @moduledoc "Serialização das respostas da API."
 
   def product(p) do
-    %{id: p.id, name: p.name, description: p.description, price_cents: p.price_cents, image_url: p.image_url}
+    %{
+      id: p.id,
+      name: p.name,
+      description: p.description,
+      price_cents: p.price_cents,
+      image_url: p.image_url
+    }
   end
 
   def order(o) do
@@ -15,7 +21,12 @@ defmodule EncomendeiWeb.API.JSON do
       customer: %{name: o.customer.name, phone: o.customer.phone},
       items:
         for i <- o.items do
-          %{product_id: i.product_id, name: i.product.name, quantity: i.quantity, unit_price_cents: i.unit_price_cents}
+          %{
+            product_id: i.product_id,
+            name: i.product.name,
+            quantity: i.quantity,
+            unit_price_cents: i.unit_price_cents
+          }
         end
     }
   end

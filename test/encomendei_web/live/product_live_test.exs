@@ -6,9 +6,27 @@ defmodule EncomendeiWeb.ProductLiveTest do
 
   setup %{conn: conn}, do: {:ok, conn: admin_conn(conn)}
 
-  @create_attrs %{name: "some name", description: "some description", available: true, price_cents: 42, image_url: "some image_url"}
-  @update_attrs %{name: "some updated name", description: "some updated description", available: false, price_cents: 43, image_url: "some updated image_url"}
-  @invalid_attrs %{name: nil, description: nil, available: false, price_cents: nil, image_url: nil}
+  @create_attrs %{
+    name: "some name",
+    description: "some description",
+    available: true,
+    price_cents: 42,
+    image_url: "some image_url"
+  }
+  @update_attrs %{
+    name: "some updated name",
+    description: "some updated description",
+    available: false,
+    price_cents: 43,
+    image_url: "some updated image_url"
+  }
+  @invalid_attrs %{
+    name: nil,
+    description: nil,
+    available: false,
+    price_cents: nil,
+    image_url: nil
+  }
   defp create_product(_) do
     product = product_fixture()
 

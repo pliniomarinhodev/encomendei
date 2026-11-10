@@ -45,7 +45,11 @@ defmodule EncomendeiWeb.Format do
   def status_label(:delivered), do: "Entregue"
   def status_label(:canceled), do: "Cancelado"
 
-  def phone(<<ddd::binary-size(2), a::binary-size(5), b::binary-size(4)>>), do: "(#{ddd}) #{a}-#{b}"
-  def phone(<<ddd::binary-size(2), a::binary-size(4), b::binary-size(4)>>), do: "(#{ddd}) #{a}-#{b}"
+  def phone(<<ddd::binary-size(2), a::binary-size(5), b::binary-size(4)>>),
+    do: "(#{ddd}) #{a}-#{b}"
+
+  def phone(<<ddd::binary-size(2), a::binary-size(4), b::binary-size(4)>>),
+    do: "(#{ddd}) #{a}-#{b}"
+
   def phone(other), do: other
 end

@@ -35,7 +35,10 @@ defmodule EncomendeiWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <a href="#conteudo" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-base-100">
+    <a
+      href="#conteudo"
+      class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-base-100"
+    >
       Ir para o conteúdo
     </a>
     <header class="navbar px-4 sm:px-6 lg:px-8 border-b border-base-300">

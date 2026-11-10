@@ -6,7 +6,10 @@ defmodule EncomendeiWeb.StoreFlowTest do
   alias Encomendei.Sales
 
   defp future_local do
-    DateTime.utc_now() |> DateTime.add(2, :day) |> DateTime.add(-3 * 3600) |> Calendar.strftime("%Y-%m-%dT%H:%M")
+    DateTime.utc_now()
+    |> DateTime.add(2, :day)
+    |> DateTime.add(-3 * 3600)
+    |> Calendar.strftime("%Y-%m-%dT%H:%M")
   end
 
   test "mostra só produtos disponíveis", %{conn: conn} do
@@ -36,7 +39,9 @@ defmodule EncomendeiWeb.StoreFlowTest do
     assert html =~ "R$ 90,00"
 
     lv
-    |> form("#checkout-form", checkout: %{name: "Ana", phone: "19988887777", delivery_at: future_local(), notes: ""})
+    |> form("#checkout-form",
+      checkout: %{name: "Ana", phone: "19988887777", delivery_at: future_local(), notes: ""}
+    )
     |> render_submit()
 
     {path, _flash} = assert_redirect(lv)
@@ -54,7 +59,9 @@ defmodule EncomendeiWeb.StoreFlowTest do
 
     html =
       lv
-      |> form("#checkout-form", checkout: %{name: "Ana", phone: "19988887777", delivery_at: future_local()})
+      |> form("#checkout-form",
+        checkout: %{name: "Ana", phone: "19988887777", delivery_at: future_local()}
+      )
       |> render_submit()
 
     assert html =~ "Adicione ao menos um item"
@@ -63,7 +70,14 @@ defmodule EncomendeiWeb.StoreFlowTest do
 
   test "cliente acompanha a mudança de status em tempo real", %{conn: conn} do
     product = product_fixture()
-    {:ok, order} = Sales.place_order(%{"name" => "Ana", "phone" => "19988887777", "delivery_at" => DateTime.add(DateTime.utc_now(), 1, :day), "items" => [%{"product_id" => product.id, "quantity" => 1}]})
+
+    {:ok, order} =
+      Sales.place_order(%{
+        "name" => "Ana",
+        "phone" => "19988887777",
+        "delivery_at" => DateTime.add(DateTime.utc_now(), 1, :day),
+        "items" => [%{"product_id" => product.id, "quantity" => 1}]
+      })
 
     {:ok, lv, html} = live(conn, ~p"/pedido/#{order.id}")
     assert html =~ "Pendente"

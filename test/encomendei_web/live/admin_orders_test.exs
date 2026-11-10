@@ -25,7 +25,9 @@ defmodule EncomendeiWeb.Admin.OrdersLiveTest do
   end
 
   test "rejeita senha errada", %{conn: conn} do
-    conn = put_req_header(conn, "authorization", Plug.BasicAuth.encode_basic_auth("admin", "errada"))
+    conn =
+      put_req_header(conn, "authorization", Plug.BasicAuth.encode_basic_auth("admin", "errada"))
+
     assert get(conn, ~p"/admin/pedidos").status == 401
   end
 
@@ -42,7 +44,12 @@ defmodule EncomendeiWeb.Admin.OrdersLiveTest do
     product = product_fixture(name: "Torta")
 
     {:ok, _} =
-      Sales.place_order(%{"name" => "Beto", "phone" => "19977776666", "delivery_at" => DateTime.add(DateTime.utc_now(), 3, :day), "items" => [%{"product_id" => product.id, "quantity" => 1}]})
+      Sales.place_order(%{
+        "name" => "Beto",
+        "phone" => "19977776666",
+        "delivery_at" => DateTime.add(DateTime.utc_now(), 3, :day),
+        "items" => [%{"product_id" => product.id, "quantity" => 1}]
+      })
 
     assert render(lv) =~ "Beto"
   end

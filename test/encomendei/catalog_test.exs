@@ -8,7 +8,13 @@ defmodule Encomendei.CatalogTest do
 
     import Encomendei.CatalogFixtures
 
-    @invalid_attrs %{name: nil, description: nil, available: nil, price_cents: nil, image_url: nil}
+    @invalid_attrs %{
+      name: nil,
+      description: nil,
+      available: nil,
+      price_cents: nil,
+      image_url: nil
+    }
 
     test "list_products/0 returns all products" do
       product = product_fixture()
@@ -21,7 +27,13 @@ defmodule Encomendei.CatalogTest do
     end
 
     test "create_product/1 with valid data creates a product" do
-      valid_attrs = %{name: "some name", description: "some description", available: true, price_cents: 42, image_url: "some image_url"}
+      valid_attrs = %{
+        name: "some name",
+        description: "some description",
+        available: true,
+        price_cents: 42,
+        image_url: "some image_url"
+      }
 
       assert {:ok, %Product{} = product} = Catalog.create_product(valid_attrs)
       assert product.name == "some name"
@@ -37,7 +49,14 @@ defmodule Encomendei.CatalogTest do
 
     test "update_product/2 with valid data updates the product" do
       product = product_fixture()
-      update_attrs = %{name: "some updated name", description: "some updated description", available: false, price_cents: 43, image_url: "some updated image_url"}
+
+      update_attrs = %{
+        name: "some updated name",
+        description: "some updated description",
+        available: false,
+        price_cents: 43,
+        image_url: "some updated image_url"
+      }
 
       assert {:ok, %Product{} = product} = Catalog.update_product(product, update_attrs)
       assert product.name == "some updated name"

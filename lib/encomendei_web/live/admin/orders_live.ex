@@ -22,8 +22,11 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
     order = Sales.get_order!(id)
 
     case Sales.update_status(order, to) do
-      {:ok, _} -> {:noreply, load(socket)}
-      {:error, _} -> {:noreply, put_flash(socket, :error, "Essa mudança de status não é permitida.")}
+      {:ok, _} ->
+        {:noreply, load(socket)}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Essa mudança de status não é permitida.")}
     end
   end
 
@@ -50,9 +53,15 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
           <h2 id={"col-#{status}"} class="text-lg font-semibold">
             {status_label(status)} ({length(Map.get(@orders, status, []))})
           </h2>
-          <p :if={Map.get(@orders, status, []) == []} class="text-sm text-base-content/60">Nenhum pedido.</p>
+          <p :if={Map.get(@orders, status, []) == []} class="text-sm text-base-content/60">
+            Nenhum pedido.
+          </p>
 
-          <article :for={order <- Map.get(@orders, status, [])} id={"order-#{order.id}"} class="card bg-base-200 p-3 space-y-2">
+          <article
+            :for={order <- Map.get(@orders, status, [])}
+            id={"order-#{order.id}"}
+            class="card bg-base-200 p-3 space-y-2"
+          >
             <h3 class="font-semibold">{order.customer.name}</h3>
             <p class="text-sm">Entrega: {datetime(order.delivery_at)}</p>
             <ul class="text-sm list-disc pl-5">
@@ -61,8 +70,14 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
             <p :if={order.notes} class="text-sm italic">“{order.notes}”</p>
             <p class="font-bold">{money(order.total_cents)}</p>
             <div class="flex flex-wrap gap-2">
-              <button :for={next <- Sales.next_statuses(order)} type="button" class="btn btn-xs"
-                phx-click="status" phx-value-id={order.id} phx-value-to={next}>
+              <button
+                :for={next <- Sales.next_statuses(order)}
+                type="button"
+                class="btn btn-xs"
+                phx-click="status"
+                phx-value-id={order.id}
+                phx-value-to={next}
+              >
                 {if next == :canceled, do: "Cancelar", else: "Mover para " <> status_label(next)}
               </button>
               <a href={wa_link(order)} target="_blank" rel="noopener" class="btn btn-xs btn-ghost">

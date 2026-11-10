@@ -12,7 +12,9 @@ defmodule EncomendeiWeb.API.OrderController do
       conn |> put_status(:created) |> json(%{data: J.order(order)})
     else
       {:error, :bad_datetime} ->
-        unprocessable(conn, %{delivery_at: ["use o formato ISO 8601, ex.: 2026-11-20T14:00:00-03:00"]})
+        unprocessable(conn, %{
+          delivery_at: ["use o formato ISO 8601, ex.: 2026-11-20T14:00:00-03:00"]
+        })
 
       {:error, :empty_cart} ->
         unprocessable(conn, %{items: ["adicione ao menos um item"]})
@@ -78,6 +80,9 @@ defmodule EncomendeiWeb.API.OrderController do
     _ -> nil
   end
 
-  defp not_found(conn), do: conn |> put_status(:not_found) |> json(%{errors: %{detail: "não encontrado"}})
-  defp unprocessable(conn, errors), do: conn |> put_status(:unprocessable_entity) |> json(%{errors: errors})
+  defp not_found(conn),
+    do: conn |> put_status(:not_found) |> json(%{errors: %{detail: "não encontrado"}})
+
+  defp unprocessable(conn, errors),
+    do: conn |> put_status(:unprocessable_entity) |> json(%{errors: errors})
 end

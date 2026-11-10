@@ -32,8 +32,10 @@ defmodule Encomendei.Reports do
   @doc "Produtos mais vendidos (quantidade e faturamento), do maior para o menor."
   def top_products(limit \\ 5) do
     from(i in OrderItem,
-      join: o in Order, on: o.id == i.order_id,
-      join: p in Product, on: p.id == i.product_id,
+      join: o in Order,
+      on: o.id == i.order_id,
+      join: p in Product,
+      on: p.id == i.product_id,
       where: o.status != :canceled,
       group_by: [p.id, p.name],
       order_by: [desc: sum(i.quantity), asc: p.name],
@@ -66,9 +68,11 @@ defmodule Encomendei.Reports do
   @doc "Linhas para exportar em CSV: um item de pedido por linha."
   def export_rows do
     from(i in OrderItem,
-      join: o in Order, on: o.id == i.order_id,
+      join: o in Order,
+      on: o.id == i.order_id,
       join: c in assoc(o, :customer),
-      join: p in Product, on: p.id == i.product_id,
+      join: p in Product,
+      on: p.id == i.product_id,
       order_by: [asc: o.delivery_at, asc: p.name],
       select: %{
         pedido: o.id,

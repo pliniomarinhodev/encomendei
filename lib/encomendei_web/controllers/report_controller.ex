@@ -7,10 +7,19 @@ defmodule EncomendeiWeb.ReportController do
   def orders_csv(conn, _params) do
     rows =
       for r <- Reports.export_rows() do
-        [r.pedido, DateTime.to_iso8601(r.entrega), r.status, r.cliente, r.produto, r.quantidade, centavos(r.preco_unitario_cents)]
+        [
+          r.pedido,
+          DateTime.to_iso8601(r.entrega),
+          r.status,
+          r.cliente,
+          r.produto,
+          r.quantidade,
+          centavos(r.preco_unitario_cents)
+        ]
       end
 
-    csv = [@header | rows] |> Enum.map_join("\r\n", fn row -> Enum.map_join(row, ",", &cell/1) end)
+    csv =
+      [@header | rows] |> Enum.map_join("\r\n", fn row -> Enum.map_join(row, ",", &cell/1) end)
 
     conn
     |> put_resp_content_type("text/csv")

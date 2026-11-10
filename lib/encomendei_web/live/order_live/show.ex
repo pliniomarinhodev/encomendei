@@ -44,7 +44,11 @@ defmodule EncomendeiWeb.OrderLive.Show do
 
       <table class="table">
         <caption class="sr-only">Itens do pedido</caption>
-        <thead><tr><th scope="col">Produto</th><th scope="col">Qtd</th><th scope="col">Subtotal</th></tr></thead>
+        <thead>
+          <tr>
+            <th scope="col">Produto</th><th scope="col">Qtd</th><th scope="col">Subtotal</th>
+          </tr>
+        </thead>
         <tbody>
           <tr :for={i <- @order.items}>
             <td>{i.product.name}</td>
@@ -52,7 +56,11 @@ defmodule EncomendeiWeb.OrderLive.Show do
             <td>{money(i.quantity * i.unit_price_cents)}</td>
           </tr>
         </tbody>
-        <tfoot><tr><th scope="row" colspan="2">Total</th><td>{money(@order.total_cents)}</td></tr></tfoot>
+        <tfoot>
+          <tr>
+            <th scope="row" colspan="2">Total</th><td>{money(@order.total_cents)}</td>
+          </tr>
+        </tfoot>
       </table>
 
       <.link navigate={~p"/"} class="btn">Fazer outro pedido</.link>
