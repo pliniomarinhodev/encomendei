@@ -40,10 +40,20 @@ defmodule EncomendeiWeb.Router do
     live "/produtos/:id/edit", ProductLive.Form, :edit
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", EncomendeiWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", EncomendeiWeb.API do
+    pipe_through :api
+
+    get "/products", ProductController, :index
+    post "/orders", OrderController, :create
+    get "/orders/:id", OrderController, :show
+  end
+
+  scope "/api/admin", EncomendeiWeb.API do
+    pipe_through [:api, :admin]
+
+    get "/orders", OrderController, :index
+    patch "/orders/:id/status", OrderController, :update_status
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:encomendei, :dev_routes) do
