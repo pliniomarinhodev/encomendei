@@ -23,5 +23,9 @@ defmodule Encomendei.Sales.OrderItem do
     |> validate_required([:quantity, :unit_price_cents, :product_id])
     |> validate_number(:quantity, greater_than: 0, less_than_or_equal_to: 99)
     |> validate_number(:unit_price_cents, greater_than_or_equal_to: 0)
+    |> assoc_constraint(:order)
+    |> assoc_constraint(:product)
+    |> check_constraint(:quantity, name: :quantity_positive)
+    |> check_constraint(:unit_price_cents, name: :unit_price_non_negative)
   end
 end

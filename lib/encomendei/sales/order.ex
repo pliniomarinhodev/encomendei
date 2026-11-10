@@ -26,6 +26,7 @@ defmodule Encomendei.Sales.Order do
     field :status, Ecto.Enum, values: @statuses, default: :pending
     field :total_cents, :integer, default: 0
     field :notes, :string
+    field :number, :integer, read_after_writes: true
 
     belongs_to :customer, Customer
     has_many :items, OrderItem
@@ -60,6 +61,10 @@ defmodule Encomendei.Sales.Order do
     |> validate_required([:delivery_at, :customer_id])
     |> validate_length(:notes, max: 500)
     |> validate_change(:delivery_at, &validate_future/2)
+    |> validate_number(:total_cents, greater_than_or_equal_to: 0)
+    |> assoc_constraint(:customer)
+    |> unique_constraint(:number)
+    |> check_constraint(:total_cents, name: :total_cents_non_negative)
   end
 
   @spec status_changeset(t(), status()) :: Ecto.Changeset.t()
@@ -67,6 +72,8 @@ defmodule Encomendei.Sales.Order do
     order
     |> cast(%{status: status}, [:status])
     |> validate_required([:status])
+    |> validate_inclusion(:status, @statuses)
+    |> check_constraint(:status, name: :status_valid)
   end
 
   defp validate_future(:delivery_at, delivery_at) do
