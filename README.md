@@ -16,6 +16,7 @@ tudo em um painel que atualiza em tempo real (pendente → em produção → ent
 | Nuvem | Oracle Cloud Always Free – ver [docs/DEPLOY_ORACLE.md](docs/DEPLOY_ORACLE.md) |
 | API | JSON em `/api` (abaixo) |
 | Acessibilidade | HTML semântico, rótulos ARIA, `aria-live`, link "ir para o conteúdo", tema claro/escuro, `lang="pt-BR"` |
+| Análise de dados (opcional) | Relatórios em `/admin/relatorios` e exportação CSV |
 | Controle de versão | git |
 | Testes | ExUnit (`mix test`) |
 
@@ -45,6 +46,8 @@ Testes: `mix test`
 | `/pedido/:id` | público (o id funciona como código do pedido) | Confirmação e status em tempo real |
 | `/admin/pedidos` | senha | Fila de produção |
 | `/admin/produtos` | senha | Cadastro de produtos |
+| `/admin/relatorios` | senha | Faturamento, ticket médio, produtos mais vendidos e semanas; atualiza em tempo real |
+| `/admin/relatorios/pedidos.csv` | senha | Exporta os itens vendidos em CSV (pronto para planilha) |
 
 ## API JSON
 
@@ -82,6 +85,7 @@ Status: `pending`, `in_production`, `delivered`, `canceled`. Transições permit
 
 - `lib/encomendei/catalog` – produtos
 - `lib/encomendei/sales` – clientes, pedidos, itens e regras de negócio
+- `lib/encomendei/reports.ex` – consultas de análise de vendas
 - `lib/encomendei_web/live` – telas (cardápio, confirmação, painel, produtos)
 - `lib/encomendei_web/controllers/api` – API JSON
 - `test/` – testes de regras, telas e API

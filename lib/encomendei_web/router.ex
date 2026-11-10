@@ -34,6 +34,8 @@ defmodule EncomendeiWeb.Router do
     pipe_through [:browser, :admin]
 
     live "/pedidos", Admin.OrdersLive
+    live "/relatorios", Admin.ReportsLive
+    get "/relatorios/pedidos.csv", ReportController, :orders_csv
     live "/produtos", ProductLive.Index, :index
     live "/produtos/new", ProductLive.Form, :new
     live "/produtos/:id", ProductLive.Show, :show

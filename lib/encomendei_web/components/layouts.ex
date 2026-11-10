@@ -48,6 +48,7 @@ defmodule EncomendeiWeb.Layouts do
         <ul class="flex items-center gap-2">
           <li><a href="/" class="btn btn-ghost btn-sm">Cardápio</a></li>
           <li><a href="/admin/pedidos" class="btn btn-ghost btn-sm">Painel</a></li>
+          <li><a href="/admin/relatorios" class="btn btn-ghost btn-sm">Relatórios</a></li>
           <li><.theme_toggle /></li>
         </ul>
       </nav>
