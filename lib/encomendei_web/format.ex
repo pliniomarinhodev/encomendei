@@ -4,6 +4,10 @@ defmodule EncomendeiWeb.Format do
   # Brasil não usa horário de verão desde 2019: fuso fixo UTC-3.
   @offset_seconds -3 * 3600
 
+  @doc "Número do pedido como o cliente e a confeiteira o chamam, por exemplo `#42`."
+  def order_number(%{number: number}) when is_integer(number), do: "##{number}"
+  def order_number(_order), do: ""
+
   def money(cents) when is_integer(cents) do
     reais = div(cents, 100)
     centavos = cents |> rem(100) |> Integer.to_string() |> String.pad_leading(2, "0")

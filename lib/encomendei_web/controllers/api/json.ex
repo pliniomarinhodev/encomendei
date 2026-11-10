@@ -14,6 +14,7 @@ defmodule EncomendeiWeb.API.JSON do
   def order(o) do
     %{
       id: o.id,
+      number: o.number,
       status: o.status,
       delivery_at: o.delivery_at,
       total_cents: o.total_cents,

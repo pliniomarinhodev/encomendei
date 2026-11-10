@@ -48,7 +48,7 @@ defmodule EncomendeiWeb.StoreFlowTest do
     assert path =~ "/pedido/"
 
     {:ok, _lv, html} = live(conn, path)
-    assert html =~ "Pedido recebido"
+    assert html =~ ~r/Pedido #\d+ recebido/
     assert html =~ "Pendente"
     assert html =~ "R$ 90,00"
   end

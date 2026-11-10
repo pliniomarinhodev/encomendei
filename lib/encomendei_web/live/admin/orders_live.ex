@@ -90,6 +90,9 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
         class="table table-sm"
         row_item={fn {_dom_id, order} -> order end}
       >
+        <:col :let={order} label="Nº">
+          <span class="whitespace-nowrap tabular-nums font-medium">{order_number(order)}</span>
+        </:col>
         <:col :let={order} label="Cliente">
           <p class="whitespace-nowrap font-medium">{order.customer.name}</p>
           <p class="whitespace-nowrap text-xs text-base-content/70">{phone(order.customer.phone)}</p>
@@ -169,6 +172,7 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
             </h2>
             <ul class="mt-1 space-y-1 text-sm">
               <li :for={order <- @overdue}>
+                <span class="tabular-nums">{order_number(order)}</span>
                 {order.customer.name}
                 <span class="text-base-content/70">· {delivery_short(order.delivery_at)}</span>
               </li>
@@ -180,7 +184,7 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
             <p :if={@today == []} class="mt-1 text-sm text-base-content/70">Nada para hoje.</p>
             <ul class="mt-1 divide-y divide-base-300 text-sm">
               <li :for={order <- @today} class="flex justify-between gap-2 py-1.5">
-                <span>{order.customer.name}</span>
+                <span><span class="tabular-nums">{order_number(order)}</span> {order.customer.name}</span>
                 <span class="tabular-nums text-base-content/70">{delivery_short(order.delivery_at)}</span>
               </li>
             </ul>

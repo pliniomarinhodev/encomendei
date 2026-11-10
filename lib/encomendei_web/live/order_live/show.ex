@@ -30,7 +30,7 @@ defmodule EncomendeiWeb.OrderLive.Show do
     <Layouts.app flash={@flash}>
       <div class="mx-auto max-w-2xl space-y-6">
         <.header>
-          Pedido recebido!
+          Pedido {order_number(@order)} recebido!
           <:subtitle>
             Obrigado, {@order.customer.name}. Guarde esta página para acompanhar sua encomenda.
           </:subtitle>
