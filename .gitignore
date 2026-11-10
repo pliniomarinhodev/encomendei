@@ -35,3 +35,6 @@ encomendei-*.tar
 npm-debug.log
 /assets/node_modules/
 
+
+# Segredos de produção
+.env
