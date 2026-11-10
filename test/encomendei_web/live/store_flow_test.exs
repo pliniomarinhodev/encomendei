@@ -18,6 +18,15 @@ defmodule EncomendeiWeb.StoreFlowTest do
     refute html =~ "Bolo Escondido"
   end
 
+  test "controles têm nome acessível e a página tem idioma", %{conn: conn} do
+    product_fixture(name: "Bolo")
+    {:ok, _lv, html} = live(conn, ~p"/")
+    assert html =~ ~s(aria-label="Tema escuro")
+    assert html =~ ~s(aria-label="Adicionar um Bolo")
+    assert html =~ ~s(href="#conteudo")
+    assert html =~ ~r/<main[^>]*id="conteudo"/
+  end
+
   test "cliente monta o carrinho, envia e vê a confirmação", %{conn: conn} do
     product = product_fixture(name: "Bolo de Cenoura", price_cents: 4500)
     {:ok, lv, _} = live(conn, ~p"/")

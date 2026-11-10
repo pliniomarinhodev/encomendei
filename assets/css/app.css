@@ -103,3 +103,9 @@
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
 /* This file is for your main application CSS */
+
+/* Acessibilidade: o rótulo padrão do daisyUI é semitransparente e não atinge contraste AA */
+.label {
+  color: var(--color-base-content);
+  opacity: 1;
+}
