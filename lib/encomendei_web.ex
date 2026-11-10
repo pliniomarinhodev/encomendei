@@ -86,6 +86,7 @@ defmodule EncomendeiWeb do
       import Phoenix.HTML
       # Core UI components
       import EncomendeiWeb.CoreComponents
+      import EncomendeiWeb.OrderComponents
 
       # Common modules used in templates
       alias Phoenix.LiveView.JS

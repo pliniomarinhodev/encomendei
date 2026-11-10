@@ -33,103 +33,87 @@ defmodule EncomendeiWeb.Admin.ReportsLive do
 
   @impl true
   def render(assigns) do
-    max_qty = assigns.top |> Enum.map(& &1.quantity) |> Enum.max(fn -> 0 end)
-    max_rev = assigns.weekly |> Enum.map(& &1.revenue_cents) |> Enum.max(fn -> 0 end)
-    assigns = assign(assigns, max_qty: max_qty, max_rev: max_rev)
+    assigns =
+      assign(assigns,
+        max_quantity: assigns.top |> Enum.map(& &1.quantity) |> Enum.max(fn -> 0 end),
+        max_revenue: assigns.weekly |> Enum.map(& &1.revenue_cents) |> Enum.max(fn -> 0 end)
+      )
 
     ~H"""
-    <Layouts.app flash={@flash}>
-      <div class="flex items-center justify-between">
-        <h1 class="text-3xl font-bold">Relatórios</h1>
-        <a href={~p"/admin/relatorios/pedidos.csv"} class="btn btn-sm">Baixar CSV</a>
-      </div>
+    <Layouts.app flash={@flash} nav={:admin} active={:reports}>
+      <.header>
+        Relatórios
+        <:actions>
+          <.button href={~p"/admin/relatorios/pedidos.csv"} variant="ghost" size="sm">
+            Baixar CSV
+          </.button>
+        </:actions>
+      </.header>
 
-      <dl class="grid gap-4 sm:grid-cols-3">
-        <div class="card bg-base-200 p-4">
-          <dt class="text-sm">Faturamento</dt>
-          <dd class="text-2xl font-bold">{money(@summary.revenue_cents)}</dd>
+      <dl class="grid divide-y divide-base-300 border border-base-300 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        <div class="p-4">
+          <dt class="text-sm text-base-content/70">Faturamento</dt>
+          <dd class="text-2xl font-semibold tabular-nums">{money(@summary.revenue_cents)}</dd>
         </div>
-        <div class="card bg-base-200 p-4">
-          <dt class="text-sm">Pedidos (sem cancelados)</dt>
-          <dd class="text-2xl font-bold">{@summary.orders}</dd>
+        <div class="p-4">
+          <dt class="text-sm text-base-content/70">Pedidos (sem cancelados)</dt>
+          <dd class="text-2xl font-semibold tabular-nums">{@summary.orders}</dd>
         </div>
-        <div class="card bg-base-200 p-4">
-          <dt class="text-sm">Ticket médio</dt>
-          <dd class="text-2xl font-bold">{money(@summary.average_ticket_cents)}</dd>
+        <div class="p-4">
+          <dt class="text-sm text-base-content/70">Ticket médio</dt>
+          <dd class="text-2xl font-semibold tabular-nums">{money(@summary.average_ticket_cents)}</dd>
         </div>
       </dl>
 
-      <section aria-labelledby="rep-status" class="space-y-2">
-        <h2 id="rep-status" class="text-xl font-semibold">Pedidos por status</h2>
-        <ul class="flex flex-wrap gap-4">
-          <li :for={s <- Encomendei.Sales.Order.statuses()}>
-            {status_label(s)}: <strong>{@summary.by_status[s]}</strong>
-          </li>
-        </ul>
-      </section>
+      <ul class="flex flex-wrap gap-x-6 gap-y-1 text-sm" aria-label="Pedidos por status">
+        <li :for={status <- Encomendei.Sales.Order.statuses()} class="flex items-center gap-2">
+          <.status_badge status={status} />
+          <strong class="tabular-nums">{@summary.by_status[status]}</strong>
+        </li>
+      </ul>
 
-      <section aria-labelledby="rep-top" class="space-y-2">
-        <h2 id="rep-top" class="text-xl font-semibold">Produtos mais vendidos</h2>
-        <p :if={@top == []} class="text-sm">Ainda não há vendas.</p>
-        <table :if={@top != []} class="table">
-          <caption class="sr-only">Ranking de produtos por quantidade vendida</caption>
-          <thead>
-            <tr>
-              <th scope="col">Produto</th><th scope="col">Quantidade</th><th scope="col">
-                Faturamento
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr :for={p <- @top}>
-              <th scope="row" class="font-normal">{p.name}</th>
-              <td>
-                <div class="flex items-center gap-2">
-                  <div
-                    class="h-3 rounded bg-primary"
-                    style={"width: #{max(pct(p.quantity, @max_qty), 2)}%"}
-                    aria-hidden="true"
-                  >
-                  </div>
-                  <span class="whitespace-nowrap">{p.quantity}</span>
-                </div>
-              </td>
-              <td>{money(p.revenue_cents)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+        <section aria-labelledby="rep-top" class="space-y-2">
+          <h2 id="rep-top" class="text-sm font-semibold">Produtos mais vendidos</h2>
+          <p :if={@top == []} class="text-sm text-base-content/70">Ainda não há vendas.</p>
+          <.table :if={@top != []} id="top-products" rows={@top} class="table table-sm">
+            <:col :let={product} label="Produto">{product.name}</:col>
+            <:col :let={product} label="Quantidade">
+              <.bar value={product.quantity} max={@max_quantity}>{product.quantity}</.bar>
+            </:col>
+            <:col :let={product} label="Faturamento">
+              <span class="tabular-nums">{money(product.revenue_cents)}</span>
+            </:col>
+          </.table>
+        </section>
 
-      <section aria-labelledby="rep-week" class="space-y-2">
-        <h2 id="rep-week" class="text-xl font-semibold">Faturamento por semana de entrega</h2>
-        <p :if={@weekly == []} class="text-sm">Ainda não há vendas.</p>
-        <table :if={@weekly != []} class="table">
-          <caption class="sr-only">Pedidos e faturamento por semana</caption>
-          <thead>
-            <tr>
-              <th scope="col">Semana</th><th scope="col">Pedidos</th><th scope="col">Faturamento</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr :for={w <- @weekly}>
-              <th scope="row" class="font-normal">{week_label(w.week)}</th>
-              <td>{w.orders}</td>
-              <td>
-                <div class="flex items-center gap-2">
-                  <div
-                    class="h-3 rounded bg-primary"
-                    style={"width: #{max(pct(w.revenue_cents, @max_rev), 2)}%"}
-                    aria-hidden="true"
-                  >
-                  </div>
-                  <span class="whitespace-nowrap">{money(w.revenue_cents)}</span>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+        <section aria-labelledby="rep-week" class="space-y-2">
+          <h2 id="rep-week" class="text-sm font-semibold">Faturamento por semana de entrega</h2>
+          <p :if={@weekly == []} class="text-sm text-base-content/70">Ainda não há vendas.</p>
+          <.table :if={@weekly != []} id="weekly" rows={@weekly} class="table table-sm">
+            <:col :let={week} label="Semana">{week_label(week.week)}</:col>
+            <:col :let={week} label="Pedidos">{week.orders}</:col>
+            <:col :let={week} label="Faturamento">
+              <.bar value={week.revenue_cents} max={@max_revenue}>{money(week.revenue_cents)}</.bar>
+            </:col>
+          </.table>
+        </section>
+      </div>
     </Layouts.app>
+    """
+  end
+
+  attr :value, :integer, required: true
+  attr :max, :integer, required: true
+  slot :inner_block, required: true
+
+  defp bar(assigns) do
+    ~H"""
+    <div class="flex items-center gap-2">
+      <div class="h-2 bg-primary" style={"width: #{max(pct(@value, @max), 2)}%"} aria-hidden="true">
+      </div>
+      <span class="whitespace-nowrap tabular-nums">{render_slot(@inner_block)}</span>
+    </div>
     """
   end
 end

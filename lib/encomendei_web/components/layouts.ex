@@ -31,40 +31,78 @@ defmodule EncomendeiWeb.Layouts do
     default: nil,
     doc: "the current [scope](https://phoenix.hexdocs.pm/scopes.html)"
 
+  attr :nav, :atom, values: [:public, :admin], default: :public
+  attr :active, :atom, default: nil, doc: "aba ativa do painel"
+
   slot :inner_block, required: true
 
   def app(assigns) do
     ~H"""
     <a
       href="#conteudo"
-      class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-base-100"
+      class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-base-100 focus:p-3"
     >
       Ir para o conteúdo
     </a>
-    <header class="navbar px-4 sm:px-6 lg:px-8 border-b border-base-300">
-      <div class="flex-1">
-        <a href="/" class="text-xl font-bold" aria-label="Encomendei, página inicial">
-          <span aria-hidden="true">🍰</span> Encomendei
-        </a>
+
+    <header class="border-b border-base-300 bg-base-100">
+      <div class={[
+        "mx-auto flex flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3 sm:px-6",
+        content_width(@nav)
+      ]}>
+        <.link
+          navigate={home_path(@nav)}
+          class="text-lg font-bold tracking-tight text-primary"
+          aria-label="Encomendei, página inicial"
+        >
+          Encomendei
+        </.link>
+
+        <nav :if={@nav == :admin} aria-label="Painel" class="flex flex-1 flex-wrap gap-1">
+          <.link
+            :for={{key, label, path} <- admin_tabs()}
+            navigate={path}
+            aria-current={@active == key && "page"}
+            class={[
+              "rounded px-3 py-1.5 text-sm font-medium",
+              @active == key && "bg-base-200",
+              @active != key && "text-base-content/70 hover:bg-base-200"
+            ]}
+          >
+            {label}
+          </.link>
+        </nav>
+
+        <div class="ml-auto"><.theme_toggle /></div>
       </div>
-      <nav class="flex-none" aria-label="Principal">
-        <ul class="flex items-center gap-2">
-          <li><a href="/" class="btn btn-ghost btn-sm">Cardápio</a></li>
-          <li><a href="/admin/pedidos" class="btn btn-ghost btn-sm">Painel</a></li>
-          <li><a href="/admin/relatorios" class="btn btn-ghost btn-sm">Relatórios</a></li>
-          <li><.theme_toggle /></li>
-        </ul>
-      </nav>
     </header>
 
-    <main id="conteudo" class="px-4 py-8 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-4xl space-y-4">
+    <main id="conteudo" class="px-4 py-8 sm:px-6">
+      <div class={["mx-auto space-y-6", content_width(@nav)]}>
         {render_slot(@inner_block)}
       </div>
     </main>
 
+    <footer :if={@nav == :public} class="px-4 pb-8 text-center text-sm text-base-content/75">
+      <.link navigate={~p"/admin/pedidos"} class="underline">Área da confeiteira</.link>
+    </footer>
+
     <.flash_group flash={@flash} />
     """
+  end
+
+  defp content_width(:admin), do: "max-w-7xl"
+  defp content_width(:public), do: "max-w-6xl"
+
+  defp home_path(:admin), do: ~p"/admin/pedidos"
+  defp home_path(:public), do: ~p"/"
+
+  defp admin_tabs do
+    [
+      {:orders, "Pedidos", ~p"/admin/pedidos"},
+      {:products, "Produtos", ~p"/admin/produtos"},
+      {:reports, "Relatórios", ~p"/admin/relatorios"}
+    ]
   end
 
   @doc """

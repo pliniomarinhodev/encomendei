@@ -3,30 +3,7 @@ defmodule EncomendeiWeb.ProductLive.Form do
 
   alias Encomendei.Catalog
   alias Encomendei.Catalog.Product
-
-  @impl true
-  def render(assigns) do
-    ~H"""
-    <Layouts.app flash={@flash}>
-      <.header>
-        {@page_title}
-        <:subtitle>Use this form to manage product records in your database.</:subtitle>
-      </.header>
-
-      <.form for={@form} id="product-form" phx-change="validate" phx-submit="save">
-        <.input field={@form[:name]} type="text" label="Name" />
-        <.input field={@form[:description]} type="textarea" label="Description" />
-        <.input field={@form[:price_cents]} type="number" label="Price cents" />
-        <.input field={@form[:available]} type="checkbox" label="Available" />
-        <.input field={@form[:image_url]} type="text" label="Image url" />
-        <footer>
-          <.button phx-disable-with="Saving..." variant="primary">Save Product</.button>
-          <.button navigate={return_path(@return_to, @product)}>Cancel</.button>
-        </footer>
-      </.form>
-    </Layouts.app>
-    """
-  end
+  import EncomendeiWeb.Format, only: [price_input: 1]
 
   @impl true
   def mount(params, _session, socket) do
@@ -37,42 +14,35 @@ defmodule EncomendeiWeb.ProductLive.Form do
   end
 
   defp return_to("show"), do: "show"
-  defp return_to(_), do: "index"
+  defp return_to(_other), do: "index"
 
   defp apply_action(socket, :edit, %{"id" => id}) do
     product = Catalog.get_product!(id)
-
-    socket
-    |> assign(:page_title, "Edit Product")
-    |> assign(:product, product)
-    |> assign(:form, to_form(Catalog.change_product(product)))
+    assign_form(socket, "Editar produto", product, %{"price" => price_input(product.price_cents)})
   end
 
   defp apply_action(socket, :new, _params) do
-    product = %Product{}
+    assign_form(socket, "Novo produto", %Product{available: true}, %{})
+  end
 
+  defp assign_form(socket, title, product, params) do
     socket
-    |> assign(:page_title, "New Product")
-    |> assign(:product, product)
-    |> assign(:form, to_form(Catalog.change_product(product)))
+    |> assign(page_title: title, product: product)
+    |> assign(:form, to_form(Catalog.change_product(product, params)))
   end
 
   @impl true
-  def handle_event("validate", %{"product" => product_params}, socket) do
-    changeset = Catalog.change_product(socket.assigns.product, product_params)
+  def handle_event("validate", %{"product" => params}, socket) do
+    changeset = Catalog.change_product(socket.assigns.product, params)
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
-  def handle_event("save", %{"product" => product_params}, socket) do
-    save_product(socket, socket.assigns.live_action, product_params)
-  end
-
-  defp save_product(socket, :edit, product_params) do
-    case Catalog.update_product(socket.assigns.product, product_params) do
+  def handle_event("save", %{"product" => params}, socket) do
+    case persist(socket.assigns.live_action, socket.assigns.product, params) do
       {:ok, product} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Product updated successfully")
+         |> put_flash(:info, "Produto salvo.")
          |> push_navigate(to: return_path(socket.assigns.return_to, product))}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -80,19 +50,34 @@ defmodule EncomendeiWeb.ProductLive.Form do
     end
   end
 
-  defp save_product(socket, :new, product_params) do
-    case Catalog.create_product(product_params) do
-      {:ok, product} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Product created successfully")
-         |> push_navigate(to: return_path(socket.assigns.return_to, product))}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
-    end
-  end
+  defp persist(:edit, product, params), do: Catalog.update_product(product, params)
+  defp persist(:new, _product, params), do: Catalog.create_product(params)
 
   defp return_path("index", _product), do: ~p"/admin/produtos"
   defp return_path("show", product), do: ~p"/admin/produtos/#{product}"
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <Layouts.app flash={@flash} nav={:admin} active={:products}>
+      <div class="max-w-xl">
+        <.header>
+          {@page_title}
+          <:subtitle>O preço é em reais, por exemplo 45,00.</:subtitle>
+        </.header>
+
+        <.form for={@form} id="product-form" phx-change="validate" phx-submit="save">
+          <.input field={@form[:name]} type="text" label="Nome" required />
+          <.input field={@form[:description]} type="textarea" label="Descrição" />
+          <.input field={@form[:price]} type="text" label="Preço (R$)" inputmode="decimal" required />
+          <.input field={@form[:available]} type="checkbox" label="Disponível para encomenda" />
+          <footer class="flex gap-2 pt-2">
+            <.button type="submit" variant="primary" phx-disable-with="Salvando...">Salvar</.button>
+            <.button navigate={return_path(@return_to, @product)} variant="ghost">Cancelar</.button>
+          </footer>
+        </.form>
+      </div>
+    </Layouts.app>
+    """
+  end
 end

@@ -35,7 +35,7 @@ defmodule EncomendeiWeb.Admin.OrdersLiveTest do
     {:ok, lv, html} = conn |> admin_conn() |> live(~p"/admin/pedidos")
     assert html =~ "Ana"
 
-    lv |> element("#order-#{order.id} button", "Mover para Em produção") |> render_click()
+    lv |> element("#order-#{order.id} button", "Iniciar produção") |> render_click()
     assert Sales.get_order!(order.id).status == :in_production
   end
 
@@ -52,5 +52,41 @@ defmodule EncomendeiWeb.Admin.OrdersLiveTest do
       })
 
     assert render(lv) =~ "Beto"
+  end
+
+  test "agrupa por status com contagem e total", %{conn: conn, order: order} do
+    {:ok, view, _html} = conn |> admin_conn() |> live(~p"/admin/pedidos")
+
+    assert has_element?(view, "#group-pending #order-#{order.id}")
+    assert has_element?(view, "#group-in_production", "Nenhum pedido")
+    assert has_element?(view, "#group-delivered", "Nenhum pedido")
+
+    view |> element("#order-#{order.id} button", "Iniciar produção") |> render_click()
+
+    assert has_element?(view, "#group-in_production #order-#{order.id}")
+    refute has_element?(view, "#group-pending #order-#{order.id}")
+  end
+
+  test "cancelar pede confirmação no navegador", %{conn: conn, order: order} do
+    {:ok, view, _html} = conn |> admin_conn() |> live(~p"/admin/pedidos")
+
+    assert has_element?(
+             view,
+             ~s(#order-#{order.id} button[data-confirm="Cancelar este pedido?"]),
+             "Cancelar"
+           )
+  end
+
+  test "mudança de status inválida mostra aviso e não altera o pedido", %{
+    conn: conn,
+    order: order
+  } do
+    {:ok, view, _html} = conn |> admin_conn() |> live(~p"/admin/pedidos")
+    html = render_click(view, "status", %{"id" => order.id, "to" => "delivered"})
+
+    assert html =~ "não é permitida"
+    assert Sales.get_order!(order.id).status == :pending
+    assert render_click(view, "status", %{"id" => order.id, "to" => "xyz"}) =~ "não é permitida"
+    assert render_click(view, "status", %{"id" => "abc", "to" => "pending"}) =~ "não é permitida"
   end
 end

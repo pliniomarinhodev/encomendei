@@ -46,6 +46,41 @@ defmodule Encomendei.Sales do
   defp filter_status(query, nil), do: query
   defp filter_status(query, status), do: where(query, [o], o.status in ^List.wrap(status))
 
+  @type queue :: %{
+          pending: [Order.t()],
+          in_production: [Order.t()],
+          delivered: [Order.t()]
+        }
+
+  @recent_deliveries 10
+
+  @doc """
+  Fila de produção agrupada por status, para o painel da confeiteira.
+
+  Encomendas pendentes e em produção aparecem completas, da entrega mais
+  próxima para a mais distante. As entregues mostram só as #{@recent_deliveries}
+  mais recentes, para o painel não crescer indefinidamente.
+  """
+  @spec production_queue() :: queue()
+  def production_queue do
+    open = [status: [:pending, :in_production]] |> list_orders() |> Enum.group_by(& &1.status)
+
+    %{
+      pending: Map.get(open, :pending, []),
+      in_production: Map.get(open, :in_production, []),
+      delivered: recent_deliveries()
+    }
+  end
+
+  defp recent_deliveries do
+    Order
+    |> where([o], o.status == :delivered)
+    |> order_by([o], desc: o.updated_at)
+    |> limit(@recent_deliveries)
+    |> with_details()
+    |> Repo.all()
+  end
+
   @spec get_order!(Ecto.UUID.t()) :: Order.t()
   def get_order!(id), do: Repo.get!(with_details(Order), id)
 

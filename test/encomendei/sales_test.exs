@@ -126,6 +126,53 @@ defmodule Encomendei.SalesTest do
     end
   end
 
+  describe "production_queue/0" do
+    defp place!(product, days, phone) do
+      {:ok, order} =
+        Sales.place_order(
+          valid_attrs(product, %{
+            "phone" => phone,
+            "delivery_at" => DateTime.add(DateTime.utc_now(), days, :day)
+          })
+        )
+
+      order
+    end
+
+    test "agrupa por status e ordena as abertas pela entrega mais próxima" do
+      product = product_fixture()
+      late = place!(product, 5, "19900000001")
+      soon = place!(product, 1, "19900000002")
+      producing = place!(product, 2, "19900000003")
+      {:ok, _} = Sales.update_status(producing, :in_production)
+
+      assert %{pending: [first, second], in_production: [%{id: id}], delivered: []} =
+               Sales.production_queue()
+
+      assert [first.id, second.id] == [soon.id, late.id]
+      assert id == producing.id
+    end
+
+    test "canceladas ficam fora da fila" do
+      product = product_fixture()
+      order = place!(product, 1, "19900000004")
+      {:ok, _} = Sales.update_status(order, :canceled)
+      assert %{pending: [], in_production: [], delivered: []} = Sales.production_queue()
+    end
+
+    test "entregues mostram só as 10 mais recentes" do
+      product = product_fixture()
+
+      for n <- 1..12 do
+        order = place!(product, 1, "1990000#{String.pad_leading("#{n}", 4, "0")}")
+        {:ok, order} = Sales.update_status(order, :in_production)
+        {:ok, _} = Sales.update_status(order, :delivered)
+      end
+
+      assert length(Sales.production_queue().delivered) == 10
+    end
+  end
+
   describe "fetch_order/1" do
     test "devolve {:ok, order} com cliente e itens carregados" do
       {:ok, order} = Sales.place_order(valid_attrs(product_fixture()))

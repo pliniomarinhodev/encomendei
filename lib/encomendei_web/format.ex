@@ -52,4 +52,42 @@ defmodule EncomendeiWeb.Format do
     do: "(#{ddd}) #{a}-#{b}"
 
   def phone(other), do: other
+
+  @doc "Valor em reais para preencher campo de formulário (ex.: `4550` → `\"45,50\"`)."
+  def price_input(cents) when is_integer(cents) do
+    reais = div(cents, 100)
+    centavos = cents |> rem(100) |> Integer.to_string() |> String.pad_leading(2, "0")
+    "#{reais},#{centavos}"
+  end
+
+  def price_input(_), do: ""
+
+  @doc "Data de entrega curta, no horário de Brasília (ex.: `12/11 às 14:00`)."
+  def delivery_short(%DateTime{} = dt) do
+    dt |> DateTime.add(@offset_seconds) |> Calendar.strftime("%d/%m às %H:%M")
+  end
+
+  @doc "Soma dos totais de uma lista de encomendas, em centavos."
+  def total_cents(orders), do: orders |> Enum.map(& &1.total_cents) |> Enum.sum()
+
+  @doc "Resumo dos itens em uma linha (ex.: `2× Bolo de Limão, 1× Brigadeiros`)."
+  def items_summary(%{items: items}) do
+    Enum.map_join(items, ", ", &"#{&1.quantity}× #{&1.product.name}")
+  end
+
+  @doc """
+  Quão perto está a entrega, no horário de Brasília: `:overdue` se já passou,
+  `:today`, `:tomorrow` ou `:later`.
+  """
+  def urgency(%{delivery_at: delivery_at}, %DateTime{} = now) do
+    local_date = &(&1 |> DateTime.add(@offset_seconds) |> DateTime.to_date())
+
+    case {DateTime.compare(delivery_at, now),
+          Date.diff(local_date.(delivery_at), local_date.(now))} do
+      {:lt, _days} -> :overdue
+      {_order, 0} -> :today
+      {_order, 1} -> :tomorrow
+      {_order, _days} -> :later
+    end
+  end
 end

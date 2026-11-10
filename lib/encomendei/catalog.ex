@@ -21,6 +21,12 @@ defmodule Encomendei.Catalog do
     Repo.all(Product)
   end
 
+  @doc "Produtos disponíveis para encomenda, em ordem alfabética."
+  @spec list_available_products() :: [Product.t()]
+  def list_available_products do
+    Repo.all(from p in Product, where: p.available, order_by: p.name)
+  end
+
   @doc """
   Gets a single product.
 
@@ -86,7 +92,13 @@ defmodule Encomendei.Catalog do
 
   """
   def delete_product(%Product{} = product) do
-    Repo.delete(product)
+    product
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.foreign_key_constraint(:id,
+      name: :order_items_product_id_fkey,
+      message: "já foi vendido; marque como indisponível em vez de excluir"
+    )
+    |> Repo.delete()
   end
 
   @doc """

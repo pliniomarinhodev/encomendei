@@ -22,42 +22,44 @@ defmodule EncomendeiWeb.OrderLive.Show do
     {:noreply, assign(socket, order: Sales.get_order!(id))}
   end
 
-  def handle_info(_msg, socket), do: {:noreply, socket}
+  def handle_info(_message, socket), do: {:noreply, socket}
 
   @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
-      <h1 class="text-3xl font-bold">Pedido recebido!</h1>
-      <p>Obrigado, {@order.customer.name}. Guarde esta página para acompanhar sua encomenda.</p>
+      <div class="mx-auto max-w-2xl space-y-6">
+        <.header>
+          Pedido recebido!
+          <:subtitle>
+            Obrigado, {@order.customer.name}. Guarde esta página para acompanhar sua encomenda.
+          </:subtitle>
+        </.header>
 
-      <p class="text-lg" aria-live="polite">
-        Status: <strong>{status_label(@order.status)}</strong>
-      </p>
-      <p>Entrega: {datetime(@order.delivery_at)}</p>
+        <div aria-live="polite" class="space-y-3">
+          <p class="flex items-center gap-2">Status: <.status_badge status={@order.status} /></p>
+          <.status_steps status={@order.status} />
+        </div>
 
-      <table class="table">
-        <caption class="sr-only">Itens do pedido</caption>
-        <thead>
-          <tr>
-            <th scope="col">Produto</th><th scope="col">Qtd</th><th scope="col">Subtotal</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr :for={i <- @order.items}>
-            <td>{i.product.name}</td>
-            <td>{i.quantity}</td>
-            <td>{money(i.quantity * i.unit_price_cents)}</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <th scope="row" colspan="2">Total</th><td>{money(@order.total_cents)}</td>
-          </tr>
-        </tfoot>
-      </table>
+        <.list>
+          <:item title="Entrega">{datetime(@order.delivery_at)}</:item>
+          <:item :if={@order.notes} title="Observações">{@order.notes}</:item>
+        </.list>
 
-      <.link navigate={~p"/"} class="btn">Fazer outro pedido</.link>
+        <.table id="order-items" rows={@order.items} class="table table-sm">
+          <:col :let={item} label="Produto">{item.product.name}</:col>
+          <:col :let={item} label="Qtd">{item.quantity}</:col>
+          <:col :let={item} label="Subtotal">
+            <span class="tabular-nums">{money(item.quantity * item.unit_price_cents)}</span>
+          </:col>
+        </.table>
+        <p class="flex justify-between border-t border-base-300 pt-3 font-semibold">
+          <span>Total</span>
+          <span class="tabular-nums">{money(@order.total_cents)}</span>
+        </p>
+
+        <.button navigate={~p"/"}>Fazer outro pedido</.button>
+      </div>
     </Layouts.app>
     """
   end

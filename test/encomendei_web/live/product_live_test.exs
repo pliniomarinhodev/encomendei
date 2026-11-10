@@ -4,139 +4,112 @@ defmodule EncomendeiWeb.ProductLiveTest do
   import Phoenix.LiveViewTest
   import Encomendei.CatalogFixtures
 
+  alias Encomendei.{Catalog, Sales}
+
   setup %{conn: conn}, do: {:ok, conn: admin_conn(conn)}
 
-  @create_attrs %{
-    name: "some name",
-    description: "some description",
-    available: true,
-    price_cents: 42,
-    image_url: "some image_url"
-  }
-  @update_attrs %{
-    name: "some updated name",
-    description: "some updated description",
-    available: false,
-    price_cents: 43,
-    image_url: "some updated image_url"
-  }
-  @invalid_attrs %{
-    name: nil,
-    description: nil,
-    available: false,
-    price_cents: nil,
-    image_url: nil
-  }
-  defp create_product(_) do
-    product = product_fixture()
+  describe "Index" do
+    test "lista produtos com preço em reais e situação", %{conn: conn} do
+      product_fixture(name: "Bolo de Limão", price_cents: 4800)
+      product_fixture(name: "Torta Oculta", price_cents: 3000, available: false)
 
-    %{product: product}
+      {:ok, view, html} = live(conn, ~p"/admin/produtos")
+
+      assert has_element?(view, "#products")
+      assert html =~ "Bolo de Limão"
+      assert html =~ "R$ 48,00"
+      assert html =~ "Indisponível"
+    end
+
+    test "marca a aba Produtos como ativa", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/produtos")
+      assert has_element?(view, ~s(nav[aria-label="Painel"] a[aria-current="page"]), "Produtos")
+    end
+
+    test "exclui produto sem vendas", %{conn: conn} do
+      product = product_fixture()
+      {:ok, view, _html} = live(conn, ~p"/admin/produtos")
+
+      view |> element("#products-#{product.id} a", "Excluir") |> render_click()
+
+      refute has_element?(view, "#products-#{product.id}")
+      assert Catalog.list_products() == []
+    end
+
+    test "não exclui produto já vendido e orienta a marcar como indisponível", %{conn: conn} do
+      product = product_fixture(name: "Bolo Vendido")
+
+      {:ok, _order} =
+        Sales.place_order(%{
+          "name" => "Ana",
+          "phone" => "19988887777",
+          "delivery_at" => DateTime.add(DateTime.utc_now(), 1, :day),
+          "items" => [%{"product_id" => product.id, "quantity" => 1}]
+        })
+
+      {:ok, view, _html} = live(conn, ~p"/admin/produtos")
+      html = view |> element("#products-#{product.id} a", "Excluir") |> render_click()
+
+      assert html =~ "já foi vendido"
+      assert has_element?(view, "#products-#{product.id}")
+      assert [%{name: "Bolo Vendido"}] = Catalog.list_products()
+    end
   end
 
-  describe "Index" do
-    setup [:create_product]
+  describe "Form" do
+    test "cadastra produto informando o preço em reais", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/produtos/new")
 
-    test "lists all products", %{conn: conn, product: product} do
-      {:ok, _index_live, html} = live(conn, ~p"/admin/produtos")
+      {:ok, _view, html} =
+        view
+        |> form("#product-form",
+          product: %{name: "Bolo de Fubá", price: "45,50", available: true}
+        )
+        |> render_submit()
+        |> follow_redirect(conn, ~p"/admin/produtos")
 
-      assert html =~ "Listing Products"
-      assert html =~ product.name
+      assert html =~ "Produto salvo"
+
+      assert [%{name: "Bolo de Fubá", price_cents: 4550, available: true}] =
+               Catalog.list_products()
     end
 
-    test "saves new product", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/admin/produtos")
+    test "mostra erro de preço inválido e de campos obrigatórios", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/produtos/new")
 
-      assert {:ok, form_live, _} =
-               index_live
-               |> element("a", "New Product")
-               |> render_click()
-               |> follow_redirect(conn, ~p"/admin/produtos/new")
+      html =
+        view
+        |> form("#product-form", product: %{name: "", price: "abc"})
+        |> render_change()
 
-      assert render(form_live) =~ "New Product"
-
-      assert form_live
-             |> form("#product-form", product: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert {:ok, index_live, _html} =
-               form_live
-               |> form("#product-form", product: @create_attrs)
-               |> render_submit()
-               |> follow_redirect(conn, ~p"/admin/produtos")
-
-      html = render(index_live)
-      assert html =~ "Product created successfully"
-      assert html =~ "some name"
+      assert html =~ "informe um valor como 45,00"
+      assert html =~ "can&#39;t be blank" or html =~ "não pode ficar em branco"
+      assert Catalog.list_products() == []
     end
 
-    test "updates product in listing", %{conn: conn, product: product} do
-      {:ok, index_live, _html} = live(conn, ~p"/admin/produtos")
+    test "edição já traz o preço atual em reais e salva a alteração", %{conn: conn} do
+      product = product_fixture(price_cents: 4800)
+      {:ok, view, html} = live(conn, ~p"/admin/produtos/#{product}/edit")
+      assert html =~ ~s(value="48,00")
 
-      assert {:ok, form_live, _html} =
-               index_live
-               |> element("#products-#{product.id} a", "Edit")
-               |> render_click()
-               |> follow_redirect(conn, ~p"/admin/produtos/#{product}/edit")
+      {:ok, _view, _html} =
+        view
+        |> form("#product-form", product: %{price: "52", available: false})
+        |> render_submit()
+        |> follow_redirect(conn, ~p"/admin/produtos")
 
-      assert render(form_live) =~ "Edit Product"
-
-      assert form_live
-             |> form("#product-form", product: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert {:ok, index_live, _html} =
-               form_live
-               |> form("#product-form", product: @update_attrs)
-               |> render_submit()
-               |> follow_redirect(conn, ~p"/admin/produtos")
-
-      html = render(index_live)
-      assert html =~ "Product updated successfully"
-      assert html =~ "some updated name"
-    end
-
-    test "deletes product in listing", %{conn: conn, product: product} do
-      {:ok, index_live, _html} = live(conn, ~p"/admin/produtos")
-
-      assert index_live |> element("#products-#{product.id} a", "Delete") |> render_click()
-      refute has_element?(index_live, "#products-#{product.id}")
+      assert %{price_cents: 5200, available: false} = Catalog.get_product!(product.id)
     end
   end
 
   describe "Show" do
-    setup [:create_product]
+    test "mostra os dados do produto", %{conn: conn} do
+      product = product_fixture(name: "Bolo de Cenoura", price_cents: 5500)
+      {:ok, _view, html} = live(conn, ~p"/admin/produtos/#{product}")
 
-    test "displays product", %{conn: conn, product: product} do
-      {:ok, _show_live, html} = live(conn, ~p"/admin/produtos/#{product}")
-
-      assert html =~ "Show Product"
-      assert html =~ product.name
-    end
-
-    test "updates product and returns to show", %{conn: conn, product: product} do
-      {:ok, show_live, _html} = live(conn, ~p"/admin/produtos/#{product}")
-
-      assert {:ok, form_live, _} =
-               show_live
-               |> element("a", "Edit")
-               |> render_click()
-               |> follow_redirect(conn, ~p"/admin/produtos/#{product}/edit?return_to=show")
-
-      assert render(form_live) =~ "Edit Product"
-
-      assert form_live
-             |> form("#product-form", product: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert {:ok, show_live, _html} =
-               form_live
-               |> form("#product-form", product: @update_attrs)
-               |> render_submit()
-               |> follow_redirect(conn, ~p"/admin/produtos/#{product}")
-
-      html = render(show_live)
-      assert html =~ "Product updated successfully"
-      assert html =~ "some updated name"
+      assert html =~ "Bolo de Cenoura"
+      assert html =~ "R$ 55,00"
+      assert html =~ "Disponível"
     end
   end
 end

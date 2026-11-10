@@ -95,17 +95,27 @@ defmodule EncomendeiWeb.CoreComponents do
       <.button phx-click="go" variant="primary">Send!</.button>
       <.button navigate={~p"/"}>Home</.button>
   """
-  attr :rest, :global, include: ~w(href navigate patch method download name value disabled)
+  attr :rest, :global,
+    include: ~w(href navigate patch method download name value disabled type target rel)
+
   attr :class, :any
-  attr :variant, :string, values: ~w(primary)
+  attr :variant, :string, values: ~w(primary ghost danger)
+  attr :size, :string, values: ~w(sm md), default: "md"
   slot :inner_block, required: true
 
   def button(%{rest: rest} = assigns) do
-    variants = %{"primary" => "btn-primary", nil => "btn-primary btn-soft"}
+    variants = %{
+      "primary" => "btn-primary",
+      "ghost" => "btn-ghost",
+      "danger" => "btn-error btn-soft",
+      nil => "btn-primary btn-soft"
+    }
+
+    sizes = %{"sm" => "btn-sm", "md" => nil}
 
     assigns =
       assign_new(assigns, :class, fn ->
-        ["btn", Map.fetch!(variants, assigns[:variant])]
+        ["btn", Map.fetch!(variants, assigns[:variant]), Map.fetch!(sizes, assigns.size)]
       end)
 
     if rest[:href] || rest[:navigate] || rest[:patch] do
@@ -323,7 +333,7 @@ defmodule EncomendeiWeb.CoreComponents do
     ~H"""
     <header class={[@actions != [] && "flex items-center justify-between gap-6", "pb-4"]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8">
+        <h1 class="text-xl font-semibold leading-8 tracking-tight">
           {render_slot(@inner_block)}
         </h1>
         <p :if={@subtitle != []} class="text-sm text-base-content/70">
@@ -349,6 +359,7 @@ defmodule EncomendeiWeb.CoreComponents do
   attr :rows, :list, required: true
   attr :row_id, :any, default: nil, doc: "the function for generating the row id"
   attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
+  attr :class, :any, default: "table table-zebra", doc: "classes of the table element"
 
   attr :row_item, :any,
     default: &Function.identity/1,
@@ -367,7 +378,7 @@ defmodule EncomendeiWeb.CoreComponents do
       end
 
     ~H"""
-    <table class="table table-zebra">
+    <table class={@class}>
       <thead>
         <tr>
           <th :for={col <- @col}>{col[:label]}</th>
