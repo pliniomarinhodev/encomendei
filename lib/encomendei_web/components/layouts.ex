@@ -35,35 +35,26 @@ defmodule EncomendeiWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <header class="navbar px-4 sm:px-6 lg:px-8">
+    <a href="#conteudo" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-base-100">
+      Ir para o conteúdo
+    </a>
+    <header class="navbar px-4 sm:px-6 lg:px-8 border-b border-base-300">
       <div class="flex-1">
-        <a href="/" class="flex-1 flex w-fit items-center gap-2">
-          <img src={~p"/images/logo.svg"} width="36" />
-          <span class="text-sm font-semibold">v{Application.spec(:phoenix, :vsn)}</span>
+        <a href="/" class="text-xl font-bold" aria-label="Encomendei, página inicial">
+          <span aria-hidden="true">🍰</span> Encomendei
         </a>
       </div>
-      <div class="flex-none">
-        <ul class="flex px-1 space-x-4 items-center">
-          <li>
-            <a href="https://phoenixframework.org/" class="btn btn-ghost">Website</a>
-          </li>
-          <li>
-            <a href="https://github.com/phoenixframework/phoenix" class="btn btn-ghost">GitHub</a>
-          </li>
-          <li>
-            <.theme_toggle />
-          </li>
-          <li>
-            <a href="https://phoenix.hexdocs.pm/overview.html" class="btn btn-primary">
-              Get Started <span aria-hidden="true">&rarr;</span>
-            </a>
-          </li>
+      <nav class="flex-none" aria-label="Principal">
+        <ul class="flex items-center gap-2">
+          <li><a href="/" class="btn btn-ghost btn-sm">Cardápio</a></li>
+          <li><a href="/admin/pedidos" class="btn btn-ghost btn-sm">Painel</a></li>
+          <li><.theme_toggle /></li>
         </ul>
-      </div>
+      </nav>
     </header>
 
-    <main class="px-4 py-20 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl space-y-4">
+    <main id="conteudo" class="px-4 py-8 sm:px-6 lg:px-8">
+      <div class="mx-auto max-w-4xl space-y-4">
         {render_slot(@inner_block)}
       </div>
     </main>

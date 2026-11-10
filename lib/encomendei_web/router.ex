@@ -10,6 +10,15 @@ defmodule EncomendeiWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :admin do
+    plug :admin_auth
+  end
+
+  defp admin_auth(conn, _opts) do
+    creds = Application.fetch_env!(:encomendei, :admin_auth)
+    Plug.BasicAuth.basic_auth(conn, creds)
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -17,12 +26,18 @@ defmodule EncomendeiWeb.Router do
   scope "/", EncomendeiWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", StoreLive
+    live "/pedido/:id", OrderLive.Show
+  end
 
-    live "/products", ProductLive.Index, :index
-    live "/products/new", ProductLive.Form, :new
-    live "/products/:id", ProductLive.Show, :show
-    live "/products/:id/edit", ProductLive.Form, :edit
+  scope "/admin", EncomendeiWeb do
+    pipe_through [:browser, :admin]
+
+    live "/pedidos", Admin.OrdersLive
+    live "/produtos", ProductLive.Index, :index
+    live "/produtos/new", ProductLive.Form, :new
+    live "/produtos/:id", ProductLive.Show, :show
+    live "/produtos/:id/edit", ProductLive.Form, :edit
   end
 
   # Other scopes may use custom stacks.

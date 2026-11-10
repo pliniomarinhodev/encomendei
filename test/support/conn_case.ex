@@ -35,4 +35,13 @@ defmodule EncomendeiWeb.ConnCase do
     Encomendei.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
+
+  @doc "Adiciona credenciais do painel administrativo à conexão de teste."
+  def admin_conn(conn) do
+    Plug.Conn.put_req_header(
+      conn,
+      "authorization",
+      Plug.BasicAuth.encode_basic_auth("admin", "admin")
+    )
+  end
 end

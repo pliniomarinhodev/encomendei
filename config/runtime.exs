@@ -41,6 +41,10 @@ if config_env() == :dev do
 end
 
 if config_env() == :prod do
+  config :encomendei, :admin_auth,
+    username: System.get_env("ADMIN_USER") || raise("variável ADMIN_USER ausente"),
+    password: System.get_env("ADMIN_PASSWORD") || raise("variável ADMIN_PASSWORD ausente")
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """

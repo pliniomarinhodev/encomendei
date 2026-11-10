@@ -4,6 +4,8 @@ defmodule EncomendeiWeb.ProductLiveTest do
   import Phoenix.LiveViewTest
   import Encomendei.CatalogFixtures
 
+  setup %{conn: conn}, do: {:ok, conn: admin_conn(conn)}
+
   @create_attrs %{name: "some name", description: "some description", available: true, price_cents: 42, image_url: "some image_url"}
   @update_attrs %{name: "some updated name", description: "some updated description", available: false, price_cents: 43, image_url: "some updated image_url"}
   @invalid_attrs %{name: nil, description: nil, available: false, price_cents: nil, image_url: nil}
@@ -17,20 +19,20 @@ defmodule EncomendeiWeb.ProductLiveTest do
     setup [:create_product]
 
     test "lists all products", %{conn: conn, product: product} do
-      {:ok, _index_live, html} = live(conn, ~p"/products")
+      {:ok, _index_live, html} = live(conn, ~p"/admin/produtos")
 
       assert html =~ "Listing Products"
       assert html =~ product.name
     end
 
     test "saves new product", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/products")
+      {:ok, index_live, _html} = live(conn, ~p"/admin/produtos")
 
       assert {:ok, form_live, _} =
                index_live
                |> element("a", "New Product")
                |> render_click()
-               |> follow_redirect(conn, ~p"/products/new")
+               |> follow_redirect(conn, ~p"/admin/produtos/new")
 
       assert render(form_live) =~ "New Product"
 
@@ -42,7 +44,7 @@ defmodule EncomendeiWeb.ProductLiveTest do
                form_live
                |> form("#product-form", product: @create_attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/products")
+               |> follow_redirect(conn, ~p"/admin/produtos")
 
       html = render(index_live)
       assert html =~ "Product created successfully"
@@ -50,13 +52,13 @@ defmodule EncomendeiWeb.ProductLiveTest do
     end
 
     test "updates product in listing", %{conn: conn, product: product} do
-      {:ok, index_live, _html} = live(conn, ~p"/products")
+      {:ok, index_live, _html} = live(conn, ~p"/admin/produtos")
 
       assert {:ok, form_live, _html} =
                index_live
                |> element("#products-#{product.id} a", "Edit")
                |> render_click()
-               |> follow_redirect(conn, ~p"/products/#{product}/edit")
+               |> follow_redirect(conn, ~p"/admin/produtos/#{product}/edit")
 
       assert render(form_live) =~ "Edit Product"
 
@@ -68,7 +70,7 @@ defmodule EncomendeiWeb.ProductLiveTest do
                form_live
                |> form("#product-form", product: @update_attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/products")
+               |> follow_redirect(conn, ~p"/admin/produtos")
 
       html = render(index_live)
       assert html =~ "Product updated successfully"
@@ -76,7 +78,7 @@ defmodule EncomendeiWeb.ProductLiveTest do
     end
 
     test "deletes product in listing", %{conn: conn, product: product} do
-      {:ok, index_live, _html} = live(conn, ~p"/products")
+      {:ok, index_live, _html} = live(conn, ~p"/admin/produtos")
 
       assert index_live |> element("#products-#{product.id} a", "Delete") |> render_click()
       refute has_element?(index_live, "#products-#{product.id}")
@@ -87,20 +89,20 @@ defmodule EncomendeiWeb.ProductLiveTest do
     setup [:create_product]
 
     test "displays product", %{conn: conn, product: product} do
-      {:ok, _show_live, html} = live(conn, ~p"/products/#{product}")
+      {:ok, _show_live, html} = live(conn, ~p"/admin/produtos/#{product}")
 
       assert html =~ "Show Product"
       assert html =~ product.name
     end
 
     test "updates product and returns to show", %{conn: conn, product: product} do
-      {:ok, show_live, _html} = live(conn, ~p"/products/#{product}")
+      {:ok, show_live, _html} = live(conn, ~p"/admin/produtos/#{product}")
 
       assert {:ok, form_live, _} =
                show_live
                |> element("a", "Edit")
                |> render_click()
-               |> follow_redirect(conn, ~p"/products/#{product}/edit?return_to=show")
+               |> follow_redirect(conn, ~p"/admin/produtos/#{product}/edit?return_to=show")
 
       assert render(form_live) =~ "Edit Product"
 
@@ -112,7 +114,7 @@ defmodule EncomendeiWeb.ProductLiveTest do
                form_live
                |> form("#product-form", product: @update_attrs)
                |> render_submit()
-               |> follow_redirect(conn, ~p"/products/#{product}")
+               |> follow_redirect(conn, ~p"/admin/produtos/#{product}")
 
       html = render(show_live)
       assert html =~ "Product updated successfully"

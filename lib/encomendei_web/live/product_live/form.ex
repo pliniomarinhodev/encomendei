@@ -93,6 +93,6 @@ defmodule EncomendeiWeb.ProductLive.Form do
     end
   end
 
-  defp return_path("index", _product), do: ~p"/products"
-  defp return_path("show", product), do: ~p"/products/#{product}"
+  defp return_path("index", _product), do: ~p"/admin/produtos"
+  defp return_path("show", product), do: ~p"/admin/produtos/#{product}"
 end

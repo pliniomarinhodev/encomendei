@@ -76,3 +76,6 @@ config :phoenix_live_view,
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+# Credenciais do painel administrativo (apenas desenvolvimento)
+config :encomendei, :admin_auth, username: "admin", password: "admin"

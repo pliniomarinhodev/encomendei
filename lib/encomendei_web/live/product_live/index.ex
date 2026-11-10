@@ -10,7 +10,7 @@ defmodule EncomendeiWeb.ProductLive.Index do
       <.header>
         Listing Products
         <:actions>
-          <.button variant="primary" navigate={~p"/products/new"}>
+          <.button variant="primary" navigate={~p"/admin/produtos/new"}>
             <.icon name="hero-plus" /> New Product
           </.button>
         </:actions>
@@ -19,7 +19,7 @@ defmodule EncomendeiWeb.ProductLive.Index do
       <.table
         id="products"
         rows={@streams.products}
-        row_click={fn {_id, product} -> JS.navigate(~p"/products/#{product}") end}
+        row_click={fn {_id, product} -> JS.navigate(~p"/admin/produtos/#{product}") end}
       >
         <:col :let={{_id, product}} label="Name">{product.name}</:col>
         <:col :let={{_id, product}} label="Description">{product.description}</:col>
@@ -28,9 +28,9 @@ defmodule EncomendeiWeb.ProductLive.Index do
         <:col :let={{_id, product}} label="Image url">{product.image_url}</:col>
         <:action :let={{_id, product}}>
           <div class="sr-only">
-            <.link navigate={~p"/products/#{product}"}>Show</.link>
+            <.link navigate={~p"/admin/produtos/#{product}"}>Show</.link>
           </div>
-          <.link navigate={~p"/products/#{product}/edit"}>Edit</.link>
+          <.link navigate={~p"/admin/produtos/#{product}/edit"}>Edit</.link>
         </:action>
         <:action :let={{id, product}}>
           <.link
