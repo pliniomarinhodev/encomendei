@@ -43,11 +43,25 @@ Testes: `mix test`
 | Rota | Acesso | Função |
 |---|---|---|
 | `/` | público | Cardápio, carrinho e envio da encomenda |
-| `/pedido/:id` | público (o id funciona como código do pedido) | Confirmação e status em tempo real |
-| `/admin/pedidos` | senha | Fila de produção |
+| `/pedido/:id` | público (o `id` é um UUID difícil de adivinhar) | Confirmação ("Pedido #42 recebido") e status em tempo real |
+| `/admin/pedidos` | senha | Fila de produção, com o número do pedido e botão de WhatsApp com mensagem pronta |
 | `/admin/produtos` | senha | Cadastro de produtos |
 | `/admin/relatorios` | senha | Faturamento, ticket médio, produtos mais vendidos e semanas; atualiza em tempo real |
-| `/admin/relatorios/pedidos.csv` | senha | Exporta os itens vendidos em CSV (pronto para planilha) |
+| `/admin/relatorios/pedidos.csv` | senha | Exporta os itens vendidos em CSV (pronto para planilha), identificando o pedido pelo número |
+
+## Número do pedido
+
+Cada encomenda recebe um número sequencial (`#1`, `#2`, ...) gerado pelo próprio PostgreSQL
+(coluna `identity` com índice único). É o número que a confeiteira e o cliente usam na conversa;
+o UUID continua sendo o identificador interno e o da URL de acompanhamento. O número aparece na
+confirmação, no painel, na mensagem de WhatsApp, no CSV e no campo `number` da API.
+
+## Integridade dos dados
+
+As regras valem no banco, não só nos changesets: `total_cents >= 0`, `quantity > 0`,
+`unit_price_cents >= 0`, `status` restrito aos quatro valores e colunas essenciais `NOT NULL`.
+Há índices em `orders (status, delivery_at)`, `orders (inserted_at)` e `orders (customer_id)`,
+usados pelo painel e pelos relatórios.
 
 ## API JSON
 
@@ -73,6 +87,8 @@ curl -X POST http://localhost:4000/api/orders \
     "items": [{"product_id": "<id>", "quantity": 2}]
   }'
 ```
+
+O pedido retorna `id` (UUID) e `number` (número sequencial).
 
 Respostas: `201` com o pedido; `422` com `{"errors": {...}}` (data no passado, carrinho vazio,
 produto indisponível, telefone inválido); `404` quando o pedido não existe.
