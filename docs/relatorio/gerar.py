@@ -113,11 +113,11 @@ REFERÊNCIAS</p>
 
 <h1>3 RESULTADOS</h1>
 <h2>3.1 A solução desenvolvida</h2>
-<p>O Encomendei tem duas visões. Na <b>visão do cliente</b>, o cardápio lista os produtos disponíveis; o cliente monta o carrinho, informa nome, telefone, data e hora de entrega e envia a encomenda (Figura 1). Ao concluir, recebe uma página de confirmação que acompanha o status do pedido em tempo real (Figura 2). Na <b>visão da empreendedora</b>, um painel protegido por senha organiza os pedidos em colunas por status e permite avançar cada pedido de pendente para em produção e para entregue, ou cancelá-lo (Figura 3). O painel atualiza sozinho quando chega um pedido novo e traz o link direto para o WhatsApp do cliente. A empreendedora também cadastra os produtos e consulta relatórios de vendas, com exportação em CSV (Figura 4).</p>
-{fig(1,"cardapio.png","Cardápio e formulário de encomenda do cliente")}
-{fig(2,"confirmacao.png","Confirmação do pedido com status em tempo real")}
-{fig(3,"painel.png","Painel de pedidos da empreendedora")}
-{fig(4,"relatorios.png","Relatórios de vendas")}
+<p>O Encomendei tem duas visões. Na <b>visão do cliente</b>, o cardápio lista os produtos disponíveis; o cliente monta o carrinho, informa nome, telefone, data e hora de entrega e envia a encomenda (Figura 1). Ao concluir, recebe uma página de confirmação que acompanha o status do pedido em tempo real (Figura 2). Na <b>visão da empreendedora</b>, um painel protegido por senha agrupa os pedidos por status (pendente, em produção e entregue), com a contagem e o valor de cada grupo, e permite avançar cada pedido para a etapa seguinte ou cancelá-lo, com confirmação (Figura 3). Uma coluna lateral destaca as entregas de hoje e as atrasadas. O painel atualiza sozinho quando chega um pedido novo e traz o link direto para o WhatsApp do cliente. A empreendedora também cadastra os produtos e consulta relatórios de vendas, com exportação em CSV (Figura 4).</p>
+{fig(1,"cardapio.png","Cardápio, carrinho e formulário de encomenda do cliente")}
+{fig(2,"confirmacao.png","Confirmação do pedido com andamento em tempo real")}
+{fig(3,"painel.png","Painel de pedidos da empreendedora, agrupado por status",15)}
+{fig(4,"relatorios.png","Relatórios de vendas",13)}
 <p>O banco de dados relacional possui quatro tabelas: produtos, clientes, pedidos e itens de pedido, ligadas por chaves estrangeiras. As principais regras de negócio são:</p>
 <ul>
 <li>o preço de cada item é lido do cadastro de produtos no servidor, e o valor enviado pelo cliente é ignorado;</li>
@@ -134,7 +134,7 @@ REFERÊNCIAS</p>
  ["Uso de API","API JSON: catálogo, criação e consulta de pedidos, rotas administrativas com autenticação"],
  ["Acessibilidade","HTML semântico, rótulos, avisos para leitor de tela, contraste e tema claro/escuro"],
  ["Controle de versão","git, com histórico de commits por funcionalidade"],
- ["Testes","66 testes automatizados (ExUnit), todos aprovados"],
+ ["Testes","90 testes automatizados (ExUnit), todos aprovados"],
  ["Análise de dados (opcional)","Relatórios de faturamento, ticket médio, produtos mais vendidos e vendas por semana, com exportação em CSV"]],
  "Tabela 2 – Requisitos do projeto e como foram atendidos")}
 
@@ -142,8 +142,8 @@ REFERÊNCIAS</p>
 <p>A construção foi organizada em etapas, cada uma registrada no controle de versão: (1) criação do projeto e do esquema de banco de dados; (2) regras de negócio dos pedidos, com testes; (3) telas do cliente e painel da empreendedora em tempo real; (4) API JSON; (5) preparação para implantação em nuvem, com contêineres e documentação; (6) correções de acessibilidade; (7) relatórios de vendas e exportação.</p>
 
 <h2>3.3 Verificação: testes e acessibilidade</h2>
-<p>Os 66 testes automatizados cobrem as regras de negócio (preço calculado no servidor, produto indisponível, carrinho vazio, data passada, fluxo de status), as telas do cliente e do painel, a proteção por senha, a API e os relatórios. Um dos testes verifica a atualização do painel em tempo real quando um pedido é criado. A exportação CSV neutraliza campos que começam com caracteres de fórmula, evitando que planilhas executem conteúdo digitado por clientes.</p>
-<p>A acessibilidade foi avaliada com a ferramenta axe-core, em navegador sem interface gráfica, nas telas do cardápio, da confirmação, do painel, do cadastro de produtos e dos relatórios, nos temas claro e escuro. A primeira execução apontou dois problemas: botões do seletor de tema sem nome acessível e baixo contraste nos rótulos dos campos. Após a correção, não restaram violações. Ferramentas automáticas detectam apenas parte dos problemas; por isso, recomenda-se complementar a verificação com testes manuais de teclado e leitor de tela {M("PREENCHER se o grupo fez teste manual")}.</p>
+<p>Os 90 testes automatizados cobrem as regras de negócio (preço calculado no servidor, produto indisponível, carrinho vazio, data passada, fluxo de status), as telas do cliente e do painel, a proteção por senha, a API e os relatórios. Um dos testes verifica a atualização do painel em tempo real quando um pedido é criado. A exportação CSV neutraliza campos que começam com caracteres de fórmula, evitando que planilhas executem conteúdo digitado por clientes.</p>
+<p>A acessibilidade foi avaliada com a ferramenta axe-core, em navegador sem interface gráfica, nas telas do cardápio, da confirmação, do painel, do cadastro de produtos e dos relatórios, nos temas claro e escuro. A primeira execução apontou dois problemas: botões do seletor de tema sem nome acessível e baixo contraste nos rótulos dos campos. Após o redesenho da interface, a auditoria foi repetida e apontou contraste insuficiente em cabeçalhos de tabela e em etiquetas de status do tema claro, corrigidos com ajuste da paleta. Ao final, não restaram violações. Ferramentas automáticas detectam apenas parte dos problemas; por isso, recomenda-se complementar a verificação com testes manuais de teclado e leitor de tela {M("PREENCHER se o grupo fez teste manual")}.</p>
 
 <h2>3.4 Implantação e validação com a usuária</h2>
 <p>{M("PREENCHER: onde o sistema foi publicado (URL), quando foi apresentado à Sra. Michele, o que ela testou, o feedback recebido e os ajustes feitos a partir dele. Não inventar: descrever apenas o que de fato ocorreu.")}</p>

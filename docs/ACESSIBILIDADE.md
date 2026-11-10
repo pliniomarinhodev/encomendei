@@ -23,6 +23,7 @@ nos temas claro e escuro.
 |---|---|
 | Primeira execução | 2 tipos: botões do seletor de tema sem nome (crítico) e contraste dos rótulos (sério) |
 | Após correções | 0 em todas as telas e temas |
+| Após o redesenho da interface | contraste em cabeçalhos de tabela e etiquetas de aviso (tema claro): corrigido, 0 violações em 6 telas nos dois temas |
 
 Correções: `aria-label` nos três botões do seletor de tema; rótulos de campo com a cor de texto
 plena em vez da versão semitransparente do tema.
