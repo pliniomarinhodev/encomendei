@@ -73,6 +73,24 @@ defmodule EncomendeiWeb.APITest do
                conn |> post(~p"/api/orders", order_params(hidden)) |> json_response(422)
     end
 
+    test "422 com id de produto malformado (antes quebrava com 500)", %{conn: conn} do
+      product = product_fixture()
+      params = order_params(product, %{"items" => [%{"product_id" => "abc", "quantity" => 1}]})
+
+      assert %{"errors" => %{"items" => _}} =
+               conn |> post(~p"/api/orders", params) |> json_response(422)
+    end
+
+    test "422 com quantidade acima do limite", %{conn: conn} do
+      product = product_fixture()
+
+      params =
+        order_params(product, %{"items" => [%{"product_id" => product.id, "quantity" => 100}]})
+
+      assert %{"errors" => %{"quantity" => _}} =
+               conn |> post(~p"/api/orders", params) |> json_response(422)
+    end
+
     test "422 com telefone inválido", %{conn: conn} do
       product = product_fixture()
 

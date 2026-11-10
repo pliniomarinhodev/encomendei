@@ -18,14 +18,12 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
 
   @impl true
   def handle_event("status", %{"id" => id, "to" => to}, socket) do
-    to = String.to_existing_atom(to)
-    order = Sales.get_order!(id)
-
-    case Sales.update_status(order, to) do
-      {:ok, _} ->
-        {:noreply, load(socket)}
-
-      {:error, _} ->
+    with {:ok, order} <- Sales.fetch_order(id),
+         {:ok, status} <- Sales.Order.parse_status(to),
+         {:ok, _order} <- Sales.update_status(order, status) do
+      {:noreply, load(socket)}
+    else
+      {:error, _reason} ->
         {:noreply, put_flash(socket, :error, "Essa mudança de status não é permitida.")}
     end
   end

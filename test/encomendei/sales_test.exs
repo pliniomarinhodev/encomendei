@@ -79,6 +79,85 @@ defmodule Encomendei.SalesTest do
     end
   end
 
+  describe "place_order/1 com dados inválidos nos itens" do
+    test "id de produto malformado vira :unavailable_product em vez de exceção" do
+      product = product_fixture()
+
+      attrs =
+        valid_attrs(product, %{"items" => [%{"product_id" => "não-é-uuid", "quantity" => 1}]})
+
+      assert {:error, :unavailable_product} = Sales.place_order(attrs)
+    end
+
+    test "quantidade acima do limite devolve changeset e desfaz tudo" do
+      product = product_fixture()
+
+      attrs =
+        valid_attrs(product, %{"items" => [%{"product_id" => product.id, "quantity" => 100}]})
+
+      assert {:error, %Ecto.Changeset{} = cs} = Sales.place_order(attrs)
+      assert errors_on(cs).quantity != []
+      assert Sales.list_orders() == []
+      assert Sales.list_customers() == []
+    end
+
+    test "linhas com quantidade zero são ignoradas" do
+      product = product_fixture(price_cents: 1000)
+      other = product_fixture(price_cents: 500)
+
+      items = [
+        %{"product_id" => product.id, "quantity" => 0},
+        %{"product_id" => other.id, "quantity" => "2"}
+      ]
+
+      assert {:ok, order} = Sales.place_order(valid_attrs(product, %{"items" => items}))
+      assert order.total_cents == 1000
+      assert [%{product_id: id}] = order.items
+      assert id == other.id
+    end
+
+    test "congela o preço do item mesmo se o catálogo mudar depois" do
+      product = product_fixture(price_cents: 4000)
+      {:ok, order} = Sales.place_order(valid_attrs(product))
+      {:ok, _} = Encomendei.Catalog.update_product(product, %{price_cents: 9999})
+
+      assert Sales.get_order!(order.id).total_cents == 8000
+      assert [%{unit_price_cents: 4000}] = Sales.get_order!(order.id).items
+    end
+  end
+
+  describe "fetch_order/1" do
+    test "devolve {:ok, order} com cliente e itens carregados" do
+      {:ok, order} = Sales.place_order(valid_attrs(product_fixture()))
+
+      assert {:ok, %{id: id, customer: %{name: "Maria Silva"}, items: [_]}} =
+               Sales.fetch_order(order.id)
+
+      assert id == order.id
+    end
+
+    test "id inexistente ou malformado devolve {:error, :not_found}" do
+      assert {:error, :not_found} = Sales.fetch_order(Ecto.UUID.generate())
+      assert {:error, :not_found} = Sales.fetch_order("abc")
+      assert {:error, :not_found} = Sales.fetch_order(nil)
+    end
+  end
+
+  describe "next_statuses/1" do
+    test "reflete o fluxo de produção" do
+      assert Sales.next_statuses(:pending) == [:in_production, :canceled]
+      assert Sales.next_statuses(:in_production) == [:delivered, :canceled]
+      assert Sales.next_statuses(:delivered) == []
+      assert Sales.next_statuses(:canceled) == []
+    end
+  end
+
+  test "Order.parse_status/1 aceita só nomes de status conhecidos" do
+    assert {:ok, :in_production} = Encomendei.Sales.Order.parse_status("in_production")
+    assert {:error, :invalid_status} = Encomendei.Sales.Order.parse_status("xyz")
+    assert {:error, :invalid_status} = Encomendei.Sales.Order.parse_status(nil)
+  end
+
   describe "update_status/2" do
     setup do
       {:ok, order} = Sales.place_order(valid_attrs(product_fixture()))

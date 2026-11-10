@@ -1,11 +1,25 @@
 defmodule Encomendei.Sales.Order do
+  @moduledoc """
+  Encomenda de um cliente, com data de entrega e total em centavos.
+
+  O total é sempre calculado pelo contexto `Encomendei.Sales` a partir dos
+  preços do catálogo no momento do pedido; alterações posteriores de preço
+  não afetam encomendas já registradas.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
+
+  alias Encomendei.Sales.{Customer, OrderItem}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
   @statuses [:pending, :in_production, :delivered, :canceled]
+  @status_by_name Map.new(@statuses, &{Atom.to_string(&1), &1})
+
+  @type status :: :pending | :in_production | :delivered | :canceled
+  @type t :: %__MODULE__{}
 
   schema "orders" do
     field :delivery_at, :utc_datetime
@@ -13,28 +27,52 @@ defmodule Encomendei.Sales.Order do
     field :total_cents, :integer, default: 0
     field :notes, :string
 
-    belongs_to :customer, Encomendei.Sales.Customer
-    has_many :items, Encomendei.Sales.OrderItem
+    belongs_to :customer, Customer
+    has_many :items, OrderItem
 
     timestamps(type: :utc_datetime)
   end
 
+  @spec statuses() :: [status()]
   def statuses, do: @statuses
 
-  @doc false
+  @doc "Converte o nome de um status recebido de fora (formulário, API) no atom correspondente."
+  @spec parse_status(term()) :: {:ok, status()} | {:error, :invalid_status}
+  def parse_status(name) when is_binary(name) do
+    case @status_by_name do
+      %{^name => status} -> {:ok, status}
+      _ -> {:error, :invalid_status}
+    end
+  end
+
+  def parse_status(_other), do: {:error, :invalid_status}
+
+  @doc """
+  Valida os dados de uma nova encomenda.
+
+  A entrega precisa estar no futuro, pois a confeiteira só produz sob
+  encomenda; não há antecedência mínima configurada.
+  """
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(order, attrs) do
     order
     |> cast(attrs, [:delivery_at, :notes, :customer_id, :total_cents])
     |> validate_required([:delivery_at, :customer_id])
     |> validate_length(:notes, max: 500)
-    |> validate_change(:delivery_at, fn :delivery_at, at ->
-      if DateTime.compare(at, DateTime.utc_now()) == :gt,
-        do: [],
-        else: [delivery_at: "deve ser uma data futura"]
-    end)
+    |> validate_change(:delivery_at, &validate_future/2)
   end
 
+  @spec status_changeset(t(), status()) :: Ecto.Changeset.t()
   def status_changeset(order, status) do
-    order |> cast(%{status: status}, [:status]) |> validate_required([:status])
+    order
+    |> cast(%{status: status}, [:status])
+    |> validate_required([:status])
+  end
+
+  defp validate_future(:delivery_at, delivery_at) do
+    case DateTime.compare(delivery_at, DateTime.utc_now()) do
+      :gt -> []
+      _past_or_now -> [delivery_at: "deve ser uma data futura"]
+    end
   end
 end

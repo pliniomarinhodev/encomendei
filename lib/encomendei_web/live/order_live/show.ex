@@ -7,13 +7,13 @@ defmodule EncomendeiWeb.OrderLive.Show do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
-    case fetch(id) do
-      nil ->
-        {:ok, socket |> put_flash(:error, "Pedido não encontrado.") |> push_navigate(to: ~p"/")}
-
-      order ->
+    case Sales.fetch_order(id) do
+      {:ok, order} ->
         if connected?(socket), do: Sales.subscribe()
         {:ok, assign(socket, page_title: "Pedido", order: order)}
+
+      {:error, :not_found} ->
+        {:ok, socket |> put_flash(:error, "Pedido não encontrado.") |> push_navigate(to: ~p"/")}
     end
   end
 
@@ -23,12 +23,6 @@ defmodule EncomendeiWeb.OrderLive.Show do
   end
 
   def handle_info(_msg, socket), do: {:noreply, socket}
-
-  defp fetch(id) do
-    Sales.get_order!(id)
-  rescue
-    _ -> nil
-  end
 
   @impl true
   def render(assigns) do
