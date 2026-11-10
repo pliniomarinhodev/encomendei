@@ -31,7 +31,7 @@ defmodule EncomendeiWeb.ReportsTest do
   test "CSV traz os itens e neutraliza fórmulas", %{conn: conn} do
     bolo = product_fixture(name: "=HYPERLINK(\"x\")", price_cents: 1050)
 
-    {:ok, _} =
+    {:ok, order} =
       Sales.place_order(%{
         "name" => "+Ana",
         "phone" => "19988887777",
@@ -48,6 +48,7 @@ defmodule EncomendeiWeb.ReportsTest do
 
     body = response(conn, 200)
     assert body =~ ~S|"pedido","entrega","status"|
+    assert body =~ ~s|"#{order.number}","20|
     assert body =~ ~S|"'+Ana"|
     assert body =~ ~S|"'=HYPERLINK(""x"")"|
     assert body =~ ~S|"10.50"|

@@ -75,7 +75,7 @@ defmodule Encomendei.Reports do
       on: p.id == i.product_id,
       order_by: [asc: o.delivery_at, asc: p.name],
       select: %{
-        pedido: o.id,
+        pedido: o.number,
         entrega: o.delivery_at,
         status: o.status,
         cliente: c.name,

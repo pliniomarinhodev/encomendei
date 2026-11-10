@@ -62,7 +62,12 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
   defp overdue_title(1), do: "1 atrasada"
   defp overdue_title(count), do: "#{count} atrasadas"
 
-  defp whatsapp_url(order), do: "https://wa.me/55#{order.customer.phone}"
+  defp whatsapp_url(order) do
+    text =
+      "Olá, #{order.customer.name}! Sobre o seu pedido #{order_number(order)} na Encomendei: "
+
+    "https://wa.me/55#{order.customer.phone}?" <> URI.encode_query([text: text], :rfc3986)
+  end
 
   attr :status, :atom, required: true
   attr :rows, :any, required: true

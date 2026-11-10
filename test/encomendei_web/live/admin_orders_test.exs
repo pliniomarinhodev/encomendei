@@ -34,6 +34,9 @@ defmodule EncomendeiWeb.Admin.OrdersLiveTest do
   test "lista pedidos e avança o status", %{conn: conn, order: order} do
     {:ok, lv, html} = conn |> admin_conn() |> live(~p"/admin/pedidos")
     assert html =~ "Ana"
+    assert html =~ "##{order.number}"
+    assert html =~ "wa.me/55"
+    assert html =~ URI.encode("pedido #{"##{order.number}"}", &URI.char_unreserved?/1)
 
     lv |> element("#order-#{order.id} button", "Iniciar produção") |> render_click()
     assert Sales.get_order!(order.id).status == :in_production
