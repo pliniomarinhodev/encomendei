@@ -134,7 +134,7 @@ REFERÊNCIAS</p>
  ["Uso de API","API JSON: catálogo, criação e consulta de pedidos, rotas administrativas com autenticação"],
  ["Acessibilidade","HTML semântico, rótulos, avisos para leitor de tela, contraste e tema claro/escuro"],
  ["Controle de versão","git, com histórico de commits por funcionalidade"],
- ["Testes","56 testes automatizados (ExUnit), todos aprovados"],
+ ["Testes","66 testes automatizados (ExUnit), todos aprovados"],
  ["Análise de dados (opcional)","Relatórios de faturamento, ticket médio, produtos mais vendidos e vendas por semana, com exportação em CSV"]],
  "Tabela 2 – Requisitos do projeto e como foram atendidos")}
 
@@ -142,7 +142,7 @@ REFERÊNCIAS</p>
 <p>A construção foi organizada em etapas, cada uma registrada no controle de versão: (1) criação do projeto e do esquema de banco de dados; (2) regras de negócio dos pedidos, com testes; (3) telas do cliente e painel da empreendedora em tempo real; (4) API JSON; (5) preparação para implantação em nuvem, com contêineres e documentação; (6) correções de acessibilidade; (7) relatórios de vendas e exportação.</p>
 
 <h2>3.3 Verificação: testes e acessibilidade</h2>
-<p>Os 56 testes automatizados cobrem as regras de negócio (preço calculado no servidor, produto indisponível, carrinho vazio, data passada, fluxo de status), as telas do cliente e do painel, a proteção por senha, a API e os relatórios. Um dos testes verifica a atualização do painel em tempo real quando um pedido é criado. A exportação CSV neutraliza campos que começam com caracteres de fórmula, evitando que planilhas executem conteúdo digitado por clientes.</p>
+<p>Os 66 testes automatizados cobrem as regras de negócio (preço calculado no servidor, produto indisponível, carrinho vazio, data passada, fluxo de status), as telas do cliente e do painel, a proteção por senha, a API e os relatórios. Um dos testes verifica a atualização do painel em tempo real quando um pedido é criado. A exportação CSV neutraliza campos que começam com caracteres de fórmula, evitando que planilhas executem conteúdo digitado por clientes.</p>
 <p>A acessibilidade foi avaliada com a ferramenta axe-core, em navegador sem interface gráfica, nas telas do cardápio, da confirmação, do painel, do cadastro de produtos e dos relatórios, nos temas claro e escuro. A primeira execução apontou dois problemas: botões do seletor de tema sem nome acessível e baixo contraste nos rótulos dos campos. Após a correção, não restaram violações. Ferramentas automáticas detectam apenas parte dos problemas; por isso, recomenda-se complementar a verificação com testes manuais de teclado e leitor de tela {M("PREENCHER se o grupo fez teste manual")}.</p>
 
 <h2>3.4 Implantação e validação com a usuária</h2>
