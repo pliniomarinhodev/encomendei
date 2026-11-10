@@ -59,7 +59,7 @@ confirmação, no painel, na mensagem de WhatsApp, no CSV e no campo `number` da
 ## Integridade dos dados
 
 As regras valem no banco, não só nos changesets: `total_cents >= 0`, `quantity > 0`,
-`unit_price_cents >= 0`, `status` restrito aos quatro valores e colunas essenciais `NOT NULL`.
+`unit_price_cents >= 0`, `products.price_cents > 0`, `status` restrito aos quatro valores e colunas essenciais `NOT NULL`.
 Há índices em `orders (status, delivery_at)`, `orders (inserted_at)` e `orders (customer_id)`,
 usados pelo painel e pelos relatórios.
 

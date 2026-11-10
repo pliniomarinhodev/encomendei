@@ -33,6 +33,7 @@ defmodule Encomendei.Catalog.Product do
     |> validate_required([:name, :price_cents])
     |> validate_length(:name, max: 120)
     |> validate_number(:price_cents, greater_than: 0)
+    |> check_constraint(:price_cents, name: :price_cents_positive)
   end
 
   defp put_price_cents(changeset) do

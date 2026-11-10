@@ -83,4 +83,16 @@ defmodule Encomendei.CatalogTest do
       assert %Ecto.Changeset{} = Catalog.change_product(product)
     end
   end
+
+  test "preço zero ou negativo é rejeitado também pelo banco" do
+    alias Encomendei.{Catalog.Product, Repo}
+
+    assert {:error, changeset} =
+             %Product{name: "Bolo"}
+             |> Ecto.Changeset.change(price_cents: 0)
+             |> Ecto.Changeset.check_constraint(:price_cents, name: :price_cents_positive)
+             |> Repo.insert()
+
+    assert %{price_cents: ["is invalid"]} = errors_on(changeset)
+  end
 end
