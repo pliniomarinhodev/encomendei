@@ -18,6 +18,7 @@ defmodule Encomendei.Catalog.Product do
   def changeset(product, attrs) do
     product
     |> cast(attrs, [:name, :description, :price_cents, :available, :image_url])
-    |> validate_required([:name, :description, :price_cents, :available, :image_url])
+    |> validate_required([:name, :price_cents])
+    |> validate_number(:price_cents, greater_than: 0)
   end
 end

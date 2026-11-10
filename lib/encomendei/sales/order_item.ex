@@ -7,16 +7,19 @@ defmodule Encomendei.Sales.OrderItem do
   schema "order_items" do
     field :quantity, :integer
     field :unit_price_cents, :integer
-    field :order_id, :binary_id
-    field :product_id, :binary_id
+
+    belongs_to :order, Encomendei.Sales.Order
+    belongs_to :product, Encomendei.Catalog.Product
 
     timestamps(type: :utc_datetime)
   end
 
   @doc false
-  def changeset(order_item, attrs) do
-    order_item
-    |> cast(attrs, [:quantity, :unit_price_cents])
-    |> validate_required([:quantity, :unit_price_cents])
+  def changeset(item, attrs) do
+    item
+    |> cast(attrs, [:quantity, :unit_price_cents, :order_id, :product_id])
+    |> validate_required([:quantity, :unit_price_cents, :product_id])
+    |> validate_number(:quantity, greater_than: 0, less_than_or_equal_to: 99)
+    |> validate_number(:unit_price_cents, greater_than_or_equal_to: 0)
   end
 end

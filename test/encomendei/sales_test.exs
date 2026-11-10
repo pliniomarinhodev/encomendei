@@ -2,120 +2,109 @@ defmodule Encomendei.SalesTest do
   use Encomendei.DataCase
 
   alias Encomendei.Sales
+  import Encomendei.CatalogFixtures
 
-  describe "customers" do
-    alias Encomendei.Sales.Customer
+  defp valid_attrs(product, extra \\ %{}) do
+    Map.merge(
+      %{
+        "name" => "Maria Silva",
+        "phone" => "(19) 99999-1234",
+        "delivery_at" => DateTime.add(DateTime.utc_now(), 2, :day),
+        "notes" => "Sem nozes",
+        "items" => [%{"product_id" => product.id, "quantity" => "2"}]
+      },
+      extra
+    )
+  end
 
-    import Encomendei.SalesFixtures
+  describe "place_order/1" do
+    test "cria pedido, cliente e itens e calcula o total no servidor" do
+      product = product_fixture(price_cents: 5000)
 
-    @invalid_attrs %{name: nil, phone: nil}
+      # Tentativa de forjar o preço é ignorada
+      attrs = valid_attrs(product, %{"items" => [%{"product_id" => product.id, "quantity" => 2, "unit_price_cents" => 1}]})
 
-    test "list_customers/0 returns all customers" do
-      customer = customer_fixture()
-      assert Sales.list_customers() == [customer]
+      assert {:ok, order} = Sales.place_order(attrs)
+      assert order.total_cents == 10_000
+      assert order.status == :pending
+      assert order.customer.phone == "19999991234"
+      assert [%{quantity: 2, unit_price_cents: 5000}] = order.items
     end
 
-    test "get_customer!/1 returns the customer with given id" do
-      customer = customer_fixture()
-      assert Sales.get_customer!(customer.id) == customer
+    test "reaproveita o cliente pelo telefone" do
+      product = product_fixture()
+      {:ok, a} = Sales.place_order(valid_attrs(product))
+      {:ok, b} = Sales.place_order(valid_attrs(product, %{"name" => "Maria S."}))
+      assert a.customer_id == b.customer_id
+      assert length(Sales.list_customers()) == 1
     end
 
-    test "create_customer/1 with valid data creates a customer" do
-      valid_attrs = %{name: "some name", phone: "some phone"}
-
-      assert {:ok, %Customer{} = customer} = Sales.create_customer(valid_attrs)
-      assert customer.name == "some name"
-      assert customer.phone == "some phone"
+    test "rejeita carrinho vazio" do
+      product = product_fixture()
+      assert {:error, :empty_cart} = Sales.place_order(valid_attrs(product, %{"items" => []}))
     end
 
-    test "create_customer/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Sales.create_customer(@invalid_attrs)
+    test "rejeita produto indisponível" do
+      product = product_fixture(available: false)
+      assert {:error, :unavailable_product} = Sales.place_order(valid_attrs(product))
     end
 
-    test "update_customer/2 with valid data updates the customer" do
-      customer = customer_fixture()
-      update_attrs = %{name: "some updated name", phone: "some updated phone"}
-
-      assert {:ok, %Customer{} = customer} = Sales.update_customer(customer, update_attrs)
-      assert customer.name == "some updated name"
-      assert customer.phone == "some updated phone"
+    test "rejeita data de entrega no passado" do
+      product = product_fixture()
+      past = DateTime.add(DateTime.utc_now(), -1, :day)
+      assert {:error, %Ecto.Changeset{} = cs} = Sales.place_order(valid_attrs(product, %{"delivery_at" => past}))
+      assert "deve ser uma data futura" in errors_on(cs).delivery_at
     end
 
-    test "update_customer/2 with invalid data returns error changeset" do
-      customer = customer_fixture()
-      assert {:error, %Ecto.Changeset{}} = Sales.update_customer(customer, @invalid_attrs)
-      assert customer == Sales.get_customer!(customer.id)
+    test "rejeita cliente sem telefone válido" do
+      product = product_fixture()
+      assert {:error, %Ecto.Changeset{} = cs} = Sales.place_order(valid_attrs(product, %{"phone" => "123"}))
+      assert errors_on(cs).phone != []
     end
 
-    test "delete_customer/1 deletes the customer" do
-      customer = customer_fixture()
-      assert {:ok, %Customer{}} = Sales.delete_customer(customer)
-      assert_raise Ecto.NoResultsError, fn -> Sales.get_customer!(customer.id) end
-    end
-
-    test "change_customer/1 returns a customer changeset" do
-      customer = customer_fixture()
-      assert %Ecto.Changeset{} = Sales.change_customer(customer)
+    test "não grava nada quando falha (transação)" do
+      product = product_fixture()
+      past = DateTime.add(DateTime.utc_now(), -1, :day)
+      Sales.place_order(valid_attrs(product, %{"delivery_at" => past}))
+      assert Sales.list_orders() == []
     end
   end
 
-  describe "orders" do
-    alias Encomendei.Sales.Order
-
-    import Encomendei.SalesFixtures
-
-    @invalid_attrs %{status: nil, delivery_at: nil, total_cents: nil, notes: nil}
-
-    test "list_orders/0 returns all orders" do
-      order = order_fixture()
-      assert Sales.list_orders() == [order]
+  describe "update_status/2" do
+    setup do
+      {:ok, order} = Sales.place_order(valid_attrs(product_fixture()))
+      %{order: order}
     end
 
-    test "get_order!/1 returns the order with given id" do
-      order = order_fixture()
-      assert Sales.get_order!(order.id) == order
+    test "segue o fluxo pendente → em produção → entregue", %{order: order} do
+      assert {:ok, order} = Sales.update_status(order, :in_production)
+      assert {:ok, order} = Sales.update_status(order, :delivered)
+      assert order.status == :delivered
     end
 
-    test "create_order/1 with valid data creates a order" do
-      valid_attrs = %{status: "some status", delivery_at: ~U[2026-11-09 14:17:00Z], total_cents: 42, notes: "some notes"}
-
-      assert {:ok, %Order{} = order} = Sales.create_order(valid_attrs)
-      assert order.status == "some status"
-      assert order.delivery_at == ~U[2026-11-09 14:17:00Z]
-      assert order.total_cents == 42
-      assert order.notes == "some notes"
+    test "não permite pular etapa nem sair de estado final", %{order: order} do
+      assert {:error, :invalid_transition} = Sales.update_status(order, :delivered)
+      {:ok, order} = Sales.update_status(order, :canceled)
+      assert {:error, :invalid_transition} = Sales.update_status(order, :in_production)
     end
 
-    test "create_order/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Sales.create_order(@invalid_attrs)
+    test "avisa quem está ouvindo (painel em tempo real)", %{order: order} do
+      Sales.subscribe()
+      {:ok, _} = Sales.update_status(order, :in_production)
+      id = order.id
+      assert_receive {:order_updated, ^id}
     end
+  end
 
-    test "update_order/2 with valid data updates the order" do
-      order = order_fixture()
-      update_attrs = %{status: "some updated status", delivery_at: ~U[2026-11-10 14:17:00Z], total_cents: 43, notes: "some updated notes"}
+  test "list_orders/1 filtra por status e ordena pela entrega" do
+    product = product_fixture()
+    {:ok, late} = Sales.place_order(valid_attrs(product, %{"delivery_at" => DateTime.add(DateTime.utc_now(), 5, :day)}))
+    {:ok, soon} = Sales.place_order(valid_attrs(product, %{"delivery_at" => DateTime.add(DateTime.utc_now(), 1, :day)}))
+    {:ok, _} = Sales.update_status(late, :in_production)
 
-      assert {:ok, %Order{} = order} = Sales.update_order(order, update_attrs)
-      assert order.status == "some updated status"
-      assert order.delivery_at == ~U[2026-11-10 14:17:00Z]
-      assert order.total_cents == 43
-      assert order.notes == "some updated notes"
-    end
-
-    test "update_order/2 with invalid data returns error changeset" do
-      order = order_fixture()
-      assert {:error, %Ecto.Changeset{}} = Sales.update_order(order, @invalid_attrs)
-      assert order == Sales.get_order!(order.id)
-    end
-
-    test "delete_order/1 deletes the order" do
-      order = order_fixture()
-      assert {:ok, %Order{}} = Sales.delete_order(order)
-      assert_raise Ecto.NoResultsError, fn -> Sales.get_order!(order.id) end
-    end
-
-    test "change_order/1 returns a order changeset" do
-      order = order_fixture()
-      assert %Ecto.Changeset{} = Sales.change_order(order)
-    end
+    assert [first, second] = Sales.list_orders()
+    assert first.id == soon.id and second.id == late.id
+    assert [%{id: id}] = Sales.list_orders(status: :in_production)
+    assert id == late.id
   end
 end
