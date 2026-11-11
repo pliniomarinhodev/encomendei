@@ -24,6 +24,18 @@ defmodule EncomendeiWeb.OrderLive.Show do
 
   def handle_info(_message, socket), do: {:noreply, socket}
 
+  defp shop_phone do
+    case Application.get_env(:encomendei, :shop_phone) do
+      phone when is_binary(phone) and phone != "" -> phone
+      _unset -> nil
+    end
+  end
+
+  defp contact_url(order) do
+    text = "Olá! Sobre o meu pedido #{order_number(order)} (#{order.customer.name}): "
+    whatsapp_url(shop_phone(), text)
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -58,7 +70,21 @@ defmodule EncomendeiWeb.OrderLive.Show do
           <span class="tabular-nums">{money(@order.total_cents)}</span>
         </p>
 
-        <.button navigate={~p"/"}>Fazer outro pedido</.button>
+        <section
+          :if={shop_phone()}
+          aria-labelledby="titulo-contato"
+          class="space-y-2 border border-base-300 bg-base-200 p-4"
+        >
+          <h2 id="titulo-contato" class="font-semibold">Dúvidas sobre o pedido?</h2>
+          <p class="text-sm text-base-content/80">
+            Fale direto com a confeiteira, informando o número do pedido.
+          </p>
+          <.button href={contact_url(@order)} target="_blank" rel="noopener" variant="primary">
+            Falar no WhatsApp
+          </.button>
+        </section>
+
+        <.button navigate={~p"/"} variant="ghost">Fazer outro pedido</.button>
       </div>
     </Layouts.app>
     """

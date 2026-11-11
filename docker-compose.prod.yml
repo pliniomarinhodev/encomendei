@@ -27,6 +27,7 @@ services:
       PORT: "4000"
       ADMIN_USER: ${ADMIN_USER}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      SHOP_PHONE: ${SHOP_PHONE:-}
     # Roda as migrações e depois sobe o servidor
     command: ["sh", "-c", "/app/bin/migrate && /app/bin/server"]
 

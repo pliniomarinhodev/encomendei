@@ -156,3 +156,13 @@
 @media (pointer: coarse) {
   .touch-target { min-height: 2.75rem; min-width: 2.75rem; }
 }
+
+/* Destaque temporário da linha que acabou de chegar ou mudar */
+@keyframes row-flash {
+  from { background-color: color-mix(in oklab, var(--color-primary) 22%, transparent); }
+  to { background-color: transparent; }
+}
+.row-highlight { animation: row-flash 4s ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .row-highlight { animation: none; background-color: color-mix(in oklab, var(--color-primary) 12%, transparent); }
+}

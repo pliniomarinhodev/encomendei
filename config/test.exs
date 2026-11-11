@@ -42,3 +42,4 @@ config :phoenix,
   sort_verified_routes_query_params: true
 
 config :encomendei, :admin_auth, username: "admin", password: "admin"
+config :encomendei, :shop_phone, "19900000000"

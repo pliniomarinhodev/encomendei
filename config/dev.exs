@@ -79,3 +79,6 @@ config :swoosh, :api_client, false
 
 # Credenciais do painel administrativo (apenas desenvolvimento)
 config :encomendei, :admin_auth, username: "admin", password: "admin"
+
+# Telefone fictício da loja (WhatsApp), só para ver o botão de contato em desenvolvimento
+config :encomendei, :shop_phone, "19900000000"

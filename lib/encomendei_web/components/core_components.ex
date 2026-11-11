@@ -359,6 +359,7 @@ defmodule EncomendeiWeb.CoreComponents do
   attr :rows, :list, required: true
   attr :row_id, :any, default: nil, doc: "the function for generating the row id"
   attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
+  attr :row_class, :any, default: nil, doc: "function returning extra classes for each row"
   attr :class, :any, default: "table table-zebra", doc: "classes of the table element"
 
   attr :row_item, :any,
@@ -390,7 +391,11 @@ defmodule EncomendeiWeb.CoreComponents do
           </tr>
         </thead>
         <tbody id={@id} phx-update={is_struct(@rows, Phoenix.LiveView.LiveStream) && "stream"}>
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)}>
+          <tr
+            :for={row <- @rows}
+            id={@row_id && @row_id.(row)}
+            class={@row_class && @row_class.(@row_item.(row))}
+          >
             <td
               :for={col <- @col}
               phx-click={@row_click && @row_click.(row)}

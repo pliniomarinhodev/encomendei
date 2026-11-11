@@ -49,7 +49,8 @@ defmodule Encomendei.Sales do
   @type queue :: %{
           pending: [Order.t()],
           in_production: [Order.t()],
-          delivered: [Order.t()]
+          delivered: [Order.t()],
+          canceled: [Order.t()]
         }
 
   @recent_deliveries 10
@@ -59,7 +60,8 @@ defmodule Encomendei.Sales do
 
   Encomendas pendentes e em produção aparecem completas, da entrega mais
   próxima para a mais distante. As entregues mostram só as #{@recent_deliveries}
-  mais recentes, para o painel não crescer indefinidamente.
+  mais recentes, para o painel não crescer indefinidamente; o mesmo vale para
+  as canceladas, que ficam visíveis para conferência.
   """
   @spec production_queue() :: queue()
   def production_queue do
@@ -68,13 +70,14 @@ defmodule Encomendei.Sales do
     %{
       pending: Map.get(open, :pending, []),
       in_production: Map.get(open, :in_production, []),
-      delivered: recent_deliveries()
+      delivered: recent_with_status(:delivered),
+      canceled: recent_with_status(:canceled)
     }
   end
 
-  defp recent_deliveries do
+  defp recent_with_status(status) do
     Order
-    |> where([o], o.status == :delivered)
+    |> where([o], o.status == ^status)
     |> order_by([o], desc: o.updated_at)
     |> limit(@recent_deliveries)
     |> with_details()

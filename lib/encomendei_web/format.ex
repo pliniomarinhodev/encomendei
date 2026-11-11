@@ -4,6 +4,13 @@ defmodule EncomendeiWeb.Format do
   # Brasil não usa horário de verão desde 2019: fuso fixo UTC-3.
   @offset_seconds -3 * 3600
 
+  @doc "Link do WhatsApp (`wa.me`) para um telefone com DDD, com texto inicial opcional."
+  @spec whatsapp_url(String.t(), String.t()) :: String.t()
+  def whatsapp_url(phone, text) do
+    digits = String.replace(phone, ~r/\D/, "")
+    "https://wa.me/55#{digits}?" <> URI.encode_query([text: text], :rfc3986)
+  end
+
   @doc "Número do pedido como o cliente e a confeiteira o chamam, por exemplo `#42`."
   def order_number(%{number: number}) when is_integer(number), do: "##{number}"
   def order_number(_order), do: ""

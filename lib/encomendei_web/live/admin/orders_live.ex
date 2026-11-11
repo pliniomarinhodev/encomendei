@@ -6,24 +6,45 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
   alias Encomendei.Sales.Order
   import EncomendeiWeb.Format
 
-  @groups [:pending, :in_production, :delivered]
+  @groups [:pending, :in_production, :delivered, :canceled]
   @open [:pending, :in_production]
+  @flash_ms 6_000
 
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: Sales.subscribe()
-    {:ok, socket |> assign(page_title: "Pedidos", groups: @groups) |> load()}
+    {:ok, socket |> assign(page_title: "Pedidos", groups: @groups, highlight: nil) |> load()}
   end
 
   @impl true
+  def handle_info({:order_created, id}, socket) do
+    socket =
+      case Sales.fetch_order(id) do
+        {:ok, order} ->
+          notify(socket, "Novo pedido #{order_number(order)} de #{order.customer.name}.", id)
+
+        {:error, :not_found} ->
+          socket
+      end
+
+    {:noreply, load(socket)}
+  end
+
   def handle_info({_event, _order_id}, socket), do: {:noreply, load(socket)}
+  def handle_info(:clear_flash, socket), do: {:noreply, clear_flash(socket)}
+
+  defp notify(socket, message, id) do
+    Process.send_after(self(), :clear_flash, @flash_ms)
+    socket |> put_flash(:info, message) |> assign(highlight: id)
+  end
 
   @impl true
   def handle_event("status", %{"id" => id, "to" => to}, socket) do
     with {:ok, order} <- Sales.fetch_order(id),
          {:ok, status} <- Order.parse_status(to),
-         {:ok, _order} <- Sales.update_status(order, status) do
-      {:noreply, socket}
+         {:ok, updated} <- Sales.update_status(order, status) do
+      message = "Pedido #{order_number(updated)} #{status_done(status)}."
+      {:noreply, notify(socket, message, updated.id)}
     else
       {:error, _reason} ->
         {:noreply, put_flash(socket, :error, "Essa mudança de status não é permitida.")}
@@ -49,6 +70,10 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
     )
   end
 
+  defp status_done(:in_production), do: "em produção"
+  defp status_done(:delivered), do: "entregue"
+  defp status_done(:canceled), do: "cancelado"
+
   defp action_label(:in_production), do: "Iniciar produção"
   defp action_label(:delivered), do: "Marcar entregue"
   defp action_label(:canceled), do: "Cancelar"
@@ -66,7 +91,7 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
     text =
       "Olá, #{order.customer.name}! Sobre o seu pedido #{order_number(order)} na Encomendei: "
 
-    "https://wa.me/55#{order.customer.phone}?" <> URI.encode_query([text: text], :rfc3986)
+    whatsapp_url(order.customer.phone, text)
   end
 
   attr :status, :atom, required: true
@@ -74,10 +99,15 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
   attr :count, :integer, required: true
   attr :total, :integer, required: true
   attr :now, DateTime, required: true
+  attr :highlight, :string, default: nil
 
   defp status_group(assigns) do
     ~H"""
-    <section id={"group-#{@status}"} aria-labelledby={"title-#{@status}"}>
+    <section
+      :if={@status != :canceled or @count > 0}
+      id={"group-#{@status}"}
+      aria-labelledby={"title-#{@status}"}
+    >
       <div class="flex items-baseline justify-between border-b border-base-300 pb-2">
         <h2 id={"title-#{@status}"} class="flex items-center gap-2 text-sm font-semibold">
           <.status_badge status={@status} />
@@ -94,6 +124,7 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
         rows={@rows}
         class="table table-sm orders-stack"
         row_item={fn {_dom_id, order} -> order end}
+        row_class={fn order -> order.id == @highlight && "row-highlight" end}
       >
         <:col :let={order} label="Nº">
           <span class="whitespace-nowrap tabular-nums font-medium">{order_number(order)}</span>
@@ -163,6 +194,7 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
             count={@counts[status]}
             total={@totals[status]}
             now={@now}
+            highlight={@highlight}
           />
         </div>
 

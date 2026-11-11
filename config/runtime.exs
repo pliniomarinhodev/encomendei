@@ -45,6 +45,9 @@ if config_env() == :prod do
     username: System.get_env("ADMIN_USER") || raise("variável ADMIN_USER ausente"),
     password: System.get_env("ADMIN_PASSWORD") || raise("variável ADMIN_PASSWORD ausente")
 
+  # Opcional: com o telefone, a confirmação do pedido mostra o botão "Falar no WhatsApp"
+  config :encomendei, :shop_phone, System.get_env("SHOP_PHONE")
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """

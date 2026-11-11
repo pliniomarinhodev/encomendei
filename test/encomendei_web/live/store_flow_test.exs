@@ -51,6 +51,26 @@ defmodule EncomendeiWeb.StoreFlowTest do
     assert html =~ ~r/Pedido #\d+ recebido/
     assert html =~ "Pendente"
     assert html =~ "R$ 90,00"
+    assert html =~ "Falar no WhatsApp"
+    assert html =~ "wa.me/5519900000000"
+  end
+
+  test "sem telefone da loja configurado não mostra o botão de contato", %{conn: conn} do
+    product = product_fixture()
+
+    {:ok, order} =
+      Sales.place_order(%{
+        "name" => "Ana",
+        "phone" => "19988887777",
+        "delivery_at" => DateTime.add(DateTime.utc_now(), 2, :day),
+        "items" => [%{"product_id" => product.id, "quantity" => 1}]
+      })
+
+    Application.put_env(:encomendei, :shop_phone, nil)
+    on_exit(fn -> Application.put_env(:encomendei, :shop_phone, "19900000000") end)
+
+    {:ok, _lv, html} = live(conn, ~p"/pedido/#{order.id}")
+    refute html =~ "Falar no WhatsApp"
   end
 
   test "carrinho vazio não envia", %{conn: conn} do

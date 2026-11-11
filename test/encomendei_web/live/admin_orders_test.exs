@@ -54,7 +54,29 @@ defmodule EncomendeiWeb.Admin.OrdersLiveTest do
         "items" => [%{"product_id" => product.id, "quantity" => 1}]
       })
 
-    assert render(lv) =~ "Beto"
+    html = render(lv)
+    assert html =~ "Beto"
+    assert has_element?(lv, "#flash-info", "Novo pedido")
+    assert html =~ "row-highlight"
+  end
+
+  test "mudar o status confirma na tela e destaca a linha", %{conn: conn, order: order} do
+    {:ok, lv, _} = conn |> admin_conn() |> live(~p"/admin/pedidos")
+
+    lv |> element("#order-#{order.id} button", "Iniciar produção") |> render_click()
+
+    assert has_element?(lv, "#flash-info", "em produção")
+    assert has_element?(lv, "#order-#{order.id}.row-highlight")
+  end
+
+  test "pedidos cancelados ficam visíveis em um grupo próprio", %{conn: conn, order: order} do
+    {:ok, lv, _} = conn |> admin_conn() |> live(~p"/admin/pedidos")
+    refute has_element?(lv, "#group-canceled")
+
+    lv |> element("#order-#{order.id} button", "Cancelar") |> render_click()
+
+    assert has_element?(lv, "#group-canceled #order-#{order.id}")
+    refute has_element?(lv, "#group-pending #order-#{order.id}")
   end
 
   test "agrupa por status com contagem e total", %{conn: conn, order: order} do

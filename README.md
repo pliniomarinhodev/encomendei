@@ -43,8 +43,8 @@ Testes: `mix test`
 | Rota | Acesso | Função |
 |---|---|---|
 | `/` | público | Cardápio, carrinho e envio da encomenda |
-| `/pedido/:id` | público (o `id` é um UUID difícil de adivinhar) | Confirmação ("Pedido #42 recebido") e status em tempo real |
-| `/admin/pedidos` | senha | Fila de produção, com o número do pedido e botão de WhatsApp com mensagem pronta |
+| `/pedido/:id` | público (o `id` é um UUID difícil de adivinhar) | Confirmação ("Pedido #42 recebido"), status em tempo real e botão para falar com a confeiteira no WhatsApp (variável `SHOP_PHONE`) |
+| `/admin/pedidos` | senha | Fila de produção em tempo real: aviso e destaque de pedido novo, confirmação a cada mudança de status, grupo de cancelados e WhatsApp com mensagem pronta |
 | `/admin/produtos` | senha | Cadastro de produtos |
 | `/admin/relatorios` | senha | Faturamento, ticket médio, produtos mais vendidos e semanas; atualiza em tempo real |
 | `/admin/relatorios/pedidos.csv` | senha | Exporta os itens vendidos em CSV (pronto para planilha), identificando o pedido pelo número |
