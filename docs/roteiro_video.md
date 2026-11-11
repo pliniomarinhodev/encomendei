@@ -18,7 +18,7 @@ Os itens abaixo seguem os critérios de avaliação da tarefa "Q7 – Entrega do
 
 ## Demonstração (4 minutos)
 
-Prepare antes: sistema rodando, 4 produtos cadastrados, nenhum pedido pendente de testes antigos,
+Prepare antes: sistema rodando, 4 produtos cadastrados, dados de demonstração recentes (`mix run priv/repo/demo.exs`, para as datas não aparecerem como atrasadas), `SHOP_PHONE` configurado,
 duas janelas lado a lado (cliente à esquerda, painel à direita).
 
 1. **Cardápio** (`/`): mostrar os produtos e adicionar dois bolos e brigadeiros. Mostrar o total mudando.
@@ -26,7 +26,7 @@ duas janelas lado a lado (cliente à esquerda, painel à direita).
    (carrinho vazio ou data no passado) para evidenciar as validações.
 3. **Confirmação**: mostrar a página do pedido com status *Pendente*.
 4. **Painel** (`/admin/pedidos`, pedir senha): o pedido já aparece **sem recarregar** no grupo *Pendente*, com o total do grupo atualizado.
-5. **Mudar status**: clicar em *Iniciar produção*. Na janela do cliente, o status muda sozinho.
+5. **Mudar status**: mostrar também a busca (digitar um nome) e clicar em *Iniciar produção*; o aviso confirma a mudança. Na janela do cliente, o status muda sozinho.
    Este é o ponto mais forte da demonstração.
 6. **WhatsApp**: clicar no link do cliente (apenas mostrar que abre a conversa com a mensagem já citando o número do pedido).
 7. **Produtos** (`/admin/produtos`): cadastrar ou editar um produto e mostrar que aparece no cardápio.

@@ -89,15 +89,17 @@ defmodule EncomendeiWeb.StoreLive do
           </p>
 
           <ul class="divide-y divide-base-300 border-y border-base-300" aria-label="Produtos">
-            <li :for={product <- @products} class="flex items-center gap-4 py-4">
-              <div class="min-w-0 flex-1">
+            <li :for={product <- @products} class="flex flex-wrap items-center gap-x-4 gap-y-3 py-4">
+              <div class="min-w-0 basis-full sm:flex-1 sm:basis-0">
                 <h2 class="font-semibold">{product.name}</h2>
                 <p :if={product.description} class="text-sm text-base-content/70">
                   {product.description}
                 </p>
               </div>
-              <p class="w-24 text-right font-semibold tabular-nums">{money(product.price_cents)}</p>
-              <div class="flex items-center gap-1">
+              <p class="font-semibold tabular-nums sm:w-24 sm:text-right">
+                {money(product.price_cents)}
+              </p>
+              <div class="ml-auto flex items-center gap-1 sm:ml-0">
                 <.button
                   type="button"
                   class="btn btn-outline btn-square min-h-11 min-w-11"
