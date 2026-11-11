@@ -29,7 +29,7 @@ duas janelas lado a lado (cliente à esquerda, painel à direita).
 5. **Mudar status**: mostrar também a busca (digitar um nome) e clicar em *Iniciar produção*; o aviso confirma a mudança. Na janela do cliente, o status muda sozinho.
    Este é o ponto mais forte da demonstração.
 6. **WhatsApp**: clicar no link do cliente (apenas mostrar que abre a conversa com a mensagem já citando o número do pedido).
-7. **Produtos** (`/admin/produtos`): cadastrar ou editar um produto e mostrar que aparece no cardápio.
+7. **Produtos** (`/admin/produtos`): cadastrar ou editar um produto, colar o link de uma foto (a pré-visualização aparece) e mostrar que aparece no cardápio.
 8. **Relatórios** (`/admin/relatorios`): faturamento, ticket médio, mais vendidos e **baixar o CSV**.
 9. **API** (30 s, opcional): abrir `/api/products` no navegador para mostrar o JSON.
 10. **Acessibilidade** (30 s): navegar pelo cardápio só com Tab, mostrar o link "Ir para o conteúdo" e
