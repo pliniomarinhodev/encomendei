@@ -70,6 +70,22 @@ defmodule EncomendeiWeb.ProductLive.Form do
           <.input field={@form[:name]} type="text" label="Nome" required />
           <.input field={@form[:description]} type="textarea" label="Descrição" />
           <.input field={@form[:price]} type="text" label="Preço (R$)" inputmode="decimal" required />
+          <.input
+            field={@form[:image_url]}
+            type="url"
+            label="Link da foto (opcional)"
+            placeholder="https://..."
+          />
+          <p class="-mt-2 mb-4 text-xs text-base-content/70">
+            Cole o endereço direto de uma imagem (termina em .jpg, .png ou .webp). Se o link sair do ar, o produto aparece sem foto.
+          </p>
+          <img
+            :if={Product.image_url?(@form[:image_url].value)}
+            src={@form[:image_url].value}
+            alt="Pré-visualização da foto do produto"
+            class="mb-4 h-32 w-32 rounded border border-base-300 object-cover"
+            onerror="this.style.display='none'"
+          />
           <.input field={@form[:available]} type="checkbox" label="Disponível para encomenda" />
           <footer class="flex gap-2 pt-2">
             <.button type="submit" variant="primary" phx-disable-with="Salvando...">Salvar</.button>

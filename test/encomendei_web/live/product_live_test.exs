@@ -85,6 +85,36 @@ defmodule EncomendeiWeb.ProductLiveTest do
                Catalog.list_products()
     end
 
+    test "salva o link da foto e mostra a pré-visualização", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/produtos/new")
+      url = "https://exemplo.com/bolo.jpg"
+
+      html =
+        view
+        |> form("#product-form", product: %{name: "Bolo", price: "30", image_url: url})
+        |> render_change()
+
+      assert html =~ ~s(src="#{url}")
+
+      view |> form("#product-form") |> render_submit()
+      assert [%{image_url: ^url}] = Catalog.list_products()
+    end
+
+    test "recusa link de foto perigoso", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/produtos/new")
+
+      html =
+        view
+        |> form("#product-form",
+          product: %{name: "Bolo", price: "30", image_url: "javascript:alert(1)"}
+        )
+        |> render_submit()
+
+      assert html =~ "informe um link começando com https://"
+      refute html =~ ~s(src="javascript:)
+      assert Catalog.list_products() == []
+    end
+
     test "mostra erro de preço inválido e de campos obrigatórios", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/admin/produtos/new")
 

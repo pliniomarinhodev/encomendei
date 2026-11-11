@@ -26,6 +26,14 @@ defmodule EncomendeiWeb.ProductLive.Show do
       </.header>
 
       <.list>
+        <:item :if={Encomendei.Catalog.Product.image_url?(@product.image_url)} title="Foto">
+          <img
+            src={@product.image_url}
+            alt=""
+            class="h-32 w-32 rounded border border-base-300 object-cover"
+            onerror="this.style.display='none'"
+          />
+        </:item>
         <:item title="Descrição">{@product.description}</:item>
         <:item title="Preço">{money(@product.price_cents)}</:item>
         <:item title="Situação">

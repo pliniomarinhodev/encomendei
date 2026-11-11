@@ -63,7 +63,19 @@ defmodule EncomendeiWeb.ProductLive.Index do
         class="table table-sm"
         row_click={fn {_id, product} -> JS.navigate(~p"/admin/produtos/#{product}") end}
       >
-        <:col :let={{_id, product}} label="Nome">{product.name}</:col>
+        <:col :let={{_id, product}} label="Nome">
+          <div class="flex items-center gap-3">
+            <img
+              :if={Encomendei.Catalog.Product.image_url?(product.image_url)}
+              src={product.image_url}
+              alt=""
+              loading="lazy"
+              class="size-10 shrink-0 rounded object-cover"
+              onerror="this.style.display='none'"
+            />
+            <span>{product.name}</span>
+          </div>
+        </:col>
         <:col :let={{_id, product}} label="Descrição" class="hidden md:table-cell">
           {product.description}
         </:col>

@@ -13,7 +13,7 @@ defmodule Encomendei.CatalogFixtures do
       |> Enum.into(%{
         available: true,
         description: "some description",
-        image_url: "some image_url",
+        image_url: nil,
         name: "some name",
         price_cents: 42
       })

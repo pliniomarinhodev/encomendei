@@ -32,7 +32,7 @@ defmodule Encomendei.CatalogTest do
         description: "some description",
         available: true,
         price_cents: 42,
-        image_url: "some image_url"
+        image_url: "https://exemplo.com/some.jpg"
       }
 
       assert {:ok, %Product{} = product} = Catalog.create_product(valid_attrs)
@@ -40,7 +40,7 @@ defmodule Encomendei.CatalogTest do
       assert product.description == "some description"
       assert product.available == true
       assert product.price_cents == 42
-      assert product.image_url == "some image_url"
+      assert product.image_url == "https://exemplo.com/some.jpg"
     end
 
     test "create_product/1 with invalid data returns error changeset" do
@@ -55,7 +55,7 @@ defmodule Encomendei.CatalogTest do
         description: "some updated description",
         available: false,
         price_cents: 43,
-        image_url: "some updated image_url"
+        image_url: "https://exemplo.com/updated.jpg"
       }
 
       assert {:ok, %Product{} = product} = Catalog.update_product(product, update_attrs)
@@ -63,7 +63,7 @@ defmodule Encomendei.CatalogTest do
       assert product.description == "some updated description"
       assert product.available == false
       assert product.price_cents == 43
-      assert product.image_url == "some updated image_url"
+      assert product.image_url == "https://exemplo.com/updated.jpg"
     end
 
     test "update_product/2 with invalid data returns error changeset" do

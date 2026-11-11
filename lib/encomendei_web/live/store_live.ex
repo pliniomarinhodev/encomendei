@@ -3,6 +3,7 @@ defmodule EncomendeiWeb.StoreLive do
   use EncomendeiWeb, :live_view
 
   alias Encomendei.{Catalog, Sales}
+  alias Encomendei.Catalog.Product
   alias EncomendeiWeb.Cart
   import EncomendeiWeb.Format
 
@@ -90,7 +91,19 @@ defmodule EncomendeiWeb.StoreLive do
 
           <ul class="divide-y divide-base-300 border-y border-base-300" aria-label="Produtos">
             <li :for={product <- @products} class="flex flex-wrap items-center gap-x-4 gap-y-3 py-4">
-              <div class="min-w-0 basis-full sm:flex-1 sm:basis-0">
+              <img
+                :if={Product.image_url?(product.image_url)}
+                src={product.image_url}
+                alt=""
+                loading="lazy"
+                class="size-20 shrink-0 rounded object-cover sm:size-24"
+                onerror="this.style.display='none'"
+              />
+              <div class={[
+                "min-w-0 sm:flex-1 sm:basis-0",
+                (Product.image_url?(product.image_url) && "flex-1 basis-[calc(100%-6rem)]") ||
+                  "basis-full"
+              ]}>
                 <h2 class="font-semibold">{product.name}</h2>
                 <p :if={product.description} class="text-sm text-base-content/70">
                   {product.description}

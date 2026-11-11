@@ -32,8 +32,33 @@ defmodule Encomendei.Catalog.Product do
     |> put_price_cents()
     |> validate_required([:name, :price_cents])
     |> validate_length(:name, max: 120)
+    |> validate_image_url()
     |> validate_number(:price_cents, greater_than: 0)
     |> check_constraint(:price_cents, name: :price_cents_positive)
+  end
+
+  @doc """
+  Indica se o texto é um link de imagem aceito: `http` ou `https`, com endereço.
+
+  Outros esquemas (`javascript:`, `data:`) são recusados para que o link
+  cadastrado nunca execute código nas páginas do cardápio.
+  """
+  @spec image_url?(term()) :: boolean()
+  def image_url?(url) when is_binary(url) do
+    match?(
+      %URI{scheme: scheme, host: host} when scheme in ["http", "https"] and host not in [nil, ""],
+      URI.parse(url)
+    )
+  end
+
+  def image_url?(_other), do: false
+
+  defp validate_image_url(changeset) do
+    changeset
+    |> validate_length(:image_url, max: 255)
+    |> validate_change(:image_url, fn :image_url, url ->
+      if image_url?(url), do: [], else: [image_url: "informe um link começando com https://"]
+    end)
   end
 
   defp put_price_cents(changeset) do

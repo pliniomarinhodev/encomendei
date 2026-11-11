@@ -21,6 +21,16 @@ defmodule EncomendeiWeb.StoreFlowTest do
     refute html =~ "Bolo Escondido"
   end
 
+  test "mostra a foto do produto quando há link, e nada quando não há", %{conn: conn} do
+    product_fixture(name: "Bolo com Foto", image_url: "https://exemplo.com/bolo.jpg")
+    product_fixture(name: "Bolo sem Foto")
+
+    {:ok, lv, _html} = live(conn, ~p"/")
+
+    assert has_element?(lv, ~s(img[src="https://exemplo.com/bolo.jpg"]))
+    assert lv |> render() |> String.split("<img") |> length() == 2
+  end
+
   test "controles têm nome acessível e a página tem idioma", %{conn: conn} do
     product_fixture(name: "Bolo")
     {:ok, _lv, html} = live(conn, ~p"/")
