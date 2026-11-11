@@ -113,3 +113,46 @@
 .table thead {
   color: color-mix(in oklab, var(--color-base-content) 78%, transparent);
 }
+
+/* Painel de pedidos no celular: cada linha vira um cartão (Nº, cliente e total no topo) */
+@media (max-width: 47.99rem) {
+  .orders-stack thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .orders-stack,
+  .orders-stack tbody {
+    display: block;
+    width: 100%;
+  }
+  .orders-stack tr {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    column-gap: 0.75rem;
+    row-gap: 0.25rem;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid var(--color-base-300);
+  }
+  .orders-stack td {
+    display: block;
+    padding: 0;
+    border: 0;
+    width: auto;
+  }
+  .orders-stack td:nth-child(1) { grid-column: 1; grid-row: 1; }
+  .orders-stack td:nth-child(2) { grid-column: 2; grid-row: 1; }
+  .orders-stack td:nth-child(5) { grid-column: 3; grid-row: 1; text-align: right; font-weight: 600; }
+  .orders-stack td:nth-child(3) { grid-column: 1 / -1; grid-row: 2; }
+  .orders-stack td:nth-child(4) { grid-column: 1 / -1; grid-row: 3; display: flex; align-items: center; gap: 0.5rem; }
+  .orders-stack td:nth-child(6) { grid-column: 1 / -1; grid-row: 4; margin-top: 0.25rem; }
+  .orders-stack td:nth-child(6) > div { flex-wrap: wrap; gap: 0.5rem; }
+  .orders-stack .btn { min-height: 2.75rem; }
+}
+
+/* Alvos de toque de pelo menos 44px em telas de toque */
+@media (pointer: coarse) {
+  .touch-target { min-height: 2.75rem; min-width: 2.75rem; }
+}

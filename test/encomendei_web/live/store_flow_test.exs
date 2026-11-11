@@ -85,4 +85,34 @@ defmodule EncomendeiWeb.StoreFlowTest do
     {:ok, _} = Sales.update_status(order, :in_production)
     assert render(lv) =~ "Em produção"
   end
+
+  test "erros aparecem junto de cada campo, todos de uma vez", %{conn: conn} do
+    product = product_fixture()
+    {:ok, lv, _} = live(conn, ~p"/")
+    render_click(lv, "add", %{"id" => product.id})
+
+    html =
+      lv
+      |> form("#checkout-form",
+        checkout: %{name: "Ana", phone: "123", delivery_at: "2020-01-01T10:00", notes: ""}
+      )
+      |> render_submit()
+
+    assert html =~ "informe DDD + número"
+    assert html =~ "deve ser uma data futura"
+
+    assert has_element?(lv, "#checkout-form p", "informe DDD + número")
+    assert has_element?(lv, "#checkout-form p", "deve ser uma data futura")
+  end
+
+  test "barra do carrinho só aparece com itens", %{conn: conn} do
+    product = product_fixture(price_cents: 1000)
+    {:ok, lv, html} = live(conn, ~p"/")
+    refute html =~ "cart-bar"
+
+    render_click(lv, "add", %{"id" => product.id})
+    html = render_click(lv, "add", %{"id" => product.id})
+    assert has_element?(lv, "#cart-bar", "2 itens")
+    assert html =~ "Finalizar pedido"
+  end
 end

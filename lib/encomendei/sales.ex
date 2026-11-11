@@ -118,7 +118,8 @@ defmodule Encomendei.Sales do
   end
 
   defp persist_order(attrs, lines) do
-    with {:ok, customer} <- upsert_customer(attrs),
+    with :ok <- validate_checkout(attrs),
+         {:ok, customer} <- upsert_customer(attrs),
          {:ok, order} <- insert_order(customer, attrs, lines),
          {:ok, _items} <- insert_items(order, lines) do
       {:ok, order}
@@ -173,6 +174,26 @@ defmodule Encomendei.Sales do
       _some_missing ->
         {:error, :unavailable_product}
     end
+  end
+
+  # Valida cliente e entrega juntos para devolver todos os erros de uma vez.
+  defp validate_checkout(attrs) do
+    customer =
+      Customer.changeset(%Customer{}, %{name: fetch(attrs, :name), phone: fetch(attrs, :phone)})
+
+    order =
+      Order.changeset(%Order{}, %{
+        customer_id: Ecto.UUID.generate(),
+        delivery_at: fetch(attrs, :delivery_at),
+        notes: fetch(attrs, :notes)
+      })
+
+    merged =
+      Enum.reduce(customer.errors, order, fn {field, {message, opts}}, changeset ->
+        Ecto.Changeset.add_error(changeset, field, message, opts)
+      end)
+
+    if merged.valid?, do: :ok, else: {:error, %{merged | action: :insert}}
   end
 
   defp upsert_customer(attrs) do

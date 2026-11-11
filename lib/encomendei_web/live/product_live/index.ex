@@ -47,7 +47,9 @@ defmodule EncomendeiWeb.ProductLive.Index do
         row_click={fn {_id, product} -> JS.navigate(~p"/admin/produtos/#{product}") end}
       >
         <:col :let={{_id, product}} label="Nome">{product.name}</:col>
-        <:col :let={{_id, product}} label="Descrição">{product.description}</:col>
+        <:col :let={{_id, product}} label="Descrição" class="hidden md:table-cell">
+          {product.description}
+        </:col>
         <:col :let={{_id, product}} label="Preço">
           <span class="tabular-nums">{money(product.price_cents)}</span>
         </:col>

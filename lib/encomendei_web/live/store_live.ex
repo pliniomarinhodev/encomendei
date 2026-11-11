@@ -16,7 +16,7 @@ defmodule EncomendeiWeb.StoreLive do
        products: Catalog.list_available_products(),
        cart: Cart.new(),
        error: nil,
-       form: checkout_form(@blank_checkout)
+       form: checkout_form(@blank_checkout, [])
      )}
   end
 
@@ -30,7 +30,14 @@ defmodule EncomendeiWeb.StoreLive do
   end
 
   def handle_event("validate", %{"checkout" => params}, socket) do
-    {:noreply, assign(socket, form: checkout_form(params), error: nil)}
+    %{params: previous, errors: errors} = socket.assigns.form
+
+    untouched =
+      Enum.filter(errors, fn {field, _} ->
+        params[to_string(field)] == previous[to_string(field)]
+      end)
+
+    {:noreply, assign(socket, form: checkout_form(params, untouched), error: nil)}
   end
 
   def handle_event("submit", %{"checkout" => params}, socket) do
@@ -38,12 +45,15 @@ defmodule EncomendeiWeb.StoreLive do
       {:ok, order} ->
         {:noreply, push_navigate(socket, to: ~p"/pedido/#{order.id}")}
 
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, form: checkout_form(params, changeset.errors), error: nil)}
+
       {:error, reason} ->
-        {:noreply, assign(socket, form: checkout_form(params), error: error_message(reason))}
+        {:noreply, assign(socket, form: checkout_form(params, []), error: error_message(reason))}
     end
   end
 
-  defp checkout_form(params), do: to_form(params, as: :checkout)
+  defp checkout_form(params, errors), do: to_form(params, as: :checkout, errors: errors)
 
   defp order_attrs(params, cart) do
     %{
@@ -55,24 +65,13 @@ defmodule EncomendeiWeb.StoreLive do
     }
   end
 
+  defp item_word(1), do: "item"
+  defp item_word(_), do: "itens"
+
   defp error_message(:empty_cart), do: "Adicione ao menos um item ao carrinho."
 
   defp error_message(:unavailable_product),
     do: "Algum item não está mais disponível. Atualize a página."
-
-  defp error_message(%Ecto.Changeset{} = changeset) do
-    changeset
-    |> Ecto.Changeset.traverse_errors(fn {message, _opts} -> message end)
-    |> Enum.map_join(" ", fn {field, messages} ->
-      "#{field_label(field)}: #{Enum.join(messages, ", ")}."
-    end)
-  end
-
-  defp field_label(:name), do: "Nome"
-  defp field_label(:phone), do: "Telefone"
-  defp field_label(:delivery_at), do: "Data de entrega"
-  defp field_label(:quantity), do: "Quantidade"
-  defp field_label(other), do: to_string(other)
 
   @impl true
   def render(assigns) do
@@ -101,8 +100,7 @@ defmodule EncomendeiWeb.StoreLive do
               <div class="flex items-center gap-1">
                 <.button
                   type="button"
-                  variant="ghost"
-                  size="sm"
+                  class="btn btn-outline btn-square min-h-11 min-w-11"
                   phx-click="remove"
                   phx-value-id={product.id}
                   aria-label={"Remover um #{product.name}"}
@@ -111,7 +109,7 @@ defmodule EncomendeiWeb.StoreLive do
                   −
                 </.button>
                 <span
-                  class="w-8 text-center tabular-nums"
+                  class="w-8 text-center text-lg tabular-nums"
                   aria-live="polite"
                   aria-label={"Quantidade de #{product.name}"}
                 >
@@ -119,8 +117,7 @@ defmodule EncomendeiWeb.StoreLive do
                 </span>
                 <.button
                   type="button"
-                  variant="primary"
-                  size="sm"
+                  class="btn btn-primary btn-square min-h-11 min-w-11"
                   phx-click="add"
                   phx-value-id={product.id}
                   aria-label={"Adicionar um #{product.name}"}
@@ -134,7 +131,7 @@ defmodule EncomendeiWeb.StoreLive do
 
         <aside
           aria-labelledby="titulo-pedido"
-          class="space-y-4 border border-base-300 bg-base-200 p-5 lg:sticky lg:top-6"
+          class="scroll-mt-4 space-y-4 border border-base-300 bg-base-200 p-5 lg:sticky lg:top-6"
         >
           <h2 id="titulo-pedido" class="text-lg font-semibold">Seu pedido</h2>
 
@@ -182,6 +179,21 @@ defmodule EncomendeiWeb.StoreLive do
             </.button>
           </.form>
         </aside>
+      </div>
+
+      <div
+        :if={!Cart.empty?(@cart)}
+        id="cart-bar"
+        class="fixed inset-x-0 bottom-0 z-40 border-t border-base-300 bg-base-100 p-3 lg:hidden"
+      >
+        <div class="mx-auto flex max-w-6xl items-center justify-between gap-3">
+          <p>
+            <span class="font-semibold">{Cart.count(@cart)} {item_word(Cart.count(@cart))}</span>
+            ·
+            <span class="font-semibold tabular-nums">{money(Cart.total_cents(@cart, @products))}</span>
+          </p>
+          <a href="#titulo-pedido" class="btn btn-primary">Finalizar pedido</a>
+        </div>
       </div>
     </Layouts.app>
     """

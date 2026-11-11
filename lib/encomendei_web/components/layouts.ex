@@ -58,13 +58,17 @@ defmodule EncomendeiWeb.Layouts do
           Encomendei
         </.link>
 
-        <nav :if={@nav == :admin} aria-label="Painel" class="flex flex-1 flex-wrap gap-1">
+        <nav
+          :if={@nav == :admin}
+          aria-label="Painel"
+          class="order-last -mx-1 flex w-full gap-1 overflow-x-auto sm:order-none sm:mx-0 sm:w-auto sm:flex-1"
+        >
           <.link
             :for={{key, label, path} <- admin_tabs()}
             navigate={path}
             aria-current={@active == key && "page"}
             class={[
-              "rounded px-3 py-1.5 text-sm font-medium",
+              "whitespace-nowrap rounded px-3 py-2 text-sm font-medium sm:py-1.5",
               @active == key && "bg-base-200",
               @active != key && "text-base-content/70 hover:bg-base-200"
             ]}
@@ -77,7 +81,7 @@ defmodule EncomendeiWeb.Layouts do
       </div>
     </header>
 
-    <main id="conteudo" class="px-4 py-8 sm:px-6">
+    <main id="conteudo" class="px-4 py-8 pb-24 sm:px-6 lg:pb-8">
       <div class={["mx-auto space-y-6", content_width(@nav)]}>
         {render_slot(@inner_block)}
       </div>

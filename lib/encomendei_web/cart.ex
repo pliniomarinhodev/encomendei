@@ -31,6 +31,10 @@ defmodule EncomendeiWeb.Cart do
   @spec empty?(t()) :: boolean()
   def empty?(cart), do: cart == %{}
 
+  @doc "Quantidade total de unidades no carrinho."
+  @spec count(t()) :: non_neg_integer()
+  def count(cart), do: cart |> Map.values() |> Enum.sum()
+
   @doc "Itens do carrinho com o produto e o subtotal, na ordem do cardápio."
   @spec lines(t(), [Product.t()]) :: [
           %{product: Product.t(), quantity: pos_integer(), subtotal_cents: integer()}

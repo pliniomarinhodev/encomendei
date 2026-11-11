@@ -92,7 +92,7 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
         :if={@count > 0}
         id={"orders-#{@status}"}
         rows={@rows}
-        class="table table-sm"
+        class="table table-sm orders-stack"
         row_item={fn {_dom_id, order} -> order end}
       >
         <:col :let={order} label="Nº">
@@ -166,7 +166,10 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
           />
         </div>
 
-        <aside aria-label="Resumo do dia" class="space-y-5 xl:sticky xl:top-6">
+        <aside
+          aria-label="Resumo do dia"
+          class="order-first space-y-5 xl:sticky xl:top-6 xl:order-none"
+        >
           <section
             :if={@overdue != []}
             aria-labelledby="titulo-atrasadas"
