@@ -30,6 +30,7 @@ docker run -d --name encomendei-pg -e POSTGRES_PASSWORD=postgres \
 
 mix setup                      # dependências, banco, migrações e assets
 mix run priv/repo/seeds.exs    # produtos de exemplo
+mix run priv/repo/demo_photos.exs  # opcional: fotos ilustrativas nos produtos (só dev)
 mix phx.server
 ```
 
