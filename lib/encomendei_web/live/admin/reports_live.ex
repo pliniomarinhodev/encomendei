@@ -44,16 +44,19 @@ defmodule EncomendeiWeb.Admin.ReportsLive do
       <.header>
         Relatórios
         <:actions>
-          <.button href={~p"/admin/relatorios/pedidos.csv"} variant="ghost" size="sm">
-            Baixar CSV
+          <.button href={~p"/admin/relatorios/pedidos.csv"} variant="primary">
+            <.icon name="hero-arrow-down-tray" /> Baixar planilha (CSV)
           </.button>
         </:actions>
       </.header>
 
       <dl class="grid divide-y divide-base-300 border border-base-300 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
         <div class="p-4">
-          <dt class="text-sm text-base-content/70">Faturamento</dt>
-          <dd class="text-2xl font-semibold tabular-nums">{money(@summary.revenue_cents)}</dd>
+          <dt class="text-sm text-base-content/70">Entregue</dt>
+          <dd class="text-2xl font-semibold tabular-nums">{money(@summary.delivered_cents)}</dd>
+          <dd class="text-xs text-base-content/70">
+            + {money(@summary.open_cents)} a entregar
+          </dd>
         </div>
         <div class="p-4">
           <dt class="text-sm text-base-content/70">Pedidos (sem cancelados)</dt>

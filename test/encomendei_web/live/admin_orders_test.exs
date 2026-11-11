@@ -3,6 +3,7 @@ defmodule EncomendeiWeb.Admin.OrdersLiveTest do
 
   import Phoenix.LiveViewTest
   import Encomendei.CatalogFixtures
+  import Ecto.Query
   alias Encomendei.Sales
 
   setup do
@@ -67,6 +68,63 @@ defmodule EncomendeiWeb.Admin.OrdersLiveTest do
 
     assert has_element?(lv, "#flash-info", "em produção")
     assert has_element?(lv, "#order-#{order.id}.row-highlight")
+  end
+
+  describe "busca e filtro" do
+    defp place!(name, phone, days) do
+      product = product_fixture()
+
+      {:ok, order} =
+        Sales.place_order(%{
+          "name" => name,
+          "phone" => phone,
+          "delivery_at" => DateTime.add(DateTime.utc_now(), days, :day),
+          "items" => [%{"product_id" => product.id, "quantity" => 1}]
+        })
+
+      order
+    end
+
+    test "busca por nome sem diferenciar acento ou caixa", %{conn: conn} do
+      joao = place!("João Pereira", "19911112222", 3)
+      {:ok, lv, _} = conn |> admin_conn() |> live(~p"/admin/pedidos")
+
+      lv |> form("#order-filter", %{q: "joao", scope: "all"}) |> render_change()
+
+      assert has_element?(lv, "#order-#{joao.id}")
+      refute has_element?(lv, "#orders-pending", "Ana")
+    end
+
+    test "busca por número e por telefone", %{conn: conn, order: ana} do
+      beto = place!("Beto", "19977776666", 3)
+      {:ok, lv, _} = conn |> admin_conn() |> live(~p"/admin/pedidos")
+
+      lv |> form("#order-filter", %{q: "##{beto.number}", scope: "all"}) |> render_change()
+      assert has_element?(lv, "#order-#{beto.id}")
+      refute has_element?(lv, "#order-#{ana.id}")
+
+      lv |> form("#order-filter", %{q: "88887777", scope: "all"}) |> render_change()
+      assert has_element?(lv, "#order-#{ana.id}")
+      refute has_element?(lv, "#order-#{beto.id}")
+    end
+
+    test "filtra por entrega e mantém o total em aberto", %{conn: conn, order: ana} do
+      atrasada = place!("Atrasada", "19955554444", 3)
+
+      Encomendei.Repo.update_all(
+        from(o in Encomendei.Sales.Order, where: o.id == ^atrasada.id),
+        set: [
+          delivery_at: DateTime.add(DateTime.utc_now(), -2, :hour) |> DateTime.truncate(:second)
+        ]
+      )
+
+      {:ok, lv, _} = conn |> admin_conn() |> live(~p"/admin/pedidos")
+      lv |> form("#order-filter", %{q: "", scope: "overdue"}) |> render_change()
+
+      assert has_element?(lv, "#order-#{atrasada.id}")
+      refute has_element?(lv, "#order-#{ana.id}")
+      assert render(lv) =~ "2 em aberto"
+    end
   end
 
   test "pedidos cancelados ficam visíveis em um grupo próprio", %{conn: conn, order: order} do

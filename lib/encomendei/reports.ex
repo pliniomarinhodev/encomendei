@@ -9,7 +9,12 @@ defmodule Encomendei.Reports do
   alias Encomendei.Sales.{Order, OrderItem}
   alias Encomendei.Catalog.Product
 
-  @doc "Resumo geral: pedidos válidos, faturamento, ticket médio e contagem por status."
+  @doc """
+  Resumo geral: pedidos válidos, faturamento, ticket médio e contagem por status.
+
+  `revenue_cents` soma todos os pedidos não cancelados; `delivered_cents` só os
+  já entregues e `open_cents` os ainda por entregar.
+  """
   def summary do
     valid = from o in Order, where: o.status != :canceled
 
@@ -21,9 +26,17 @@ defmodule Encomendei.Reports do
       |> Repo.all()
       |> Map.new()
 
+    by_status_cents =
+      from(o in valid, group_by: o.status, select: {o.status, sum(o.total_cents)})
+      |> Repo.all()
+      |> Map.new()
+
     %{
       orders: count,
       revenue_cents: revenue,
+      delivered_cents: Map.get(by_status_cents, :delivered, 0),
+      open_cents:
+        Map.get(by_status_cents, :pending, 0) + Map.get(by_status_cents, :in_production, 0),
       average_ticket_cents: if(count > 0, do: div(revenue, count), else: 0),
       by_status: Map.merge(%{pending: 0, in_production: 0, delivered: 0, canceled: 0}, by_status)
     }

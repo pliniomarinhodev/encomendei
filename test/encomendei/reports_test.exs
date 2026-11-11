@@ -20,6 +20,17 @@ defmodule Encomendei.ReportsTest do
     assert %{orders: 0, revenue_cents: 0, average_ticket_cents: 0} = Reports.summary()
   end
 
+  test "resumo separa o que já foi entregue do que ainda falta entregar" do
+    bolo = product_fixture(price_cents: 5000)
+    entregue = order!(bolo, 2)
+    {:ok, em_producao} = Sales.update_status(entregue, :in_production)
+    {:ok, _} = Sales.update_status(em_producao, :delivered)
+    order!(bolo, 1)
+
+    assert %{delivered_cents: 10_000, open_cents: 5_000, revenue_cents: 15_000} =
+             Reports.summary()
+  end
+
   test "resumo soma faturamento e ignora cancelados" do
     bolo = product_fixture(name: "Bolo", price_cents: 5000)
     order!(bolo, 2)

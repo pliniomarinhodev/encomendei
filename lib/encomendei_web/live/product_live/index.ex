@@ -10,6 +10,23 @@ defmodule EncomendeiWeb.ProductLive.Index do
   end
 
   @impl true
+  def handle_event("toggle", %{"id" => id}, socket) do
+    product = Catalog.get_product!(id)
+
+    case Catalog.update_product(product, %{available: !product.available}) do
+      {:ok, updated} ->
+        state = if updated.available, do: "disponível", else: "indisponível"
+
+        {:noreply,
+         socket
+         |> stream_insert(:products, updated)
+         |> put_flash(:info, "“#{updated.name}” agora está #{state}.")}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, "Não foi possível alterar a disponibilidade.")}
+    end
+  end
+
   def handle_event("delete", %{"id" => id}, socket) do
     product = Catalog.get_product!(id)
 
@@ -58,6 +75,16 @@ defmodule EncomendeiWeb.ProductLive.Index do
           <span :if={!product.available} class="badge badge-soft badge-sm">Indisponível</span>
         </:col>
         <:action :let={{_id, product}}>
+          <button
+            type="button"
+            phx-click="toggle"
+            phx-value-id={product.id}
+            class="btn btn-sm btn-soft whitespace-nowrap"
+          >
+            {if product.available, do: "Marcar indisponível", else: "Marcar disponível"}
+          </button>
+        </:action>
+        <:action :let={{_id, product}}>
           <div class="sr-only">
             <.link navigate={~p"/admin/produtos/#{product}"}>Ver</.link>
           </div>
@@ -67,7 +94,7 @@ defmodule EncomendeiWeb.ProductLive.Index do
           <.link
             phx-click={JS.push("delete", value: %{id: product.id}) |> hide("##{id}")}
             data-confirm="Excluir este produto?"
-            class="text-error underline"
+            class="text-base-content/70 underline hover:text-error"
           >
             Excluir
           </.link>

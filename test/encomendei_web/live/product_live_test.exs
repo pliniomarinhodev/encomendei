@@ -21,6 +21,17 @@ defmodule EncomendeiWeb.ProductLiveTest do
       assert html =~ "Indisponível"
     end
 
+    test "alterna a disponibilidade sem abrir o formulário", %{conn: conn} do
+      product = product_fixture(name: "Bolo de Limão", available: true)
+      {:ok, view, _html} = live(conn, ~p"/admin/produtos")
+
+      view |> element("#products-#{product.id} button", "Marcar indisponível") |> render_click()
+
+      refute Catalog.get_product!(product.id).available
+      assert has_element?(view, "#products-#{product.id} button", "Marcar disponível")
+      assert has_element?(view, "#flash-info", "indisponível")
+    end
+
     test "marca a aba Produtos como ativa", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/admin/produtos")
       assert has_element?(view, ~s(nav[aria-label="Painel"] a[aria-current="page"]), "Produtos")
