@@ -5,7 +5,7 @@ resumo = ("Este relatório apresenta o desenvolvimento do Encomendei, uma aplica
           + M("PREENCHER: uma frase com o resultado da validação com a usuária"))
 palavras = len(re.sub(r'<[^>]+>','',resumo).split())
 
-FOTOS = "fotos ilustrativas do Wikimedia Commons: Andy Li (CC0), Wilfredor (CC0) e Rodrigogomesonetwo (CC BY-SA 4.0)"
+FOTOS = "fotos ilustrativas do Wikimedia Commons: Pedro Toniazzo Terres (CC BY-SA 4.0), Wilfredor (CC0), Andy Li (CC0) e Rodrigogomesonetwo (CC BY-SA 4.0)"
 
 def fig(n, arq, legenda, w=11, fonte="Autores (2026)"):
     return f'<p class="fig"><b>Figura {n}</b> – {legenda}</p><p class="img"><img src="data:image/png;base64,{base64.b64encode(open(arq,'rb').read()).decode()}" width="{int(w*37.8)}"></p><p class="fonte">Fonte: {fonte}</p>'
