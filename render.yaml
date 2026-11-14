@@ -1,0 +1,27 @@
+# Publicação gratuita no Render (https://render.com): Blueprint com o app em Docker e um PostgreSQL.
+# ADMIN_USER, ADMIN_PASSWORD e SHOP_PHONE são pedidos no primeiro deploy e não ficam no repositório.
+databases:
+  - name: encomendei-db
+    plan: free
+    databaseName: encomendei
+    user: encomendei
+
+services:
+  - type: web
+    name: encomendei
+    runtime: docker
+    plan: free
+    dockerCommand: sh -c "/app/bin/migrate && /app/bin/server"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: encomendei-db
+          property: connectionString
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      - key: ADMIN_USER
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: SHOP_PHONE
+        sync: false
