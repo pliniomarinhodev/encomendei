@@ -11,7 +11,6 @@ services:
     name: encomendei
     runtime: docker
     plan: free
-    dockerCommand: sh -c "/app/bin/migrate && /app/bin/server"
     envVars:
       - key: DATABASE_URL
         fromDatabase:

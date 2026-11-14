@@ -104,4 +104,5 @@ USER nobody
 # above and adding an entrypoint. See https://github.com/krallin/tini for details
 # ENTRYPOINT ["/tini", "--"]
 
-CMD ["/app/bin/server"]
+# Aplica as migrações e depois sobe o servidor (usado também pelo Render, que não roda comandos antes do deploy no plano gratuito)
+CMD ["sh", "-c", "/app/bin/migrate && /app/bin/server"]
