@@ -71,11 +71,21 @@ if config_env() == :prod do
   # to check this value into version control, so we use an environment
   # variable instead.
   secret_key_base =
-    System.get_env("SECRET_KEY_BASE") ||
-      raise """
-      environment variable SECRET_KEY_BASE is missing.
-      You can generate one by calling: mix phx.gen.secret
-      """
+    case System.get_env("SECRET_KEY_BASE") do
+      nil ->
+        raise """
+        environment variable SECRET_KEY_BASE is missing.
+        You can generate one by calling: mix phx.gen.secret
+        """
+
+      key when byte_size(key) >= 64 ->
+        key
+
+      # O Phoenix exige 64 bytes ou mais, mas alguns provedores (como o Render) geram
+      # segredos mais curtos. Estica o segredo de forma determinística com HMAC-SHA512.
+      short_key ->
+        Base.encode64(:crypto.mac(:hmac, :sha512, short_key, "encomendei secret_key_base"))
+    end
 
   host =
     System.get_env("PHX_HOST") || System.get_env("RENDER_EXTERNAL_HOSTNAME") || "example.com"
