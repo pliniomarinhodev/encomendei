@@ -41,8 +41,18 @@ sudo usermod -aG docker $USER   # saia e entre de novo no SSH
 ```bash
 git clone <URL-DO-REPOSITORIO> encomendei && cd encomendei
 cp .env.example .env
-nano .env        # preencha PHX_HOST, senhas e SECRET_KEY_BASE
+nano .env        # preencha PHX_HOST, senhas, SECRET_KEY_BASE e SHOP_PHONE (WhatsApp da confeiteira)
 ```
+
+**Sem repositório no GitHub?** Envie o código direto do seu computador (rodando na pasta do projeto, não na VM):
+
+```bash
+git archive --format=tar HEAD | ssh -i chave.key ubuntu@IP_DA_VM "mkdir -p encomendei && tar -x -C encomendei"
+ssh -i chave.key ubuntu@IP_DA_VM
+cd encomendei && cp .env.example .env && nano .env
+```
+
+Para atualizar depois, repita o primeiro comando e rode o `docker compose ... up -d --build` de novo.
 
 Para gerar o `SECRET_KEY_BASE` sem ter Elixir na VM:
 
