@@ -13,7 +13,7 @@ tudo em um painel que atualiza em tempo real (pendente → em produção → ent
 | Framework web | Phoenix 1.8 (Elixir) |
 | Banco de dados | PostgreSQL via Ecto (`priv/repo/migrations`) |
 | Script web (JavaScript) | Phoenix LiveView (carrinho e painel sem recarregar a página) |
-| Nuvem | Oracle Cloud Always Free – ver [docs/DEPLOY_ORACLE.md](docs/DEPLOY_ORACLE.md) |
+| Nuvem | Render (plano gratuito) – ver [docs/DEPLOY_RENDER.md](docs/DEPLOY_RENDER.md); alternativa: Oracle Cloud ([docs/DEPLOY_ORACLE.md](docs/DEPLOY_ORACLE.md)) |
 | API | JSON em `/api` (abaixo) |
 | Acessibilidade | HTML semântico, rótulos ARIA, `aria-live`, link "ir para o conteúdo", tema claro/escuro, `lang="pt-BR"` |
 | Análise de dados (opcional) | Relatórios em `/admin/relatorios` e exportação CSV |
