@@ -77,7 +77,39 @@ defmodule EncomendeiWeb.Layouts do
           </.link>
         </nav>
 
-        <div class="ml-auto"><.theme_toggle /></div>
+        <nav
+          :if={@nav == :public}
+          aria-label="Principal"
+          class="order-last -mx-1 flex w-full gap-1 overflow-x-auto sm:order-none sm:mx-0 sm:w-auto sm:flex-1"
+        >
+          <.link
+            :for={{key, label, path} <- public_tabs()}
+            navigate={path}
+            aria-current={@active == key && "page"}
+            class={[
+              "whitespace-nowrap rounded px-3 py-2 text-sm font-medium sm:py-1.5",
+              @active == key && "bg-base-200",
+              @active != key && "text-base-content/70 hover:bg-base-200"
+            ]}
+          >
+            {label}
+          </.link>
+        </nav>
+
+        <div class="ml-auto flex items-center gap-3">
+          <.link :if={@nav == :admin} navigate={~p"/"} class="hidden text-sm underline sm:inline">
+            Ver cardápio
+          </.link>
+          <.link
+            :if={@nav == :admin}
+            href={~p"/sair"}
+            method="delete"
+            class="btn btn-ghost btn-sm"
+          >
+            Sair
+          </.link>
+          <.theme_toggle />
+        </div>
       </div>
     </header>
 
@@ -87,8 +119,11 @@ defmodule EncomendeiWeb.Layouts do
       </div>
     </main>
 
-    <footer :if={@nav == :public} class="px-4 pb-8 text-center text-sm text-base-content/75">
-      <.link navigate={~p"/admin/pedidos"} class="underline">Área da confeiteira</.link>
+    <footer
+      :if={@nav == :public and @active != :login}
+      class="px-4 pb-8 text-center text-sm text-base-content/75"
+    >
+      <.link navigate={~p"/entrar"} class="underline">Área da confeiteira</.link>
     </footer>
 
     <.flash_group flash={@flash} />
@@ -100,6 +135,13 @@ defmodule EncomendeiWeb.Layouts do
 
   defp home_path(:admin), do: ~p"/admin/pedidos"
   defp home_path(:public), do: ~p"/"
+
+  defp public_tabs do
+    [
+      {:menu, "Cardápio", ~p"/"},
+      {:track, "Acompanhar pedido", ~p"/acompanhar"}
+    ]
+  end
 
   defp admin_tabs do
     [

@@ -36,8 +36,13 @@ defmodule EncomendeiWeb.ConnCase do
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 
-  @doc "Adiciona credenciais do painel administrativo à conexão de teste."
+  @doc "Conexão de teste com a confeiteira já logada (sessão do painel)."
   def admin_conn(conn) do
+    Plug.Test.init_test_session(conn, admin_at: System.system_time(:second))
+  end
+
+  @doc "Adiciona credenciais Basic Auth da API administrativa à conexão de teste."
+  def api_admin_conn(conn) do
     Plug.Conn.put_req_header(
       conn,
       "authorization",

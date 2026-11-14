@@ -77,7 +77,7 @@ defmodule EncomendeiWeb.StoreLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash}>
+    <Layouts.app flash={@flash} active={:menu}>
       <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
         <section aria-labelledby="titulo-cardapio">
           <.header>

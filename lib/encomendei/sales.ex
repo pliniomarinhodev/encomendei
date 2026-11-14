@@ -87,6 +87,29 @@ defmodule Encomendei.Sales do
   @spec get_order!(Ecto.UUID.t()) :: Order.t()
   def get_order!(id), do: Repo.get!(with_details(Order), id)
 
+  @doc """
+  Encontra a encomenda pelo número e pelo telefone de quem pediu, para o cliente
+  que perdeu o link de acompanhamento. Exigir o telefone impede que alguém
+  descubra pedidos alheios só variando o número.
+  """
+  @spec fetch_order_by_contact(term(), term()) :: {:ok, Order.t()} | {:error, :not_found}
+  def fetch_order_by_contact(number, phone) do
+    with {n, ""} <-
+           number |> to_string() |> String.trim() |> String.trim_leading("#") |> Integer.parse(),
+         digits when digits != "" <- phone |> to_string() |> String.replace(~r/\D/, ""),
+         %Order{} = order <-
+           Repo.one(
+             from o in Order,
+               join: c in assoc(o, :customer),
+               where: o.number == ^n and c.phone == ^digits,
+               preload: [:customer, items: :product]
+           ) do
+      {:ok, order}
+    else
+      _no_match -> {:error, :not_found}
+    end
+  end
+
   @doc "Busca uma encomenda pelo id. Ids malformados são tratados como inexistentes."
   @spec fetch_order(term()) :: {:ok, Order.t()} | {:error, :not_found}
   def fetch_order(id) do

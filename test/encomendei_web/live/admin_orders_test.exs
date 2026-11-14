@@ -20,16 +20,19 @@ defmodule EncomendeiWeb.Admin.OrdersLiveTest do
     %{order: order}
   end
 
-  test "exige senha", %{conn: conn} do
-    assert get(conn, ~p"/admin/pedidos").status == 401
-    assert get(conn, ~p"/admin/produtos").status == 401
+  test "quem não fez login vai para a página de entrada", %{conn: conn} do
+    for path <- [~p"/admin", ~p"/admin/pedidos", ~p"/admin/produtos", ~p"/admin/relatorios"] do
+      conn = get(conn, path)
+      assert redirected_to(conn) == ~p"/entrar"
+    end
+
+    assert conn |> get(~p"/admin/relatorios/pedidos.csv") |> redirected_to() == ~p"/entrar"
   end
 
-  test "rejeita senha errada", %{conn: conn} do
-    conn =
-      put_req_header(conn, "authorization", Plug.BasicAuth.encode_basic_auth("admin", "errada"))
-
-    assert get(conn, ~p"/admin/pedidos").status == 401
+  test "login expirado também volta para a entrada", %{conn: conn} do
+    old = System.system_time(:second) - 13 * 3600
+    conn = conn |> Plug.Test.init_test_session(admin_at: old) |> get(~p"/admin/pedidos")
+    assert redirected_to(conn) == ~p"/entrar"
   end
 
   test "lista pedidos e avança o status", %{conn: conn, order: order} do

@@ -84,6 +84,12 @@ defmodule EncomendeiWeb.OrderLive.Show do
           </.button>
         </section>
 
+        <p class="text-sm text-base-content/80">
+          Perdeu esta página? Em
+          <.link navigate={~p"/acompanhar"} class="underline">Acompanhar pedido</.link>
+          você encontra o pedido pelo número e pelo telefone.
+        </p>
+
         <.button navigate={~p"/"} variant="ghost">Fazer outro pedido</.button>
       </div>
     </Layouts.app>

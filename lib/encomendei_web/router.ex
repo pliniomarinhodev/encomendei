@@ -10,7 +10,14 @@ defmodule EncomendeiWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :admin do
+  pipeline :require_admin do
+    plug :require_admin_session
+  end
+
+  defp require_admin_session(conn, opts), do: EncomendeiWeb.AdminAuth.require_admin(conn, opts)
+
+  # A API administrativa continua com Basic Auth, o padrão para clientes de API
+  pipeline :api_admin do
     plug :admin_auth
   end
 
@@ -27,19 +34,28 @@ defmodule EncomendeiWeb.Router do
     pipe_through :browser
 
     live "/", StoreLive
+    live "/acompanhar", TrackLive
     live "/pedido/:id", OrderLive.Show
+
+    get "/entrar", SessionController, :new
+    post "/entrar", SessionController, :create
+    delete "/sair", SessionController, :delete
   end
 
   scope "/admin", EncomendeiWeb do
-    pipe_through [:browser, :admin]
+    pipe_through [:browser, :require_admin]
 
-    live "/pedidos", Admin.OrdersLive
-    live "/relatorios", Admin.ReportsLive
+    get "/", AdminController, :index
     get "/relatorios/pedidos.csv", ReportController, :orders_csv
-    live "/produtos", ProductLive.Index, :index
-    live "/produtos/new", ProductLive.Form, :new
-    live "/produtos/:id", ProductLive.Show, :show
-    live "/produtos/:id/edit", ProductLive.Form, :edit
+
+    live_session :admin, on_mount: {EncomendeiWeb.AdminAuth, :require_admin} do
+      live "/pedidos", Admin.OrdersLive
+      live "/relatorios", Admin.ReportsLive
+      live "/produtos", ProductLive.Index, :index
+      live "/produtos/new", ProductLive.Form, :new
+      live "/produtos/:id", ProductLive.Show, :show
+      live "/produtos/:id/edit", ProductLive.Form, :edit
+    end
   end
 
   scope "/api", EncomendeiWeb.API do
@@ -51,7 +67,7 @@ defmodule EncomendeiWeb.Router do
   end
 
   scope "/api/admin", EncomendeiWeb.API do
-    pipe_through [:api, :admin]
+    pipe_through [:api, :api_admin]
 
     get "/orders", OrderController, :index
     patch "/orders/:id/status", OrderController, :update_status

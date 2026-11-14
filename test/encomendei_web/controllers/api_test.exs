@@ -139,7 +139,7 @@ defmodule EncomendeiWeb.APITest do
     end
 
     test "lista e filtra por status", %{conn: conn} do
-      conn = admin_conn(conn)
+      conn = api_admin_conn(conn)
       assert %{"data" => [_]} = conn |> get(~p"/api/admin/orders") |> json_response(200)
 
       assert %{"data" => []} =
@@ -147,7 +147,7 @@ defmodule EncomendeiWeb.APITest do
     end
 
     test "muda status respeitando o fluxo", %{conn: conn, id: id} do
-      conn = admin_conn(conn)
+      conn = api_admin_conn(conn)
 
       assert %{"data" => %{"status" => "in_production"}} =
                conn

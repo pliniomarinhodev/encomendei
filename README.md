@@ -35,7 +35,7 @@ mix phx.server
 ```
 
 - Cardápio: <http://localhost:4000/>
-- Painel: <http://localhost:4000/admin/pedidos> (dev: `admin` / `admin`)
+- Painel: <http://localhost:4000/entrar> (dev: `admin` / `admin`)
 
 Testes: `mix test`
 
@@ -44,11 +44,13 @@ Testes: `mix test`
 | Rota | Acesso | Função |
 |---|---|---|
 | `/` | público | Cardápio, carrinho e envio da encomenda |
+| `/acompanhar` | público | O cliente reencontra o pedido pelo número e pelo telefone |
 | `/pedido/:id` | público (o `id` é um UUID difícil de adivinhar) | Confirmação ("Pedido #42 recebido"), status em tempo real e botão para falar com a confeiteira no WhatsApp (variável `SHOP_PHONE`) |
-| `/admin/pedidos` | senha | Fila de produção em tempo real, com busca (nome sem acento, telefone ou nº) e filtro de entrega; aviso e destaque de pedido novo, confirmação a cada mudança de status, grupo de cancelados e WhatsApp com mensagem pronta |
-| `/admin/produtos` | senha | Cadastro de produtos, com foto por link (só `http`/`https`) e botão rápido para marcar disponível/indisponível |
-| `/admin/relatorios` | senha | Entregue x a entregar, ticket médio, produtos mais vendidos e semanas; atualiza em tempo real |
-| `/admin/relatorios/pedidos.csv` | senha | Exporta os itens vendidos em CSV (pronto para planilha), identificando o pedido pelo número |
+| `/entrar` | público | Login da confeiteira (usuário e senha, sessão de 12 horas); `/sair` encerra |
+| `/admin/pedidos` | login | Fila de produção em tempo real, com busca (nome sem acento, telefone ou nº) e filtro de entrega; aviso e destaque de pedido novo, confirmação a cada mudança de status, grupo de cancelados e WhatsApp com mensagem pronta |
+| `/admin/produtos` | login | Cadastro de produtos, com foto por link (só `http`/`https`) e botão rápido para marcar disponível/indisponível |
+| `/admin/relatorios` | login | Entregue x a entregar, ticket médio, produtos mais vendidos e semanas; atualiza em tempo real |
+| `/admin/relatorios/pedidos.csv` | login | Exporta os itens vendidos em CSV (pronto para planilha), identificando o pedido pelo número |
 
 ## Número do pedido
 

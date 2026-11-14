@@ -5,9 +5,9 @@ defmodule EncomendeiWeb.ReportsTest do
   import Encomendei.CatalogFixtures
   alias Encomendei.Sales
 
-  test "exige senha", %{conn: conn} do
-    assert get(conn, ~p"/admin/relatorios").status == 401
-    assert get(conn, ~p"/admin/relatorios/pedidos.csv").status == 401
+  test "exige login", %{conn: conn} do
+    assert conn |> get(~p"/admin/relatorios") |> redirected_to() == ~p"/entrar"
+    assert conn |> get(~p"/admin/relatorios/pedidos.csv") |> redirected_to() == ~p"/entrar"
   end
 
   test "mostra indicadores e atualiza com novo pedido", %{conn: conn} do
