@@ -51,7 +51,8 @@ corpo = f'''
 Figura 2 – Confirmação do pedido com andamento em tempo real<br>
 Figura 3 – Painel de pedidos da empreendedora, agrupado por status<br>
 Figura 4 – Relatórios de vendas<br>
-Figura 5 – Cardápio com barra do carrinho e painel de pedidos no celular</p>
+Figura 5 – Cardápio com barra do carrinho e painel de pedidos no celular<br>
+Figura 6 – Diagrama das tabelas do banco de dados e seus relacionamentos</p>
 <p class="pb"></p>
 
 <h2 class="sem">SUMÁRIO</h2>
@@ -156,7 +157,9 @@ REFERÊNCIAS</p>
 {fig(3,"painel.png","Painel de pedidos da empreendedora, agrupado por status",15)}
 {fig(4,"relatorios.png","Relatórios de vendas",13)}
 {fig(5,"celular.png","Cardápio com barra do carrinho e painel de pedidos no celular",12,"Autores (2026); "+FOTOS)}
-<p>O banco de dados relacional possui quatro tabelas: produtos, clientes, pedidos e itens de pedido, ligadas por chaves estrangeiras. As principais regras de negócio são:</p>
+<p>O banco de dados relacional possui quatro tabelas: produtos, clientes, pedidos e itens de pedido, ligadas por chaves estrangeiras (Figura 6).</p>
+{fig(6,"diagrama_banco.png","Diagrama das tabelas do banco de dados e seus relacionamentos",13)}
+<p>As principais regras de negócio são:</p>
 <ul>
 <li>o preço de cada item é lido do cadastro de produtos no servidor, e o valor enviado pelo cliente é ignorado;</li>
 <li>só é possível encomendar produtos disponíveis e com data de entrega futura;</li>

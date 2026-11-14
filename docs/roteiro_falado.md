@@ -1,70 +1,43 @@
-# Roteiro falado do vídeo (leia em voz alta, cerca de 8 minutos)
+# Roteiro do vídeo (uma pessoa, cerca de 8 minutos)
 
-Divisão sugerida entre os quatro. Troquem os nomes como preferirem; o que importa é
-**cada um aparecer e falar pelo menos uma vez** (critério de identificação do grupo).
-Texto entre colchetes `[...]` é o que só o grupo sabe. Não inventem: se algo não aconteceu, digam que está previsto.
+Formato dos vídeos de outros grupos: **uma pessoa** apresenta alguns slides (6 a 8) e, no final, **mostra o sistema funcionando**
+e o código no GitHub. Duração boa: 7 a 9 minutos (o limite é 10). Falar devagar, em linguagem simples.
+Texto entre colchetes `[...]` só você sabe. Não invente: diga só o que de fato aconteceu.
 
-Antes de gravar: `docker start encomendei-pg`, `mix phx.server`, `mix run priv/repo/demo.exs`
-e `mix run priv/repo/demo_photos.exs`. Abram duas abas: cardápio (`/`) e painel (`/admin/pedidos`, admin/admin).
+## Antes de gravar
+- `docker start encomendei-pg`, `mix phx.server`, `mix run priv/repo/demo.exs`, `mix run priv/repo/demo_photos.exs`.
+- Abra o **site publicado** (https://encomendei.onrender.com) uns 5 minutos antes, para ele não estar dormindo.
+- Abas prontas: cardápio, painel (já logado), GitHub do projeto, slides.
+- Slides sugeridos: 1 Título e grupo · 2 Problema · 3 Objetivo e etapas (Ouvir, Criar, Implementar) · 4 Tecnologias e diagrama do banco (`docs/figuras/diagrama_banco.png`) · 5 Telas (as figuras do relatório) · 6 Resultados · 7 Disciplinas aplicadas · 8 Melhorias futuras e agradecimentos, com a **URL do sistema** na tela.
 
----
+## Roteiro por bloco
 
-## 1. Abertura (0:00–0:40) — Danilo, com a câmera ou o slide de título
+| Tempo | Slide / tela | O que dizer |
+|---|---|---|
+| 0:00–0:50 | 1. Título | "Olá. Eu sou o Plinio Henrique Sgobi Marinho, RA 24202364, do Projeto Integrador em Computação II, grupo 5, turma A2026S2N4, do polo [POLO]. O grupo é formado por Danilo Henrique Scateloni, Fernando Donizeti Abachi, Paulo Patrick Rodrigues Martins e por mim. Nossa tutora é a Elaine Cecilia Gomes Macagnan. Nosso trabalho se chama Encomendei, uma aplicação web para automação de encomendas de bolos caseiros." |
+| 0:50–1:50 | 2. Problema | "A comunidade é o negócio de bolos caseiros da Sra. Michele. Hoje os pedidos chegam por mensagens e são anotados no papel. Isso causa sobrecarga, risco de esquecer pedidos e dificuldade para organizar as entregas. Nossa pergunta foi: como uma aplicação web com banco de dados pode reduzir essa sobrecarga e melhorar a gestão das encomendas?" |
+| 1:50–2:40 | 3. Objetivo e etapas | "O objetivo foi criar um sistema em que o cliente faz a encomenda pela internet e a confeiteira acompanha tudo em um painel. Seguimos as etapas da Univesp: **ouvir** a comunidade e levantar as necessidades, **criar** a solução e **implementar** o sistema funcionando." |
+| 2:40–3:40 | 4. Tecnologias e banco | "Usamos Elixir com o framework Phoenix, banco de dados PostgreSQL, e o código fica no GitHub. Este diagrama mostra o banco: clientes, pedidos, itens de pedido e produtos. Um cliente faz vários pedidos, um pedido tem vários itens, e cada item é um produto." |
+| 3:40–4:20 | 5. Telas | "Estas são as telas principais: o cardápio com o carrinho, a confirmação do pedido, o painel da confeiteira e os relatórios. Também funciona bem no celular." |
+| 4:20–5:00 | 6. Resultados | "**[DIGA O QUE DE FATO ACONTECEU com a Sra. Michele: quando mostraram, o que ela achou, ajustes.]** Se ainda não foi validado: "A validação com a Sra. Michele está prevista para [DATA]. O sistema está funcionando, publicado na internet, com 124 testes automatizados e sem problemas de acessibilidade nas verificações automáticas."" |
+| 5:00–5:40 | 7. Disciplinas | "Aplicamos programação web, banco de dados, engenharia de software, com levantamento de requisitos e testes, e interface humano-máquina, na acessibilidade e no uso pelo celular." |
+| 5:40–6:20 | 8. Melhorias e agradecimentos | "Como melhorias futuras: avisos automáticos por mensagem, pagamento online e atender mais de uma confeitaria. Agradeço à Sra. Michele, que cedeu a ideia do projeto, à tutora Elaine e ao meu grupo. O sistema está publicado neste endereço." (URL na tela) |
+| 6:20–8:30 | **Demonstração** | Roteiro abaixo |
 
-> Olá. Somos o Grupo 5 do Projeto Integrador em Computação II, disciplina PJI240, turma A2026S2N4,
-> do polo de [POLO], com a tutora Elaine Cecilia Gomes Macagnan.
-> Eu sou o Danilo Henrique Scateloni, RA 24221054.
-> Meus colegas são Fernando Donizeti Abachi, RA 24209928, Paulo Patrick Rodrigues Martins, RA 24223460,
-> e Plinio Henrique Sgobi Marinho, RA 24202364.
-> Nosso projeto se chama **Encomendei**, um sistema web de encomendas para um negócio de bolos caseiros.
+## Demonstração (2 minutos)
+1. **GitHub**: "O código está no GitHub, com o histórico de alterações e o README." Mostrar a lista de arquivos e os commits. *(Veja a nota no final sobre autoria.)*
+2. **Site publicado**: mostrar o endereço `encomendei.onrender.com` na barra: "Está hospedado na internet, no Render."
+3. **Cardápio**: adicionar produtos, preencher nome, telefone e data, enviar. Mostrar o **número do pedido** na confirmação.
+4. **Painel** (`/entrar`, usuário e senha): "O pedido apareceu sozinho." Clicar em **Iniciar produção** e mostrar a outra aba mudando de status.
+5. **Busca e relatórios**: buscar um nome e abrir `/admin/relatorios`.
+6. Fechar: "Era isso. Obrigado pela atenção."
 
-## 2. O problema (0:40–2:10) — Fernando
+## Nota sobre o GitHub
+No outro vídeo, o apresentador mostra que mais de uma pessoa mexeu no código. Neste repositório, hoje, **todos os commits são de uma só pessoa**.
+Não diga que o grupo todo programou se não foi assim. Duas saídas honestas: (1) dizer apenas que o código está versionado no GitHub; (2) cada colega
+fazer uma contribuição **de verdade** (ex.: o próprio texto do relatório, os dados dos produtos, uma melhoria pequena), com a conta dele no GitHub.
 
-> A comunidade que escolhemos é o negócio de bolos caseiros da Sra. Michele, que a família de um de nós conhece.
-> Hoje os pedidos chegam por mensagens de WhatsApp e são anotados no papel.
-> Quando visitamos o local de produção, vimos um ambiente organizado, mas com muita carga mental:
-> dezenas de mensagens para acompanhar, risco de esquecer um pedido e dificuldade de organizar os horários de entrega.
-> Nossa pergunta foi: **como uma aplicação web com banco de dados pode reduzir essa sobrecarga e melhorar a gestão das encomendas?**
-> Isso se encaixa no tema da Univesp deste semestre: um software com framework web, banco de dados,
-> script web, nuvem, API, acessibilidade, controle de versão e testes.
-
-## 3. A solução funcionando (2:10–6:10) — Plinio, mostrando a tela
-
-> Vou mostrar o sistema funcionando. À esquerda, a visão do cliente; à direita, a da confeiteira.
-
-1. **Cardápio.** "Aqui o cliente vê os produtos com foto e preço. Vou adicionar dois bolos e um cento de brigadeiros; o total muda na hora."
-2. **Erro de propósito.** "Se eu digitar um telefone incompleto e uma data no passado, os dois erros aparecem junto dos campos, para a cliente corrigir de uma vez."
-3. **Enviar.** "Agora com os dados certos." Enviar. "Ela recebe o **número do pedido** e uma página que acompanha o andamento. Há também um botão para falar com a confeiteira pelo WhatsApp."
-4. **Painel.** Ir para a aba do painel. "O pedido apareceu sozinho, sem recarregar, com um aviso e a linha destacada. Os pedidos ficam agrupados por status, com contagem e total, e uma coluna mostra atrasadas e entregas de hoje."
-5. **Mudar status.** Clicar em *Iniciar produção*. "O painel confirma a mudança. E olhem a tela do cliente..." (mostrar a outra aba) "...o status mudou sozinho, em tempo real."
-6. **Busca.** Digitar um nome no campo de busca. "A confeiteira também busca por nome, telefone ou número e filtra por entregas atrasadas ou de hoje."
-7. **Produtos.** `/admin/produtos`. "Ela cadastra produtos, cola o link da foto e marca como indisponível com um clique quando acaba."
-8. **Relatórios.** `/admin/relatorios`. "Aqui vemos o que já foi entregue e o que falta entregar, o ticket médio e os produtos mais vendidos. O botão baixa tudo em planilha."
-9. **Celular** (opcional, 20 s). Abrir o DevTools em modo celular. "No celular os pedidos viram cartões e o carrinho tem uma barra fixa."
-
-## 4. Implementação na comunidade (6:10–7:10) — Paulo
-
-> **[PREENCHAM COM A VERDADE.]** Exemplos de como falar, conforme o que aconteceu:
-> - "Apresentamos o sistema à Sra. Michele em [DATA], por [presencial/vídeo]. Ela testou [o quê] e disse [o quê]. Ajustamos [o quê]."
-> - Se ainda não foi apresentado: "A apresentação à Sra. Michele está prevista para [DATA]. A solução está pronta para implantação, e o impacto esperado é reduzir esquecimentos e centralizar os pedidos."
-
-## 5. Recursos técnicos (7:10–7:50) — Plinio ou Fernando, com um slide de arquitetura
-
-> Usamos **Elixir e Phoenix**, com **LiveView** para a tela atualizar em tempo real, e banco **PostgreSQL**.
-> Há uma **API JSON** com pedidos e produtos. O código fica no **git**, com **124 testes automatizados**,
-> e a **acessibilidade** foi verificada com a ferramenta axe-core, sem violações, também no celular.
-> O sistema roda em contêineres Docker, publicado na nuvem no Render, em encomendei.onrender.com.
-
-## 6. Fechamento (7:50–8:20) — Danilo
-
-> Em resumo, o Encomendei troca o caderno e as mensagens soltas por um fluxo organizado de pedidos.
-> Como limitações, o aviso ao cliente ainda é por link de WhatsApp, sem envio automático, e as fotos dependem de links.
-> Como trabalho futuro, notificações automáticas e pagamento. Agradecemos à Sra. Michele e à tutora Elaine. Obrigado!
-
----
-
-## Dicas rápidas
-- Gravem a tela com o **OBS Studio** ou o **Google Meet** (gravação da reunião), com o microfone ligado. Teste de 20 segundos antes.
-- Resolução 1080p e zoom do navegador em 125% (Ctrl +) para ler melhor.
-- Se errar, continue: o critério é conteúdo, não edição. Passou de 10 minutos? Cortem o item 9.
-- Envie ao YouTube como **Não listado**, copie o link e cole na capa do relatório e na tarefa do AVA. Abra o link em janela anônima para conferir.
+## Dicas
+- Grave com OBS Studio ou o Google Meet (gravando a tela), microfone ligado. Teste de 20 segundos antes.
+- Zoom do navegador em 125%. Se errar, continue; se passar de 10 minutos, corte o item 5 da demonstração.
+- Suba no YouTube como **Não listado**, copie o link para a capa do relatório e para o AVA, e abra em janela anônima para conferir.
