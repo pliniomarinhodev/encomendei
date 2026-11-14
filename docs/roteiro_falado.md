@@ -51,7 +51,7 @@ e `mix run priv/repo/demo_photos.exs`. Abram duas abas: cardápio (`/`) e painel
 ## 5. Recursos técnicos (7:10–7:50) — Plinio ou Fernando, com um slide de arquitetura
 
 > Usamos **Elixir e Phoenix**, com **LiveView** para a tela atualizar em tempo real, e banco **PostgreSQL**.
-> Há uma **API JSON** com pedidos e produtos. O código fica no **git**, com **111 testes automatizados**,
+> Há uma **API JSON** com pedidos e produtos. O código fica no **git**, com **124 testes automatizados**,
 > e a **acessibilidade** foi verificada com a ferramenta axe-core, sem violações, também no celular.
 > O sistema roda em contêineres Docker, publicado na nuvem no Render, em encomendei.onrender.com.
 

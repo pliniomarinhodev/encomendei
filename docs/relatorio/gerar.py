@@ -47,9 +47,10 @@ corpo = f'''
 2 DESENVOLVIMENTO<br>
 &nbsp;&nbsp;2.1 Objetivos<br>
 &nbsp;&nbsp;2.2 Problema, justificativa e relação com o tema norteador<br>
-&nbsp;&nbsp;2.3 Fundamentação teórica<br>
-&nbsp;&nbsp;2.4 Metodologia<br>
-&nbsp;&nbsp;2.5 Disciplinas que auxiliaram o projeto<br>
+&nbsp;&nbsp;2.3 Análise de sistemas semelhantes<br>
+&nbsp;&nbsp;2.4 Fundamentação teórica<br>
+&nbsp;&nbsp;2.5 Metodologia<br>
+&nbsp;&nbsp;2.6 Disciplinas que auxiliaram o projeto<br>
 3 RESULTADOS<br>
 &nbsp;&nbsp;3.1 A solução desenvolvida<br>
 &nbsp;&nbsp;3.2 Etapas de construção<br>
@@ -83,14 +84,30 @@ REFERÊNCIAS</p>
 <p>No primeiro contato com a Sra. Michele, no local onde os bolos são produzidos, o grupo observou um ambiente organizado, mas com forte carga mental decorrente de anotar pedidos no papel e acompanhar dezenas de mensagens. A pergunta norteadora do projeto foi: <i>como o desenvolvimento de uma aplicação web com banco de dados pode contribuir para reduzir a sobrecarga e melhorar a gestão de encomendas em um pequeno negócio de bolos caseiros?</i></p>
 <p>O problema se relaciona ao tema norteador da Univesp para o semestre, que propõe o desenvolvimento de um software com framework web que utilize banco de dados, script web, nuvem, uso de API, acessibilidade, controle de versão e testes, com análise de dados opcional {M("CONFERIR o texto exato do tema norteador no Plano de Ensino")}. O Encomendei atende a todos esses elementos, como mostra a seção 3.1.</p>
 
-<h2>2.3 Fundamentação teórica</h2>
+<h2>2.3 Análise de sistemas semelhantes</h2>
+<p>Antes de definir a interface, o grupo pesquisou soluções existentes para pedidos online e para encomendas de confeitaria, em páginas dos próprios fornecedores, em publicações sobre o setor e em trabalhos acadêmicos. A consulta foi feita em novembro de 2026 e não substitui uma avaliação com as versões de teste de cada produto.</p>
+<p>As plataformas brasileiras de cardápio digital mais conhecidas, como o Anota AI e o Cardápio Web, são voltadas a restaurantes e delivery: oferecem cardápio digital, QR Code, atendimento automatizado pelo WhatsApp e integração com meios de pagamento (ANOTA AI, [s.d.]; GIRONEWS, [s.d.]). Em uma reclamação pública, um cliente de fábrica de salgados afirmou que o Anota AI parecia pensado apenas para hamburguerias e pizzarias (RECLAME AQUI, [s.d.]), o que sugere que o foco no pedido imediato serve mal à produção sob encomenda. Já os sistemas específicos para confeitaria, como o BakeSmart e o UpMenu, tratam pedidos antecipados e personalizados, agenda de produção, cadastro de clientes com histórico e acompanhamento do pedido (BAKESMART, [s.d.]; UPMENU, [s.d.]), mas em geral são pagos em dólar, o que pesa para uma confeiteira que trabalha sozinha. Há ainda trabalhos acadêmicos de sistemas web de encomendas para confeitarias (UTFPR, [s.d.]; ETEC, [s.d.]), o que confirma a demanda, embora sejam soluções sob medida, sem uso por outros negócios.</p>
+<p>Sobre a experiência de compra, guias do setor de pedidos online recomendam compra sem criar conta, carrinho sempre visível, botões de toque com pelo menos 44 pixels e leitura em uma coluna no celular (CHOWBUS, [s.d.]). O quadro a seguir compara os achados com o Encomendei.</p>
+{tabela(["Característica","Cardápio digital para delivery","Software de confeitaria","Encomendei"],[
+ ["Foco","Restaurante e entrega imediata","Confeitaria, com pedido personalizado","Encomenda de bolos com data de entrega"],
+ ["Custo","Mensalidade em reais","Mensalidade em dólar","Gratuito (código aberto e hospedagem gratuita)"],
+ ["Compra sem criar conta","Sim","Em geral sim","Sim"],
+ ["Data e hora da entrega no pedido","Pouco explorada","Sim","Sim, com validação de data futura"],
+ ["Acompanhamento pelo cliente","Em geral sim","Sim","Sim, em tempo real, por número e telefone"],
+ ["Painel por etapa de produção","Fila de cozinha","Agenda de produção","Painel por status, com atrasadas e entregas de hoje"],
+ ["Pagamento online","Sim","Sim","Não (fora do escopo)"],
+ ["Atendimento automático por WhatsApp","Sim (chatbot)","Em geral não","Não; link com mensagem pronta"]],
+ "Tabela 1 – Comparação entre soluções semelhantes e o Encomendei")}
+<p>A pesquisa orientou três decisões: manter a compra sem cadastro, com carrinho fixo e botões grandes no celular; incluir data de entrega obrigatória no pedido e um painel por etapa, que as soluções de delivery não priorizam; e dar ao cliente um caminho simples para reencontrar o pedido, sem conta. O pagamento online e o atendimento automático foram deixados como trabalho futuro, pelo custo e pela complexidade de manter.</p>
+
+<h2>2.4 Fundamentação teórica</h2>
 <p>Segundo Laudon e Laudon (2014), os sistemas de informação coletam, processam e armazenam dados para apoiar a tomada de decisão. Em pequenos empreendimentos, o uso de registros informais gera falhas e retrabalho, e a organização e o planejamento exigem ferramentas adequadas ao controle dos processos (OLIVEIRA, 2023).</p>
 <p>As aplicações web podem ser acessadas por diferentes dispositivos conectados à internet, o que dá flexibilidade ao usuário (MACIEL, 2020). O desenvolvimento ágil dessas aplicações costuma apoiar-se em frameworks (PRESSMAN; MAXIM, 2016). O armazenamento organizado de cadastros e pedidos é feito, em geral, por bancos de dados relacionais, que garantem consistência por meio de chaves e restrições (ELMASRI; NAVATHE, 2011).</p>
 <p>No processo de construção, a engenharia de software recomenda levantar requisitos junto aos usuários, verificar o sistema com testes e controlar as versões do código (SOMMERVILLE, 2019; PRESSMAN; MAXIM, 2016). Para entender as necessidades reais da usuária, o grupo adotou o Design Thinking, abordagem centrada no usuário que alterna compreensão do contexto, ideação e prototipação (CAVALCANTI; FILATRO, 2020).</p>
 <p>Quanto à acessibilidade, as Diretrizes de Acessibilidade para Conteúdo Web (WCAG) 2.1 organizam as exigências em quatro princípios: perceptível, operável, compreensível e robusto (W3C, 2018). Esses princípios orientaram as decisões de interface do sistema, como rótulos em todos os campos, contraste de cores, navegação por teclado e avisos dinâmicos para leitores de tela.</p>
 <p>Por fim, o framework Phoenix, escrito em Elixir, permite construir interfaces que se atualizam em tempo real pelo componente LiveView, sem exigir uma aplicação de front-end separada (PHOENIX FRAMEWORK, [s.d.]). O Elixir executa sobre a máquina virtual do Erlang, projetada para sistemas concorrentes e tolerantes a falhas (ELIXIR, [s.d.]).</p>
 
-<h2>2.4 Metodologia</h2>
+<h2>2.5 Metodologia</h2>
 <p>O trabalho seguiu os pilares propostos pela Univesp:</p>
 <p><b>Ouvir e interpretar o contexto.</b> Entrevistas informais e observação da rotina da Sra. Michele no local de trabalho. Identificou-se que a ausência de um histórico organizado de pedidos era o maior gargalo.</p>
 <p><b>Criar e prototipar.</b> Sessões de ideação em grupo, definição dos requisitos funcionais, modelagem inicial do banco de dados (clientes, produtos e pedidos) e esboços das telas, apresentados no relatório parcial.</p>
@@ -100,9 +117,9 @@ REFERÊNCIAS</p>
  ["Django (Python)","Muito documentado, painel administrativo pronto, boa base de referências","Atualização em tempo real do painel exigiria componente extra (WebSocket)"],
  ["Node.js com Express","Mesma linguagem no servidor e no navegador","Exige montar manualmente autenticação, validação e camada de dados"],
  ["Elixir com Phoenix (escolhida)","LiveView atualiza o painel em tempo real sem front-end separado; testes embutidos; migrações de banco integradas","Comunidade menor; curva de aprendizado para quem não conhece a linguagem"]],
- "Tabela 1 – Alternativas de tecnologia consideradas")}
+ "Tabela 2 – Alternativas de tecnologia consideradas")}
 
-<h2>2.5 Disciplinas que auxiliaram o projeto</h2>
+<h2>2.6 Disciplinas que auxiliaram o projeto</h2>
 <p>{M("CONFERIR quais disciplinas o grupo já cursou e ajustar a lista")}</p>
 <ul>
 <li><b>Banco de Dados:</b> modelagem entidade-relacionamento, chaves estrangeiras, normalização e consultas SQL usadas nos relatórios.</li>
@@ -115,7 +132,7 @@ REFERÊNCIAS</p>
 
 <h1>3 RESULTADOS</h1>
 <h2>3.1 A solução desenvolvida</h2>
-<p>O Encomendei tem duas visões. Na <b>visão do cliente</b>, o cardápio lista os produtos disponíveis, com foto quando a empreendedora cadastra o link da imagem; o cliente monta o carrinho, informa nome, telefone, data e hora de entrega e envia a encomenda (Figura 1); se algum dado estiver incorreto, o erro aparece junto do próprio campo, todos de uma vez. Uma barra fixa no rodapé do celular mostra a quantidade de itens e o total, com atalho para finalizar o pedido (Figura 5). Ao concluir, recebe o número do pedido (por exemplo, #42) e uma página de confirmação que acompanha o status do pedido em tempo real e traz um botão para falar com a confeiteira pelo WhatsApp (Figura 2). Na <b>visão da empreendedora</b>, um painel protegido por senha agrupa os pedidos por status (pendente, em produção e entregue, além de um grupo de cancelados quando houver), com a contagem e o valor de cada grupo. Há busca por nome (sem diferenciar acentos), telefone ou número do pedido e filtro por data de entrega. Cada pedido pode avançar para a etapa seguinte ou ser cancelado, com confirmação, e o botão de cancelar fica separado do principal para evitar cliques por engano (Figura 3). Uma coluna lateral destaca as entregas de hoje e as atrasadas. O painel atualiza sozinho: quando chega um pedido novo, exibe um aviso e destaca a linha por alguns segundos, e cada mudança de status é confirmada na tela. No celular, cada pedido vira um cartão, sem rolagem lateral (Figura 5). O painel traz o link direto para o WhatsApp do cliente, com uma mensagem inicial que cita o número do pedido. A empreendedora também cadastra os produtos, podendo informar o link da foto, que é validado (apenas endereços http e https) e é escondido sem prejuízo se sair do ar, e marcá-los como disponíveis ou indisponíveis com um clique, e consulta relatórios de vendas, que separam o valor já entregue do que ainda falta entregar, com exportação em CSV, em que cada linha identifica o pedido pelo número (Figura 4). O número é sequencial e gerado pelo banco de dados; as regras de integridade (total e quantidade nunca negativos, status restrito aos valores válidos) são garantidas pelo próprio PostgreSQL, além de validadas na aplicação.</p>
+<p>O Encomendei tem duas visões. Na <b>visão do cliente</b>, o cardápio lista os produtos disponíveis, com foto quando a empreendedora cadastra o link da imagem; o cliente monta o carrinho, informa nome, telefone, data e hora de entrega e envia a encomenda (Figura 1); se algum dado estiver incorreto, o erro aparece junto do próprio campo, todos de uma vez. Uma barra fixa no rodapé do celular mostra a quantidade de itens e o total, com atalho para finalizar o pedido (Figura 5). Ao concluir, recebe o número do pedido (por exemplo, #42) e uma página de confirmação que acompanha o status do pedido em tempo real e traz um botão para falar com a confeiteira pelo WhatsApp (Figura 2). Quem perder a página reencontra o pedido na área "Acompanhar pedido", informando o número e o telefone usado na encomenda, sem precisar de conta. Na <b>visão da empreendedora</b>, um painel protegido por login (usuário e senha, com sessão de 12 horas) agrupa os pedidos por status (pendente, em produção e entregue, além de um grupo de cancelados quando houver), com a contagem e o valor de cada grupo. Há busca por nome (sem diferenciar acentos), telefone ou número do pedido e filtro por data de entrega. Cada pedido pode avançar para a etapa seguinte ou ser cancelado, com confirmação, e o botão de cancelar fica separado do principal para evitar cliques por engano (Figura 3). Uma coluna lateral destaca as entregas de hoje e as atrasadas. O painel atualiza sozinho: quando chega um pedido novo, exibe um aviso e destaca a linha por alguns segundos, e cada mudança de status é confirmada na tela. No celular, cada pedido vira um cartão, sem rolagem lateral (Figura 5). O painel traz o link direto para o WhatsApp do cliente, com uma mensagem inicial que cita o número do pedido. A empreendedora também cadastra os produtos, podendo informar o link da foto, que é validado (apenas endereços http e https) e é escondido sem prejuízo se sair do ar, e marcá-los como disponíveis ou indisponíveis com um clique, e consulta relatórios de vendas, que separam o valor já entregue do que ainda falta entregar, com exportação em CSV, em que cada linha identifica o pedido pelo número (Figura 4). O número é sequencial e gerado pelo banco de dados; as regras de integridade (total e quantidade nunca negativos, status restrito aos valores válidos) são garantidas pelo próprio PostgreSQL, além de validadas na aplicação.</p>
 {fig(1,"cardapio.png","Cardápio com fotos, carrinho e formulário de encomenda do cliente",11,"Autores (2026); "+FOTOS)}
 {fig(2,"confirmacao.png","Confirmação do pedido com andamento em tempo real")}
 {fig(3,"painel.png","Painel de pedidos da empreendedora, agrupado por status",15)}
@@ -137,15 +154,15 @@ REFERÊNCIAS</p>
  ["Uso de API","API JSON: catálogo, criação e consulta de pedidos, rotas administrativas com autenticação"],
  ["Acessibilidade","HTML semântico, rótulos, avisos para leitor de tela, contraste e tema claro/escuro"],
  ["Controle de versão","git, com histórico de commits por funcionalidade"],
- ["Testes","111 testes automatizados (ExUnit), todos aprovados"],
+ ["Testes","124 testes automatizados (ExUnit), todos aprovados"],
  ["Análise de dados (opcional)","Relatórios de faturamento, ticket médio, produtos mais vendidos e vendas por semana, com exportação em CSV"]],
- "Tabela 2 – Requisitos do projeto e como foram atendidos")}
+ "Tabela 3 – Requisitos do projeto e como foram atendidos")}
 
 <h2>3.2 Etapas de construção</h2>
 <p>A construção foi organizada em etapas, cada uma registrada no controle de versão: (1) criação do projeto e do esquema de banco de dados; (2) regras de negócio dos pedidos, com testes; (3) telas do cliente e painel da empreendedora em tempo real; (4) API JSON; (5) publicação em nuvem, com contêineres e documentação; (6) correções de acessibilidade; (7) relatórios de vendas e exportação.</p>
 
 <h2>3.3 Verificação: testes e acessibilidade</h2>
-<p>Os 111 testes automatizados cobrem as regras de negócio (preço calculado no servidor, produto indisponível, carrinho vazio, data passada, fluxo de status), as restrições do banco de dados (número único, valores não negativos, status válido), as telas do cliente e do painel, a proteção por senha, a API e os relatórios. Há testes para a atualização do painel em tempo real quando um pedido é criado, para a busca e o filtro de pedidos, para os erros do formulário e para o resumo de valores entregues e a entregar. A exportação CSV neutraliza campos que começam com caracteres de fórmula, evitando que planilhas executem conteúdo digitado por clientes.</p>
+<p>Os 124 testes automatizados cobrem as regras de negócio (preço calculado no servidor, produto indisponível, carrinho vazio, data passada, fluxo de status), as restrições do banco de dados (número único, valores não negativos, status válido), as telas do cliente e do painel, a proteção por senha, a API e os relatórios. Há testes para a atualização do painel em tempo real quando um pedido é criado, para a busca e o filtro de pedidos, para os erros do formulário e para o resumo de valores entregues e a entregar. A exportação CSV neutraliza campos que começam com caracteres de fórmula, evitando que planilhas executem conteúdo digitado por clientes.</p>
 <p>A acessibilidade foi avaliada com a ferramenta axe-core, em navegador sem interface gráfica, nas telas do cardápio, da confirmação, do painel, do cadastro de produtos e dos relatórios, nos temas claro e escuro, em computador (1280 px) e em tela de celular (390 px). A primeira execução apontou dois problemas: botões do seletor de tema sem nome acessível e baixo contraste nos rótulos dos campos. Após o redesenho da interface, a auditoria foi repetida e apontou contraste insuficiente em cabeçalhos de tabela e em etiquetas de status do tema claro, corrigidos com ajuste da paleta. Depois, o layout foi adaptado para celular e a auditoria foi refeita também em tela de 390 px. Ao final, não restaram violações em nenhuma das telas, nos dois temas e nas duas larguras. Ferramentas automáticas detectam apenas parte dos problemas; por isso, recomenda-se complementar a verificação com testes manuais de teclado e leitor de tela {M("PREENCHER se o grupo fez teste manual")}.</p>
 
 <h2>3.4 Implantação e validação com a usuária</h2>
@@ -155,7 +172,7 @@ REFERÊNCIAS</p>
 <h2>3.5 Limitações</h2>
 <ul>
 <li>o plano gratuito do Render suspende o site após 15 minutos sem acesso, e o primeiro acesso depois disso leva cerca de um minuto; o banco de dados gratuito expira em 30 dias, de modo que o uso contínuo exigiria um plano pago ou outra hospedagem;</li>
-<li>o acesso ao painel usa autenticação básica com um único usuário; para vários funcionários seria necessário um sistema de contas;</li>
+<li>o painel tem um único usuário e senha, definidos na configuração; para vários funcionários seria necessário um sistema de contas;</li>
 <li>o sistema avisa a empreendedora pelo painel, e o contato com o cliente é feito por link do WhatsApp, sem envio automático de mensagens;</li>
 <li>não há pagamento online; o pagamento continua sendo combinado diretamente com o cliente;</li>
 <li>a acessibilidade foi verificada principalmente de forma automatizada.</li>
@@ -166,15 +183,23 @@ REFERÊNCIAS</p>
 <p>Como contribuição, o Encomendei é uma base reutilizável por outras confeitarias e pequenos negócios que vendem por encomenda. Como trabalhos futuros, sugerem-se contas para vários usuários, notificações automáticas por mensagem, pagamento online e testes de acessibilidade com usuários de tecnologias assistivas.</p>
 
 <h1>REFERÊNCIAS</h1>
+<p class="ref">ANOTA AI. <b>Cardápio digital Anota Ai</b>: modernize sua gestão de pedidos. [S.l.]: Saipos, [s.d.]. Disponível em: https://saipos.com/cardapio-digital/anota-ai. Acesso em: 14 nov. 2026.</p>
+<p class="ref">BAKESMART. <b>Sales suite</b>: online ordering and custom cake orders. [S.l.]: BakeSmart, [s.d.]. Disponível em: https://bakesmart.com/products/sales-suite. Acesso em: 14 nov. 2026.</p>
 <p class="ref">CAVALCANTI, Carolina; FILATRO, Andrea. <b>Design Thinking</b>: inovação com propósito. 2. ed. Barueri: Atlas, 2020.</p>
+<p class="ref">CHOWBUS. <b>Restaurant online ordering best practices</b>. [S.l.]: Chowbus, [s.d.]. Disponível em: https://www.chowbus.com/blog/restaurant-online-ordering-best-practices. Acesso em: 14 nov. 2026.</p>
 <p class="ref">ELIXIR. <b>Elixir</b>: documentação oficial. [S.l.]: Elixir Team, [s.d.]. Disponível em: https://elixir-lang.org/. Acesso em: {M("data")}.</p>
 <p class="ref">ELMASRI, Ramez; NAVATHE, Shamkant B. <b>Sistemas de banco de dados</b>. 6. ed. São Paulo: Pearson, 2011.</p>
+<p class="ref">ETEC. <b>Sistema web de encomendas para confeiteiros</b>. Trabalho de conclusão de curso (Análise e Desenvolvimento de Sistemas). [S.l.]: Centro Paula Souza, 2024. Disponível em: https://ric.cps.sp.gov.br/bitstream/123456789/22981/1/ads_2024_1_carolinevazbarto_larissagoncalvesferreira_sistemawebdeencomendasparaconfeiteiros.pdf. Acesso em: 14 nov. 2026.</p>
+<p class="ref">GIRONEWS. <b>Melhores plataformas de cardápio digital para restaurante no Brasil</b>. [S.l.]: Gironews, [s.d.]. Disponível em: https://gironews.com/food-service/melhores-plataformas-de-cardapio-digital-para-restaurante-no-brasil/. Acesso em: 14 nov. 2026.</p>
 <p class="ref">LAUDON, Kenneth C.; LAUDON, Jane P. <b>Sistemas de informação gerenciais</b>. 14. ed. São Paulo: Pearson, 2014.</p>
 <p class="ref">MACIEL, Francisco de Barros. <b>Python e Django</b>: desenvolvimento web moderno e ágil. Rio de Janeiro: Alta Books, 2020.</p>
 <p class="ref">OLIVEIRA, Djalma de Pinho Rebouças de. <b>Planejamento estratégico</b>: conceitos, metodologia e práticas. 35. ed. Barueri: Atlas, 2023.</p>
 <p class="ref">PHOENIX FRAMEWORK. <b>Phoenix e Phoenix LiveView</b>: documentação oficial. [S.l.]: Phoenix Framework, [s.d.]. Disponível em: https://hexdocs.pm/phoenix e https://hexdocs.pm/phoenix_live_view. Acesso em: {M("data")}.</p>
 <p class="ref">PRESSMAN, Roger S.; MAXIM, Bruce R. <b>Engenharia de software</b>: uma abordagem profissional. 8. ed. Porto Alegre: AMGH, 2016.</p>
+<p class="ref">RECLAME AQUI. <b>Anota Ai</b>: sistema arcaico pensado apenas para hamburguerias e pizzarias. [S.l.]: Reclame Aqui, [s.d.]. Disponível em: https://www.reclameaqui.com.br/anota-ai/sistema-arcaico-pensado-apenas-para-hamburguerias-e-pizzarias_EsXiURq8ulT0mXAX/. Acesso em: 14 nov. 2026.</p>
 <p class="ref">SOMMERVILLE, Ian. <b>Engenharia de software</b>. 10. ed. São Paulo: Pearson, 2019.</p>
+<p class="ref">UPMENU. <b>Bakery software &amp; ordering system</b>. [S.l.]: UpMenu, [s.d.]. Disponível em: https://www.upmenu.com/bakery-software. Acesso em: 14 nov. 2026.</p>
+<p class="ref">UTFPR. <b>Sistema web para confeitaria</b>. Trabalho de conclusão de curso. [S.l.]: Universidade Tecnológica Federal do Paraná, [s.d.]. Disponível em: https://riut.utfpr.edu.br/jspui/bitstream/1/28491/1/sistemawebconfeitaria.pdf. Acesso em: 14 nov. 2026.</p>
 <p class="ref">W3C. <b>Web Content Accessibility Guidelines (WCAG) 2.1</b>. [S.l.]: World Wide Web Consortium, 2018. Disponível em: https://www.w3.org/TR/WCAG21/. Acesso em: {M("data")}.</p>
 '''
 css = '''body{font-family:"Times New Roman",serif;font-size:12pt;line-height:1.5;text-align:justify}
