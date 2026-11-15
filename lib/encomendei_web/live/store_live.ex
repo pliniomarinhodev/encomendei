@@ -92,8 +92,8 @@ defmodule EncomendeiWeb.StoreLive do
           <ul class="divide-y divide-base-300 border-y border-base-300" aria-label="Produtos">
             <li :for={product <- @products} class="flex flex-wrap items-center gap-x-4 gap-y-3 py-4">
               <img
-                :if={Product.image_url?(product.image_url)}
-                src={product.image_url}
+                :if={Product.image_src(product)}
+                src={Product.image_src(product)}
                 alt=""
                 loading="lazy"
                 class="size-20 shrink-0 rounded object-cover sm:size-24"
@@ -101,7 +101,7 @@ defmodule EncomendeiWeb.StoreLive do
               />
               <div class={[
                 "min-w-0 sm:flex-1 sm:basis-0",
-                (Product.image_url?(product.image_url) && "flex-1 basis-[calc(100%-6rem)]") ||
+                (Product.image_src(product) && "flex-1 basis-[calc(100%-6rem)]") ||
                   "basis-full"
               ]}>
                 <h2 class="font-semibold">{product.name}</h2>

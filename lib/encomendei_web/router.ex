@@ -30,6 +30,11 @@ defmodule EncomendeiWeb.Router do
     plug :accepts, ["json"]
   end
 
+  # Fotos enviadas pela confeiteira: públicas, sem sessão (o cardápio é aberto)
+  scope "/", EncomendeiWeb do
+    get "/imagens/produtos/:id", ProductImageController, :show
+  end
+
   scope "/", EncomendeiWeb do
     pipe_through :browser
 

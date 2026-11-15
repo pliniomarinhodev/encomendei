@@ -66,8 +66,8 @@ defmodule EncomendeiWeb.ProductLive.Index do
         <:col :let={{_id, product}} label="Nome">
           <div class="flex items-center gap-3">
             <img
-              :if={Encomendei.Catalog.Product.image_url?(product.image_url)}
-              src={product.image_url}
+              :if={Encomendei.Catalog.Product.image_src(product)}
+              src={Encomendei.Catalog.Product.image_src(product)}
               alt=""
               loading="lazy"
               class="size-10 shrink-0 rounded object-cover"

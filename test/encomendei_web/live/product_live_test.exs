@@ -153,4 +153,63 @@ defmodule EncomendeiWeb.ProductLiveTest do
       assert html =~ "Disponível"
     end
   end
+
+  describe "Foto enviada do computador" do
+    @png <<0x89, "PNG\r\n", 0x1A, "\n", 0, 0, 0, 13, "IHDR">>
+
+    defp photo(name, content),
+      do: %{name: name, content: content, type: "image/png"}
+
+    test "salva a foto escolhida e a mostra no cardápio", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/produtos/new")
+
+      view |> form("#product-form", product: %{name: "Bolo", price: "30"}) |> render_change()
+      upload = file_input(view, "#product-form", :photo, [photo("bolo.png", @png)])
+      assert render_upload(upload, "bolo.png") =~ "Pré-visualização da foto escolhida"
+
+      view |> form("#product-form") |> render_submit()
+
+      assert [%{image_type: "image/png"} = product] = Catalog.list_products()
+      assert {"image/png", @png} = Catalog.get_product_image(product.id)
+
+      {:ok, _view, html} = live(conn, ~p"/")
+      assert html =~ "/imagens/produtos/#{product.id}"
+    end
+
+    test "recusa arquivo que não é imagem mesmo com extensão de imagem", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/produtos/new")
+
+      view |> form("#product-form", product: %{name: "Bolo", price: "30"}) |> render_change()
+      upload = file_input(view, "#product-form", :photo, [photo("falso.png", "<html>oi</html>")])
+      render_upload(upload, "falso.png")
+
+      html = view |> form("#product-form") |> render_submit()
+
+      assert html =~ "envie uma imagem JPG, PNG ou WebP"
+      assert Catalog.list_products() == []
+    end
+
+    test "recusa extensão não aceita", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/admin/produtos/new")
+
+      upload =
+        file_input(view, "#product-form", :photo, [
+          %{name: "arquivo.pdf", content: "%PDF", type: "application/pdf"}
+        ])
+
+      assert {:error, [[_ref, :not_accepted]]} = render_upload(upload, "arquivo.pdf")
+    end
+
+    test "remove a foto enviada ao editar", %{conn: conn} do
+      {:ok, product} = Catalog.create_product(%{name: "Bolo", price: "30", image_data: @png})
+
+      {:ok, view, html} = live(conn, ~p"/admin/produtos/#{product}/edit")
+      assert html =~ "Foto enviada atualmente"
+
+      view |> form("#product-form", product: %{remove_image: "true"}) |> render_submit()
+
+      assert [%{image_type: nil}] = Catalog.list_products()
+      assert Catalog.get_product_image(product.id) == nil
+    end
+  end
 end

@@ -7,7 +7,7 @@ defmodule EncomendeiWeb.API.JSON do
       name: p.name,
       description: p.description,
       price_cents: p.price_cents,
-      image_url: p.image_url
+      image_url: Encomendei.Catalog.Product.image_src(p)
     }
   end
 

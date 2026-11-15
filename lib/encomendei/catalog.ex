@@ -21,6 +21,16 @@ defmodule Encomendei.Catalog do
     Repo.all(Product)
   end
 
+  @doc "Tipo e bytes da foto enviada de um produto, ou `nil` se ele não tem foto enviada."
+  @spec get_product_image(Ecto.UUID.t()) :: {String.t(), binary()} | nil
+  def get_product_image(id) do
+    Repo.one(
+      from p in Product,
+        where: p.id == ^id and not is_nil(p.image_type),
+        select: {p.image_type, p.image_data}
+    )
+  end
+
   @doc "Produtos disponíveis para encomenda, em ordem alfabética."
   @spec list_available_products() :: [Product.t()]
   def list_available_products do
