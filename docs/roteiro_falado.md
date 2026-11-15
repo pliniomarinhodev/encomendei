@@ -8,14 +8,14 @@ Texto entre colchetes `[...]` só você sabe. Não invente: diga só o que de fa
 - Abra o **site publicado** (https://encomendei.onrender.com) uns 5 minutos antes, para ele não estar dormindo.
 - Cadastre alguns produtos em `/admin/produtos` (o banco publicado começa vazio), para a demonstração ter o que mostrar.
 - Abas prontas: slides (PDF em tela cheia), GitHub do projeto, cardápio publicado, painel (já logado em outra aba).
-- **Slides:** `~/Projetos/univesp/docs/apresentacao_encomendei.pdf` (14 slides). Preencha em laranja: curso, polo (slide 1) e a validação com a Sra. Michele (slide 12).
+- **Slides:** `~/Projetos/univesp/docs/apresentacao_encomendei.pdf` (14 slides). O slide 12 traz só o próximo passo (apresentar à Sra. Michele); se ela já viu o sistema, me peça para atualizar com o que ela de fato disse.
 - Deixe a **câmera visível no canto** da tela (OBS), como no vídeo de referência.
 
 ## Roteiro por slide
 
 | Tempo | Slide | O que dizer |
 |---|---|---|
-| 0:00–0:40 | 1. Título | "Olá. Eu sou o Plinio Henrique Sgobi Marinho, RA 24202364, do curso [CURSO], polo [POLO]. Este é o Projeto Integrador em Computação II, grupo 5, turma A2026S2N4. O grupo é formado por Danilo Henrique Scateloni, Fernando Donizeti Abachi, Paulo Patrick Rodrigues Martins e por mim. Nossa tutora é a Elaine Cecilia Gomes Macagnan. O trabalho se chama Encomendei, uma aplicação web para automação de encomendas de bolos caseiros." |
+| 0:00–0:40 | 1. Título | "Olá. Eu sou o Plinio Henrique Sgobi Marinho, RA 24202364, da Univesp. Este é o Projeto Integrador em Computação II, grupo 5, turma A2026S2N4. O grupo é formado por Danilo Henrique Scateloni, Fernando Donizeti Abachi, Paulo Patrick Rodrigues Martins e por mim. Nossa tutora é a Elaine Cecilia Gomes Macagnan. O trabalho se chama Encomendei, uma aplicação web para automação de encomendas de bolos caseiros." |
 | 0:40–1:25 | 2. Problema | "A comunidade é o negócio de bolos caseiros da Sra. Michele. Hoje os pedidos chegam por mensagens e são anotados no papel. Isso causa sobrecarga, risco de esquecer pedidos e dificuldade para organizar as entregas. Nossa pergunta foi: como uma aplicação web com banco de dados pode reduzir essa sobrecarga e melhorar a gestão das encomendas?" |
 | 1:25–1:55 | 3. Objetivos | "O objetivo foi criar um sistema em que o cliente faz a encomenda pela internet e a confeiteira acompanha tudo em um painel, sem depender de papel e de mensagens soltas." |
 | 1:55–2:20 | 4. Etapas | "Seguimos as etapas da Univesp: **ouvir** a comunidade e levantar as necessidades, **criar** a solução e **implementar** o sistema funcionando." |
