@@ -1,7 +1,7 @@
 import re, base64, html as H
 M = lambda t: f'<mark>[{t}]</mark>'
 
-resumo = ("Este relatório apresenta o desenvolvimento do Encomendei, uma aplicação web para automação de encomendas de um pequeno negócio familiar de bolos caseiros, realizado no Projeto Integrador em Computação II da Univesp. O problema identificado foi a sobrecarga da empreendedora, que controlava pedidos por mensagens e cadernos, com falhas de comunicação e dificuldade para organizar os horários de entrega. A metodologia seguiu os pilares da Univesp (ouvir, criar e implementar) e o Design Thinking, com entrevistas, levantamento de requisitos, modelagem do banco de dados e prototipação. A solução foi construída com Elixir e Phoenix, banco de dados PostgreSQL, JavaScript por meio do Phoenix LiveView, API JSON, controle de versão com git e testes automatizados, e está publicada em nuvem, no serviço Render (plano gratuito). O sistema oferece cardápio e carrinho para o cliente, painel de pedidos atualizado em tempo real para a empreendedora e relatórios de vendas. A acessibilidade foi verificada com a ferramenta axe-core, sem violações nas telas avaliadas. O resultado é uma solução funcional que substitui o controle manual por um fluxo organizado de pedidos, com preço calculado no servidor e acompanhamento do status. "
+resumo = ("Este relatório apresenta o desenvolvimento do Encomendei, uma aplicação web para automação de encomendas de uma pequena confeitaria familiar que produz bolos caseiros, realizado no Projeto Integrador em Computação II da Univesp. O problema identificado foi a sobrecarga da empreendedora, que controlava pedidos por mensagens e cadernos, com falhas de comunicação e dificuldade para organizar os horários de entrega. A metodologia seguiu os pilares da Univesp (ouvir, criar e implementar) e o Design Thinking, com entrevistas, levantamento de requisitos, modelagem do banco de dados e prototipação. A solução foi construída com Elixir e Phoenix, banco de dados PostgreSQL, JavaScript por meio do Phoenix LiveView, API JSON, controle de versão com git e testes automatizados, e está publicada em nuvem, no serviço Render (plano gratuito). O sistema oferece cardápio e carrinho para o cliente, painel de pedidos atualizado em tempo real para a empreendedora e relatórios de vendas. A acessibilidade foi verificada com a ferramenta axe-core, sem violações nas telas avaliadas. O resultado é uma solução funcional que substitui o controle manual por um fluxo organizado de pedidos, com preço calculado no servidor e acompanhamento do status. "
           + M("PREENCHER: uma frase com o resultado da validação com a usuária"))
 palavras = len(re.sub(r'<[^>]+>','',resumo).split())
 
@@ -23,7 +23,7 @@ corpo = f'''
 <br><br>
 <p class="c">Danilo Henrique Scateloni – RA 24221054<br>Fernando Donizeti Abachi – RA 24209928<br>Paulo Patrick Rodrigues Martins – RA 24223460<br>Plinio Henrique Sgobi Marinho – RA 24202364</p>
 <br><br><br>
-<p class="c"><b>ENCOMENDEI: APLICAÇÃO WEB PARA AUTOMAÇÃO DE ENCOMENDAS DE BOLOS CASEIROS</b></p>
+<p class="c"><b>ENCOMENDEI: APLICAÇÃO WEB PARA AUTOMAÇÃO DE ENCOMENDAS DE CONFEITARIA</b></p>
 <br><br>
 <p class="c">Vídeo de apresentação: {M("COLAR AQUI O LINK DO YOUTUBE")}</p>
 <p class="c">Link para acesso no GitHub: https://github.com/pliniomarinhodev/encomendei</p>
@@ -33,12 +33,12 @@ corpo = f'''
 <p class="pb"></p>
 
 <p class="c">UNIVERSIDADE VIRTUAL DO ESTADO DE SÃO PAULO</p>
-<p class="c"><b>ENCOMENDEI: APLICAÇÃO WEB PARA AUTOMAÇÃO DE ENCOMENDAS DE BOLOS CASEIROS</b></p>
+<p class="c"><b>ENCOMENDEI: APLICAÇÃO WEB PARA AUTOMAÇÃO DE ENCOMENDAS DE CONFEITARIA</b></p>
 <p class="rec">Relatório Técnico-Científico apresentado na disciplina de Projeto Integrador em Computação II para o curso do Eixo de Computação da Universidade Virtual do Estado de São Paulo (UNIVESP).<br>Tutora: Elaine Cecilia Gomes Macagnan.</p>
 <p class="c">Vinhedo – SP<br>2026</p>
 <p class="pb"></p>
 
-<p class="rec">SCATELONI, Danilo Henrique; ABACHI, Fernando Donizeti; MARTINS, Paulo Patrick Rodrigues; MARINHO, Plinio Henrique Sgobi. <b>Encomendei: aplicação web para automação de encomendas de bolos caseiros</b>. Relatório Técnico-Científico. Eixo de Computação – Universidade Virtual do Estado de São Paulo. Tutora: Elaine Cecilia Gomes Macagnan. Polo: {M("CONFIRMAR o polo")}. 2026.</p>
+<p class="rec">SCATELONI, Danilo Henrique; ABACHI, Fernando Donizeti; MARTINS, Paulo Patrick Rodrigues; MARINHO, Plinio Henrique Sgobi. <b>Encomendei: aplicação web para automação de encomendas de confeitaria</b>. Relatório Técnico-Científico. Eixo de Computação – Universidade Virtual do Estado de São Paulo. Tutora: Elaine Cecilia Gomes Macagnan. Polo: {M("CONFIRMAR o polo")}. 2026.</p>
 <p class="pb"></p>
 
 <h2 class="sem">RESUMO</h2>
@@ -83,7 +83,7 @@ REFERÊNCIAS</p>
 
 <h1>2 DESENVOLVIMENTO</h1>
 <h2>2.1 Objetivos gerais</h2>
-<p>desenvolver uma aplicação web integrada a um banco de dados para a gestão de encomendas de um negócio de bolos caseiros, reduzindo falhas de comunicação e substituindo o controle manual por um processo organizado.</p>
+<p>desenvolver uma aplicação web integrada a um banco de dados para a gestão de encomendas de uma confeitaria de bolos caseiros, reduzindo falhas de comunicação e substituindo o controle manual por um processo organizado.</p>
 
 <h2>2.2 Objetivos específicos</h2>
 <ul>
