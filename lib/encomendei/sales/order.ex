@@ -25,6 +25,10 @@ defmodule Encomendei.Sales.Order do
     field :delivery_at, :utc_datetime
     # false: o cliente quer "o mais rápido possível" e `delivery_at` guarda a hora do pedido
     field :scheduled, :boolean, default: true
+    # :delivery (entrega no endereço combinado) ou :pickup (retirada na confeitaria)
+    field :fulfillment, Ecto.Enum, values: [:delivery, :pickup], default: :delivery
+    # Texto escrito no bolo, ex.: "Parabéns, João!"
+    field :cake_message, :string
     field :status, Ecto.Enum, values: @statuses, default: :pending
     field :total_cents, :integer, default: 0
     field :notes, :string
@@ -61,11 +65,14 @@ defmodule Encomendei.Sales.Order do
   @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(order, attrs) do
     order
-    |> cast(attrs, [:delivery_at, :notes, :customer_id, :total_cents])
+    |> cast(attrs, [:delivery_at, :notes, :fulfillment, :cake_message, :customer_id, :total_cents])
     |> validate_change(:delivery_at, &validate_future/2)
+    |> default_fulfillment()
     |> default_to_asap()
     |> validate_required([:delivery_at, :customer_id])
     |> validate_length(:notes, max: 500)
+    |> validate_length(:cake_message, max: 120)
+    |> check_constraint(:fulfillment, name: :fulfillment_valid)
     |> validate_number(:total_cents, greater_than_or_equal_to: 0)
     |> assoc_constraint(:customer)
     |> unique_constraint(:number)
@@ -79,6 +86,14 @@ defmodule Encomendei.Sales.Order do
     |> validate_required([:status])
     |> validate_inclusion(:status, @statuses)
     |> check_constraint(:status, name: :status_valid)
+  end
+
+  # Sem a forma de recebimento (API, formulário antigo), vale entrega.
+  defp default_fulfillment(changeset) do
+    if is_nil(get_field(changeset, :fulfillment)) and
+         not Keyword.has_key?(changeset.errors, :fulfillment),
+       do: put_change(changeset, :fulfillment, :delivery),
+       else: changeset
   end
 
   # Só vale quando a data não foi informada; data inválida continua sendo erro.

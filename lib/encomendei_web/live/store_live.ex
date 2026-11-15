@@ -11,6 +11,7 @@ defmodule EncomendeiWeb.StoreLive do
     "name" => "",
     "phone" => "",
     "delivery_mode" => "asap",
+    "fulfillment" => "delivery",
     "delivery_at" => "",
     "notes" => ""
   }
@@ -67,6 +68,8 @@ defmodule EncomendeiWeb.StoreLive do
       "name" => params["name"],
       "phone" => params["phone"],
       "notes" => params["notes"],
+      "fulfillment" => params["fulfillment"],
+      "cake_message" => params["cake_message"],
       "delivery_at" => scheduled_at(params),
       "items" => Cart.to_items(cart)
     }
@@ -188,7 +191,32 @@ defmodule EncomendeiWeb.StoreLive do
               autocomplete="tel"
             />
             <fieldset class="mb-4">
-              <legend class="label mb-1">Previsão de entrega</legend>
+              <legend class="label mb-1">Forma de recebimento</legend>
+              <label class="flex items-center gap-2 py-1">
+                <input
+                  type="radio"
+                  name="checkout[fulfillment]"
+                  value="delivery"
+                  checked={@form[:fulfillment].value != "pickup"}
+                  class="radio radio-sm"
+                /> Entrega
+              </label>
+              <label class="flex items-center gap-2 py-1">
+                <input
+                  type="radio"
+                  name="checkout[fulfillment]"
+                  value="pickup"
+                  checked={@form[:fulfillment].value == "pickup"}
+                  class="radio radio-sm"
+                /> Retirada na confeitaria
+              </label>
+            </fieldset>
+            <fieldset class="mb-4">
+              <legend class="label mb-1">
+                {if @form[:fulfillment].value == "pickup",
+                  do: "Previsão de retirada",
+                  else: "Previsão de entrega"}
+              </legend>
               <label class="flex items-center gap-2 py-1">
                 <input
                   type="radio"
@@ -196,7 +224,7 @@ defmodule EncomendeiWeb.StoreLive do
                   value="asap"
                   checked={@form[:delivery_mode].value != "scheduled"}
                   class="radio radio-sm"
-                /> Primeira data disponível (previsão confirmada pela confeitaria)
+                /> Previsão a combinar com a confeitaria
               </label>
               <label class="flex items-center gap-2 py-1">
                 <input
@@ -205,15 +233,26 @@ defmodule EncomendeiWeb.StoreLive do
                   value="scheduled"
                   checked={@form[:delivery_mode].value == "scheduled"}
                   class="radio radio-sm"
-                /> Agendar entrega
+                /> Agendar data e hora
               </label>
             </fieldset>
             <.input
               :if={@form[:delivery_mode].value == "scheduled"}
               field={@form[:delivery_at]}
               type="datetime-local"
-              label="Data e hora da entrega"
+              label={
+                if @form[:fulfillment].value == "pickup",
+                  do: "Data e hora da retirada",
+                  else: "Data e hora da entrega"
+              }
               required
+            />
+            <.input
+              field={@form[:cake_message]}
+              type="text"
+              label="Mensagem para o bolo (opcional)"
+              placeholder="Ex.: Parabéns, João!"
+              maxlength="120"
             />
             <.input field={@form[:notes]} type="textarea" label="Observações (opcional)" />
 

@@ -54,11 +54,17 @@ defmodule EncomendeiWeb.OrderLive.Show do
         </div>
 
         <.list>
-          <:item title="Previsão de entrega">
+          <:item title="Forma de recebimento">
+            {if @order.fulfillment == :pickup, do: "Retirada na confeitaria", else: "Entrega"}
+          </:item>
+          <:item title={
+            if @order.fulfillment == :pickup, do: "Previsão de retirada", else: "Previsão de entrega"
+          }>
             {if @order.scheduled,
               do: datetime(@order.delivery_at),
-              else: "Primeira data disponível (previsão a confirmar)"}
+              else: "A combinar com a confeitaria"}
           </:item>
+          <:item :if={@order.cake_message} title="Mensagem no bolo">{@order.cake_message}</:item>
           <:item :if={@order.notes} title="Observações">{@order.notes}</:item>
         </.list>
 

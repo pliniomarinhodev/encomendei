@@ -192,10 +192,18 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
         </:col>
         <:col :let={order} label="Itens">
           <p>{items_summary(order)}</p>
+          <p :if={order.cake_message} class="text-xs">
+            <span class="font-medium">Mensagem no bolo:</span> “{order.cake_message}”
+          </p>
           <p :if={order.notes} class="text-xs italic text-base-content/70">“{order.notes}”</p>
         </:col>
         <:col :let={order} label="Entrega">
-          <p class="whitespace-nowrap">{delivery_label(order)}</p>
+          <p class="whitespace-nowrap">
+            <span :if={order.fulfillment == :pickup} class="badge badge-neutral badge-sm mr-1">
+              Retirada
+            </span>
+            {delivery_label(order)}
+          </p>
           <.urgency_badge :if={@status in [:pending, :in_production]} urgency={urgency(order, @now)} />
         </:col>
         <:col :let={order} label="Total">

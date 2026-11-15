@@ -211,7 +211,9 @@ defmodule Encomendei.Sales do
       Order.changeset(%Order{}, %{
         customer_id: Ecto.UUID.generate(),
         delivery_at: fetch(attrs, :delivery_at),
-        notes: fetch(attrs, :notes)
+        notes: fetch(attrs, :notes),
+        fulfillment: fetch(attrs, :fulfillment),
+        cake_message: fetch(attrs, :cake_message)
       })
 
     merged =
@@ -245,6 +247,8 @@ defmodule Encomendei.Sales do
       customer_id: customer.id,
       delivery_at: fetch(attrs, :delivery_at),
       notes: fetch(attrs, :notes),
+      fulfillment: fetch(attrs, :fulfillment),
+      cake_message: fetch(attrs, :cake_message),
       total_cents: total
     })
     |> Repo.insert()

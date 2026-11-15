@@ -59,7 +59,7 @@ defmodule EncomendeiWeb.StoreFlowTest do
 
     {:ok, _lv, html} = live(conn, path)
     assert html =~ ~r/Pedido #\d+ recebido/
-    assert html =~ "Primeira data disponível"
+    assert html =~ "A combinar com a confeitaria"
     assert html =~ "Pendente"
     assert html =~ "R$ 90,00"
     assert html =~ "Falar no WhatsApp"
@@ -71,7 +71,7 @@ defmodule EncomendeiWeb.StoreFlowTest do
   } do
     {:ok, lv, html} = live(conn, ~p"/")
 
-    assert html =~ "Primeira data disponível"
+    assert html =~ "Previsão a combinar com a confeitaria"
     refute has_element?(lv, "#checkout_delivery_at")
 
     lv |> form("#checkout-form", checkout: %{delivery_mode: "scheduled"}) |> render_change()
@@ -98,7 +98,36 @@ defmodule EncomendeiWeb.StoreFlowTest do
     assert [%{scheduled: true}] = Sales.list_orders()
 
     {:ok, _lv, html} = live(conn, path)
-    refute html =~ "Primeira data disponível"
+    refute html =~ "A combinar com a confeitaria"
+  end
+
+  test "cliente pode escolher retirada e escrever a mensagem do bolo", %{conn: conn} do
+    product = product_fixture(price_cents: 4500)
+    {:ok, lv, html} = live(conn, ~p"/")
+    assert html =~ "Previsão de entrega"
+    render_click(lv, "add", %{"id" => product.id})
+
+    assert lv |> form("#checkout-form", checkout: %{fulfillment: "pickup"}) |> render_change() =~
+             "Previsão de retirada"
+
+    lv
+    |> form("#checkout-form",
+      checkout: %{
+        name: "Ana",
+        phone: "19988887777",
+        fulfillment: "pickup",
+        cake_message: "Parabéns, João!"
+      }
+    )
+    |> render_submit()
+
+    {path, _flash} = assert_redirect(lv)
+    assert [%{fulfillment: :pickup, cake_message: "Parabéns, João!"}] = Sales.list_orders()
+
+    {:ok, _lv, html} = live(conn, path)
+    assert html =~ "Retirada na confeitaria"
+    assert html =~ "Previsão de retirada"
+    assert html =~ "Parabéns, João!"
   end
 
   test "sem telefone da loja configurado não mostra o botão de contato", %{conn: conn} do

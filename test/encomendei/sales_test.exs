@@ -283,4 +283,37 @@ defmodule Encomendei.SalesTest do
                Sales.place_order(valid_attrs(product, %{"delivery_at" => "ontem"}))
     end
   end
+
+  describe "retirada e mensagem do bolo" do
+    test "sem forma de recebimento, vale entrega e sem mensagem" do
+      product = product_fixture()
+      {:ok, order} = Sales.place_order(valid_attrs(product))
+      assert order.fulfillment == :delivery
+      assert order.cake_message == nil
+    end
+
+    test "aceita retirada e guarda a mensagem do bolo" do
+      product = product_fixture()
+
+      {:ok, order} =
+        Sales.place_order(
+          valid_attrs(product, %{"fulfillment" => "pickup", "cake_message" => "Parabéns, João!"})
+        )
+
+      assert order.fulfillment == :pickup
+      assert order.cake_message == "Parabéns, João!"
+    end
+
+    test "recusa forma de recebimento desconhecida e mensagem longa demais" do
+      product = product_fixture()
+
+      assert {:error, %Ecto.Changeset{}} =
+               Sales.place_order(valid_attrs(product, %{"fulfillment" => "drone"}))
+
+      assert {:error, %Ecto.Changeset{}} =
+               Sales.place_order(
+                 valid_attrs(product, %{"cake_message" => String.duplicate("a", 121)})
+               )
+    end
+  end
 end
