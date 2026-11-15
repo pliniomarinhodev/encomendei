@@ -12,7 +12,7 @@ O Render roda a mesma imagem Docker e oferece um PostgreSQL gratuito.
 1. Crie conta em https://render.com entrando com o GitHub.
 2. **New → Blueprint** e escolha o repositório do projeto. O Render lê o `render.yaml`.
 3. Preencha as três variáveis pedidas:
-   - `ADMIN_USER`: login do painel (por exemplo `michele`)
+   - `ADMIN_USER`: login do painel (por exemplo `confeiteira`)
    - `ADMIN_PASSWORD`: uma senha forte (não use `admin`)
    - `SHOP_PHONE`: WhatsApp da confeiteira com DDD, só números
 4. Clique em **Apply** e espere o primeiro build (de 5 a 10 minutos).

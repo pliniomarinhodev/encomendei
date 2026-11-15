@@ -13,10 +13,10 @@ defmodule Encomendei.ShopTest do
   end
 
   test "salva o nome e atualiza a mesma linha nas vezes seguintes" do
-    assert {:ok, _} = Shop.update_settings(%{name: "Confeitaria da Michele"})
-    assert {:ok, _} = Shop.update_settings(%{name: "Michele Lazari Bolos"})
+    assert {:ok, _} = Shop.update_settings(%{name: "Confeitaria Exemplo"})
+    assert {:ok, _} = Shop.update_settings(%{name: "Bolos Caseiros"})
 
-    assert Shop.get_settings().name == "Michele Lazari Bolos"
+    assert Shop.get_settings().name == "Bolos Caseiros"
     assert Repo.aggregate(Encomendei.Shop.Setting, :count) == 1
   end
 

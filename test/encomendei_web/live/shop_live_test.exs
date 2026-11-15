@@ -21,13 +21,13 @@ defmodule EncomendeiWeb.ShopLiveTest do
       assert html =~ "Nome da loja"
 
       view
-      |> form("#shop-form", setting: %{name: "Confeitaria da Michele"})
+      |> form("#shop-form", setting: %{name: "Confeitaria Exemplo"})
       |> render_submit()
 
-      assert Shop.get_settings().name == "Confeitaria da Michele"
+      assert Shop.get_settings().name == "Confeitaria Exemplo"
 
       {:ok, _view, menu} = live(build_conn(), ~p"/")
-      assert menu =~ "Confeitaria da Michele"
+      assert menu =~ "Confeitaria Exemplo"
     end
 
     test "envia o logo e ele passa a aparecer no topo do cardápio", %{conn: conn} do
