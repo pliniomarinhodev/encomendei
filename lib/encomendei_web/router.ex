@@ -33,6 +33,7 @@ defmodule EncomendeiWeb.Router do
   # Fotos enviadas pela confeiteira: públicas, sem sessão (o cardápio é aberto)
   scope "/", EncomendeiWeb do
     get "/imagens/produtos/:id", ProductImageController, :show
+    get "/imagens/logo", ShopLogoController, :show
   end
 
   scope "/", EncomendeiWeb do
@@ -56,6 +57,7 @@ defmodule EncomendeiWeb.Router do
     live_session :admin, on_mount: {EncomendeiWeb.AdminAuth, :require_admin} do
       live "/pedidos", Admin.OrdersLive
       live "/relatorios", Admin.ReportsLive
+      live "/loja", ShopLive.Form, :edit
       live "/produtos", ProductLive.Index, :index
       live "/produtos/new", ProductLive.Form, :new
       live "/produtos/:id", ProductLive.Show, :show

@@ -37,6 +37,9 @@ defmodule EncomendeiWeb.Layouts do
   slot :inner_block, required: true
 
   def app(assigns) do
+    shop = Encomendei.Shop.get_settings()
+    assigns = assign(assigns, shop: shop, logo_src: Encomendei.Shop.logo_src(shop))
+
     ~H"""
     <a
       href="#conteudo"
@@ -52,10 +55,16 @@ defmodule EncomendeiWeb.Layouts do
       ]}>
         <.link
           navigate={home_path(@nav)}
-          class="text-lg font-bold tracking-tight text-primary"
-          aria-label="Encomendei, página inicial"
+          class="flex items-center gap-2 text-lg font-bold tracking-tight text-primary"
+          aria-label={"#{@shop.name}, página inicial"}
         >
-          Encomendei
+          <img
+            :if={@logo_src}
+            src={@logo_src}
+            alt=""
+            class="h-9 max-w-28 object-contain"
+          />
+          {@shop.name}
         </.link>
 
         <nav
@@ -147,7 +156,8 @@ defmodule EncomendeiWeb.Layouts do
     [
       {:orders, "Pedidos", ~p"/admin/pedidos"},
       {:products, "Produtos", ~p"/admin/produtos"},
-      {:reports, "Relatórios", ~p"/admin/relatorios"}
+      {:reports, "Relatórios", ~p"/admin/relatorios"},
+      {:shop, "Loja", ~p"/admin/loja"}
     ]
   end
 
