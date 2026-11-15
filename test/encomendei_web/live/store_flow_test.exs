@@ -59,7 +59,7 @@ defmodule EncomendeiWeb.StoreFlowTest do
 
     {:ok, _lv, html} = live(conn, path)
     assert html =~ ~r/Pedido #\d+ recebido/
-    assert html =~ "O mais rápido possível"
+    assert html =~ "Primeira data disponível"
     assert html =~ "Pendente"
     assert html =~ "R$ 90,00"
     assert html =~ "Falar no WhatsApp"
@@ -71,7 +71,7 @@ defmodule EncomendeiWeb.StoreFlowTest do
   } do
     {:ok, lv, html} = live(conn, ~p"/")
 
-    assert html =~ "O mais rápido possível"
+    assert html =~ "Primeira data disponível"
     refute has_element?(lv, "#checkout_delivery_at")
 
     lv |> form("#checkout-form", checkout: %{delivery_mode: "scheduled"}) |> render_change()
@@ -98,7 +98,7 @@ defmodule EncomendeiWeb.StoreFlowTest do
     assert [%{scheduled: true}] = Sales.list_orders()
 
     {:ok, _lv, html} = live(conn, path)
-    refute html =~ "O mais rápido possível"
+    refute html =~ "Primeira data disponível"
   end
 
   test "sem telefone da loja configurado não mostra o botão de contato", %{conn: conn} do

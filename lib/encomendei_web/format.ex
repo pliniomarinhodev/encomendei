@@ -78,8 +78,8 @@ defmodule EncomendeiWeb.Format do
     dt |> DateTime.add(@offset_seconds) |> Calendar.strftime("%d/%m às %H:%M")
   end
 
-  @doc "Entrega para a lista: a data, ou \"Quanto antes\" se o cliente não agendou."
-  def delivery_label(%{scheduled: false}), do: "Quanto antes"
+  @doc "Entrega para a lista: a data, ou \"A confirmar\" se o cliente não agendou."
+  def delivery_label(%{scheduled: false}), do: "A confirmar"
   def delivery_label(%{delivery_at: %DateTime{} = dt}), do: delivery_short(dt)
 
   @doc "Soma dos totais de uma lista de encomendas, em centavos."

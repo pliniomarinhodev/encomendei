@@ -188,7 +188,7 @@ defmodule EncomendeiWeb.StoreLive do
               autocomplete="tel"
             />
             <fieldset class="mb-4">
-              <legend class="label mb-1">Quando você quer receber?</legend>
+              <legend class="label mb-1">Previsão de entrega</legend>
               <label class="flex items-center gap-2 py-1">
                 <input
                   type="radio"
@@ -196,7 +196,7 @@ defmodule EncomendeiWeb.StoreLive do
                   value="asap"
                   checked={@form[:delivery_mode].value != "scheduled"}
                   class="radio radio-sm"
-                /> O mais rápido possível
+                /> Primeira data disponível (previsão confirmada pela confeitaria)
               </label>
               <label class="flex items-center gap-2 py-1">
                 <input
@@ -205,7 +205,7 @@ defmodule EncomendeiWeb.StoreLive do
                   value="scheduled"
                   checked={@form[:delivery_mode].value == "scheduled"}
                   class="radio radio-sm"
-                /> Agendar para uma data
+                /> Agendar entrega
               </label>
             </fieldset>
             <.input

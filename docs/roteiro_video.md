@@ -13,7 +13,7 @@ Os itens abaixo seguem os critérios de avaliação da tarefa "Q7 – Entrega do
 | 0:40–2:10 | Apresentação do problema | Quem é a comunidade (confeitaria familiar de bolos caseiros da Sra. Michele), como os pedidos eram controlados (mensagens e cadernos), as dores (sobrecarga, esquecimentos, horários), a pergunta norteadora e a relação com o tema da Univesp (software web com banco de dados, API, nuvem, acessibilidade, testes) | 1 pessoa |
 | 2:10–6:10 | Apresentação da solução **em funcionamento** | Demonstração ao vivo, roteiro abaixo | quem desenvolveu |
 | 6:10–7:10 | Implementação na comunidade | **[PREENCHER]** Como e quando foi apresentado à Sra. Michele, o que ela achou, ajustes feitos, impacto esperado. Só dizer o que realmente aconteceu | 1 pessoa |
-| 7:10–7:50 | Recursos técnicos | Slide com a arquitetura (Phoenix, PostgreSQL, LiveView, API, Docker/Render), 124 testes, acessibilidade verificada, git | quem desenvolveu |
+| 7:10–7:50 | Recursos técnicos | Slide com a arquitetura (Phoenix, PostgreSQL, LiveView, API, Docker/Render), mais de 120 testes, acessibilidade verificada, git | quem desenvolveu |
 | 7:50–8:20 | Fechamento | Resultados, limitações, trabalhos futuros, agradecimentos | 1 pessoa |
 
 ## Demonstração (4 minutos)
@@ -22,7 +22,7 @@ Prepare antes: sistema rodando, 4 produtos cadastrados, dados de demonstração 
 duas janelas lado a lado (cliente à esquerda, painel à direita).
 
 1. **Cardápio** (`/`): mostrar os produtos e adicionar dois bolos e brigadeiros. Mostrar o total mudando.
-2. **Fazer a encomenda**: preencher nome e telefone (a entrega já vem como "o mais rápido possível"; mostre também a opção de agendar). Mostrar também um erro de propósito
+2. **Fazer a encomenda**: preencher nome e telefone (a previsão já vem como "Primeira data disponível"; mostre também "Agendar entrega"). Mostrar também um erro de propósito
    (carrinho vazio ou data no passado) para evidenciar as validações.
 3. **Confirmação**: mostrar a página do pedido com status *Pendente*.
 4. **Painel** (`/admin/pedidos`, pedir senha): o pedido já aparece **sem recarregar** no grupo *Pendente*, com o total do grupo atualizado.
