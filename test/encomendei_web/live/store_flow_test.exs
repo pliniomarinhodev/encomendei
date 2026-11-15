@@ -49,20 +49,56 @@ defmodule EncomendeiWeb.StoreFlowTest do
     assert html =~ "R$ 90,00"
 
     lv
+    |> form("#checkout-form", checkout: %{name: "Ana", phone: "19988887777", notes: ""})
+    |> render_submit()
+
+    {path, _flash} = assert_redirect(lv)
+    assert path =~ "/pedido/"
+
+    assert [%{scheduled: false}] = Sales.list_orders()
+
+    {:ok, _lv, html} = live(conn, path)
+    assert html =~ ~r/Pedido #\d+ recebido/
+    assert html =~ "O mais rápido possível"
+    assert html =~ "Pendente"
+    assert html =~ "R$ 90,00"
+    assert html =~ "Falar no WhatsApp"
+    assert html =~ "wa.me/5519900000000"
+  end
+
+  test "por padrão a entrega é o mais rápido possível e o campo de data fica escondido", %{
+    conn: conn
+  } do
+    {:ok, lv, html} = live(conn, ~p"/")
+
+    assert html =~ "O mais rápido possível"
+    refute has_element?(lv, "#checkout_delivery_at")
+
+    lv |> form("#checkout-form", checkout: %{delivery_mode: "scheduled"}) |> render_change()
+    assert has_element?(lv, "#checkout_delivery_at")
+
+    lv |> form("#checkout-form", checkout: %{delivery_mode: "asap"}) |> render_change()
+    refute has_element?(lv, "#checkout_delivery_at")
+  end
+
+  test "cliente pode agendar a entrega para uma data", %{conn: conn} do
+    product = product_fixture(price_cents: 4500)
+    {:ok, lv, _} = live(conn, ~p"/")
+    render_click(lv, "add", %{"id" => product.id})
+
+    lv |> form("#checkout-form", checkout: %{delivery_mode: "scheduled"}) |> render_change()
+
+    lv
     |> form("#checkout-form",
       checkout: %{name: "Ana", phone: "19988887777", delivery_at: future_local(), notes: ""}
     )
     |> render_submit()
 
     {path, _flash} = assert_redirect(lv)
-    assert path =~ "/pedido/"
+    assert [%{scheduled: true}] = Sales.list_orders()
 
     {:ok, _lv, html} = live(conn, path)
-    assert html =~ ~r/Pedido #\d+ recebido/
-    assert html =~ "Pendente"
-    assert html =~ "R$ 90,00"
-    assert html =~ "Falar no WhatsApp"
-    assert html =~ "wa.me/5519900000000"
+    refute html =~ "O mais rápido possível"
   end
 
   test "sem telefone da loja configurado não mostra o botão de contato", %{conn: conn} do
@@ -89,9 +125,7 @@ defmodule EncomendeiWeb.StoreFlowTest do
 
     html =
       lv
-      |> form("#checkout-form",
-        checkout: %{name: "Ana", phone: "19988887777", delivery_at: future_local()}
-      )
+      |> form("#checkout-form", checkout: %{name: "Ana", phone: "19988887777"})
       |> render_submit()
 
     assert html =~ "Adicione ao menos um item"
@@ -120,6 +154,8 @@ defmodule EncomendeiWeb.StoreFlowTest do
     product = product_fixture()
     {:ok, lv, _} = live(conn, ~p"/")
     render_click(lv, "add", %{"id" => product.id})
+
+    lv |> form("#checkout-form", checkout: %{delivery_mode: "scheduled"}) |> render_change()
 
     html =
       lv

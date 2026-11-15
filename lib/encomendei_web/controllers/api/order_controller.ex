@@ -57,7 +57,9 @@ defmodule EncomendeiWeb.API.OrderController do
 
   def update_status(conn, _), do: unprocessable(conn, %{status: ["é obrigatório"]})
 
-  defp parse_datetime(nil), do: {:error, :bad_datetime}
+  # Sem data, o pedido é para o mais rápido possível
+  defp parse_datetime(nil), do: {:ok, nil}
+  defp parse_datetime(""), do: {:ok, nil}
 
   defp parse_datetime(value) when is_binary(value) do
     case DateTime.from_iso8601(value) do

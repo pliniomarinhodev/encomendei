@@ -22,7 +22,7 @@ Prepare antes: sistema rodando, 4 produtos cadastrados, dados de demonstração 
 duas janelas lado a lado (cliente à esquerda, painel à direita).
 
 1. **Cardápio** (`/`): mostrar os produtos e adicionar dois bolos e brigadeiros. Mostrar o total mudando.
-2. **Fazer a encomenda**: preencher nome, telefone e data de entrega. Mostrar também um erro de propósito
+2. **Fazer a encomenda**: preencher nome e telefone (a entrega já vem como "o mais rápido possível"; mostre também a opção de agendar). Mostrar também um erro de propósito
    (carrinho vazio ou data no passado) para evidenciar as validações.
 3. **Confirmação**: mostrar a página do pedido com status *Pendente*.
 4. **Painel** (`/admin/pedidos`, pedir senha): o pedido já aparece **sem recarregar** no grupo *Pendente*, com o total do grupo atualizado.

@@ -195,7 +195,7 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
           <p :if={order.notes} class="text-xs italic text-base-content/70">“{order.notes}”</p>
         </:col>
         <:col :let={order} label="Entrega">
-          <p class="whitespace-nowrap">{delivery_short(order.delivery_at)}</p>
+          <p class="whitespace-nowrap">{delivery_label(order)}</p>
           <.urgency_badge :if={@status in [:pending, :in_production]} urgency={urgency(order, @now)} />
         </:col>
         <:col :let={order} label="Total">
@@ -310,7 +310,7 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
               <li :for={order <- @overdue}>
                 <span class="tabular-nums">{order_number(order)}</span>
                 {order.customer.name}
-                <span class="text-base-content/70">· {delivery_short(order.delivery_at)}</span>
+                <span class="text-base-content/70">· {delivery_label(order)}</span>
               </li>
             </ul>
           </section>
@@ -321,7 +321,7 @@ defmodule EncomendeiWeb.Admin.OrdersLive do
             <ul class="mt-1 divide-y divide-base-300 text-sm">
               <li :for={order <- @today} class="flex justify-between gap-2 py-1.5">
                 <span><span class="tabular-nums">{order_number(order)}</span> {order.customer.name}</span>
-                <span class="tabular-nums text-base-content/70">{delivery_short(order.delivery_at)}</span>
+                <span class="tabular-nums text-base-content/70">{delivery_label(order)}</span>
               </li>
             </ul>
           </section>

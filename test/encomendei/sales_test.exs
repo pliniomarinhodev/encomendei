@@ -251,4 +251,36 @@ defmodule Encomendei.SalesTest do
     assert [%{id: id}] = Sales.list_orders(status: :in_production)
     assert id == late.id
   end
+
+  describe "entrega o mais rápido possível" do
+    test "sem data, o pedido fica não agendado com a hora do pedido", %{} do
+      product = product_fixture()
+      before = DateTime.utc_now() |> DateTime.add(-2)
+
+      {:ok, order} = Sales.place_order(Map.delete(valid_attrs(product), "delivery_at"))
+
+      assert order.scheduled == false
+      assert DateTime.compare(order.delivery_at, before) == :gt
+      assert DateTime.compare(order.delivery_at, DateTime.add(DateTime.utc_now(), 2)) == :lt
+    end
+
+    test "data em branco também vale como o mais rápido possível" do
+      product = product_fixture()
+      {:ok, order} = Sales.place_order(valid_attrs(product, %{"delivery_at" => ""}))
+      assert order.scheduled == false
+    end
+
+    test "com data futura, o pedido é agendado" do
+      product = product_fixture()
+      {:ok, order} = Sales.place_order(valid_attrs(product))
+      assert order.scheduled == true
+    end
+
+    test "data inválida continua sendo erro, não vira o mais rápido possível" do
+      product = product_fixture()
+
+      assert {:error, %Ecto.Changeset{}} =
+               Sales.place_order(valid_attrs(product, %{"delivery_at" => "ontem"}))
+    end
+  end
 end

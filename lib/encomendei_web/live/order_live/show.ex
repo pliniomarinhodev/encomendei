@@ -54,7 +54,9 @@ defmodule EncomendeiWeb.OrderLive.Show do
         </div>
 
         <.list>
-          <:item title="Entrega">{datetime(@order.delivery_at)}</:item>
+          <:item title="Entrega">
+            {if @order.scheduled, do: datetime(@order.delivery_at), else: "O mais rápido possível"}
+          </:item>
           <:item :if={@order.notes} title="Observações">{@order.notes}</:item>
         </.list>
 

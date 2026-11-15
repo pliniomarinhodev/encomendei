@@ -36,6 +36,14 @@ defmodule EncomendeiWeb.APITest do
                conn |> get(~p"/api/orders/#{id}") |> json_response(200)
     end
 
+    test "sem delivery_at o pedido é para o mais rápido possível", %{conn: conn} do
+      product = product_fixture()
+      params = product |> order_params() |> Map.delete("delivery_at")
+
+      resp = conn |> post(~p"/api/orders", params) |> json_response(201)
+      assert %{"data" => %{"scheduled" => false}} = resp
+    end
+
     test "422 com data inválida", %{conn: conn} do
       product = product_fixture()
 

@@ -7,7 +7,13 @@ defmodule EncomendeiWeb.StoreLive do
   alias EncomendeiWeb.Cart
   import EncomendeiWeb.Format
 
-  @blank_checkout %{"name" => "", "phone" => "", "delivery_at" => "", "notes" => ""}
+  @blank_checkout %{
+    "name" => "",
+    "phone" => "",
+    "delivery_mode" => "asap",
+    "delivery_at" => "",
+    "notes" => ""
+  }
 
   @impl true
   def mount(_params, _session, socket) do
@@ -61,10 +67,16 @@ defmodule EncomendeiWeb.StoreLive do
       "name" => params["name"],
       "phone" => params["phone"],
       "notes" => params["notes"],
-      "delivery_at" => parse_local(params["delivery_at"]),
+      "delivery_at" => scheduled_at(params),
       "items" => Cart.to_items(cart)
     }
   end
+
+  # Só há data quando o cliente escolheu agendar; senão é "o mais rápido possível".
+  defp scheduled_at(%{"delivery_mode" => "scheduled"} = params),
+    do: parse_local(params["delivery_at"])
+
+  defp scheduled_at(_params), do: nil
 
   defp item_word(1), do: "item"
   defp item_word(_), do: "itens"
@@ -175,7 +187,29 @@ defmodule EncomendeiWeb.StoreLive do
               required
               autocomplete="tel"
             />
+            <fieldset class="mb-4">
+              <legend class="label mb-1">Quando você quer receber?</legend>
+              <label class="flex items-center gap-2 py-1">
+                <input
+                  type="radio"
+                  name="checkout[delivery_mode]"
+                  value="asap"
+                  checked={@form[:delivery_mode].value != "scheduled"}
+                  class="radio radio-sm"
+                /> O mais rápido possível
+              </label>
+              <label class="flex items-center gap-2 py-1">
+                <input
+                  type="radio"
+                  name="checkout[delivery_mode]"
+                  value="scheduled"
+                  checked={@form[:delivery_mode].value == "scheduled"}
+                  class="radio radio-sm"
+                /> Agendar para uma data
+              </label>
+            </fieldset>
             <.input
+              :if={@form[:delivery_mode].value == "scheduled"}
               field={@form[:delivery_at]}
               type="datetime-local"
               label="Data e hora da entrega"

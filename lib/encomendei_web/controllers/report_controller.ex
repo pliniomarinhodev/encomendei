@@ -2,7 +2,7 @@ defmodule EncomendeiWeb.ReportController do
   use EncomendeiWeb, :controller
   alias Encomendei.Reports
 
-  @header ~w(pedido entrega status cliente produto quantidade preco_unitario_reais)
+  @header ~w(pedido entrega status cliente produto quantidade preco_unitario_reais agendada)
 
   def orders_csv(conn, _params) do
     rows =
@@ -14,7 +14,8 @@ defmodule EncomendeiWeb.ReportController do
           r.cliente,
           r.produto,
           r.quantidade,
-          centavos(r.preco_unitario_cents)
+          centavos(r.preco_unitario_cents),
+          if(r.agendada, do: "sim", else: "nao")
         ]
       end
 

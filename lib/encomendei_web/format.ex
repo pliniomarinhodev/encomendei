@@ -78,6 +78,10 @@ defmodule EncomendeiWeb.Format do
     dt |> DateTime.add(@offset_seconds) |> Calendar.strftime("%d/%m às %H:%M")
   end
 
+  @doc "Entrega para a lista: a data, ou \"Quanto antes\" se o cliente não agendou."
+  def delivery_label(%{scheduled: false}), do: "Quanto antes"
+  def delivery_label(%{delivery_at: %DateTime{} = dt}), do: delivery_short(dt)
+
   @doc "Soma dos totais de uma lista de encomendas, em centavos."
   def total_cents(orders), do: orders |> Enum.map(& &1.total_cents) |> Enum.sum()
 
@@ -88,8 +92,10 @@ defmodule EncomendeiWeb.Format do
 
   @doc """
   Quão perto está a entrega, no horário de Brasília: `:overdue` se já passou,
-  `:today`, `:tomorrow` ou `:later`.
+  `:today`, `:tomorrow` ou `:later`. Pedido "o mais rápido possível" conta como `:today`.
   """
+  def urgency(%{scheduled: false}, %DateTime{}), do: :today
+
   def urgency(%{delivery_at: delivery_at}, %DateTime{} = now) do
     local_date = &(&1 |> DateTime.add(@offset_seconds) |> DateTime.to_date())
 

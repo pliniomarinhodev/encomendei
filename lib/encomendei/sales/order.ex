@@ -23,6 +23,8 @@ defmodule Encomendei.Sales.Order do
 
   schema "orders" do
     field :delivery_at, :utc_datetime
+    # false: o cliente quer "o mais rápido possível" e `delivery_at` guarda a hora do pedido
+    field :scheduled, :boolean, default: true
     field :status, Ecto.Enum, values: @statuses, default: :pending
     field :total_cents, :integer, default: 0
     field :notes, :string
@@ -51,16 +53,19 @@ defmodule Encomendei.Sales.Order do
   @doc """
   Valida os dados de uma nova encomenda.
 
-  A entrega precisa estar no futuro, pois a confeiteira só produz sob
-  encomenda; não há antecedência mínima configurada.
+  Sem `delivery_at`, o pedido é para "o mais rápido possível": `scheduled` fica
+  `false` e a entrega recebe a hora do pedido. Com `delivery_at`, o cliente agendou
+  e a data precisa estar no futuro, pois a confeiteira só produz sob encomenda;
+  não há antecedência mínima configurada.
   """
   @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(order, attrs) do
     order
     |> cast(attrs, [:delivery_at, :notes, :customer_id, :total_cents])
+    |> validate_change(:delivery_at, &validate_future/2)
+    |> default_to_asap()
     |> validate_required([:delivery_at, :customer_id])
     |> validate_length(:notes, max: 500)
-    |> validate_change(:delivery_at, &validate_future/2)
     |> validate_number(:total_cents, greater_than_or_equal_to: 0)
     |> assoc_constraint(:customer)
     |> unique_constraint(:number)
@@ -74,6 +79,18 @@ defmodule Encomendei.Sales.Order do
     |> validate_required([:status])
     |> validate_inclusion(:status, @statuses)
     |> check_constraint(:status, name: :status_valid)
+  end
+
+  # Só vale quando a data não foi informada; data inválida continua sendo erro.
+  defp default_to_asap(changeset) do
+    if is_nil(get_field(changeset, :delivery_at)) and
+         not Keyword.has_key?(changeset.errors, :delivery_at) do
+      changeset
+      |> put_change(:delivery_at, DateTime.utc_now() |> DateTime.truncate(:second))
+      |> put_change(:scheduled, false)
+    else
+      changeset
+    end
   end
 
   defp validate_future(:delivery_at, delivery_at) do

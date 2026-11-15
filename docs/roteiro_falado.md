@@ -21,7 +21,7 @@ Texto entre colchetes `[...]` só você sabe. Não invente: diga só o que de fa
 | 1:55–2:20 | 4. Etapas | "Seguimos as etapas da Univesp: **ouvir** a comunidade e levantar as necessidades, **criar** a solução e **implementar** o sistema funcionando." |
 | 2:20–3:00 | 5. Tecnologias | "Usamos Elixir com o framework Phoenix, banco de dados PostgreSQL, Docker para empacotar, GitHub para guardar o código e Render para publicar na internet. O sistema tem 124 testes automatizados, passou na verificação automática de acessibilidade e tem login para o painel." |
 | 3:00–3:30 | 6. Banco de dados | "Este é o banco: clientes, pedidos, itens de pedido e produtos. Um cliente faz vários pedidos, um pedido tem vários itens, e cada item é um produto." |
-| 3:30–3:50 | 7. Cardápio | "Esta é a tela do cliente: ele escolhe os produtos, vê o carrinho e preenche nome, telefone e data de entrega." |
+| 3:30–3:50 | 7. Cardápio | "Esta é a tela do cliente: ele escolhe os produtos, vê o carrinho e preenche nome e telefone. A entrega é para o mais rápido possível, ou ele pode agendar uma data." |
 | 3:50–4:10 | 8. Pedido enviado | "Ao enviar, o cliente recebe o número do pedido e pode acompanhar depois, informando o número e o telefone." |
 | 4:10–4:30 | 9. Painel | "Esta é a tela da confeiteira: os pedidos aparecem separados por situação, e ela muda o andamento com um clique." |
 | 4:30–4:50 | 10. Relatórios | "Nos relatórios, ela vê o total vendido, os pedidos em aberto e pode baixar os dados em planilha." |
@@ -36,7 +36,7 @@ Os slides 7 a 10 são rápidos de propósito (20 segundos cada): o tempo é para
 ## Demonstração (2 minutos)
 1. **GitHub**: "O código está no GitHub, com o histórico de alterações e o README." Mostrar a lista de arquivos e os commits. *(Veja a nota no final sobre autoria.)*
 2. **Site publicado**: mostrar o endereço `encomendei.onrender.com` na barra: "Está hospedado na internet, no Render."
-3. **Cardápio**: adicionar produtos, preencher nome, telefone e data, enviar. Mostrar o **número do pedido** na confirmação.
+3. **Cardápio**: adicionar produtos, preencher nome e telefone, enviar (mostre também a opção "Agendar para uma data"). Mostrar o **número do pedido** na confirmação.
 4. **Painel** (`/entrar`, usuário e senha): "O pedido apareceu sozinho." Clicar em **Iniciar produção** e mostrar a outra aba mudando de status.
 5. **Busca e relatórios**: buscar um nome e abrir `/admin/relatorios`.
 6. Fechar: "Era isso. Obrigado pela atenção."

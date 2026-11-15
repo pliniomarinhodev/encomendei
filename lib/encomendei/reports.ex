@@ -90,6 +90,7 @@ defmodule Encomendei.Reports do
       select: %{
         pedido: o.number,
         entrega: o.delivery_at,
+        agendada: o.scheduled,
         status: o.status,
         cliente: c.name,
         produto: p.name,

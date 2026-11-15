@@ -17,6 +17,7 @@ defmodule EncomendeiWeb.API.JSON do
       number: o.number,
       status: o.status,
       delivery_at: o.delivery_at,
+      scheduled: o.scheduled,
       total_cents: o.total_cents,
       notes: o.notes,
       customer: %{name: o.customer.name, phone: o.customer.phone},
