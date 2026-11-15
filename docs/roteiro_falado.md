@@ -1,28 +1,37 @@
 # Roteiro do vídeo (uma pessoa, cerca de 8 minutos)
 
-Formato dos vídeos de outros grupos: **uma pessoa** apresenta alguns slides (6 a 8) e, no final, **mostra o sistema funcionando**
+Formato dos vídeos de outros grupos: **uma pessoa** apresenta os slides e, no final, **mostra o sistema funcionando**
 e o código no GitHub. Duração boa: 7 a 9 minutos (o limite é 10). Falar devagar, em linguagem simples.
 Texto entre colchetes `[...]` só você sabe. Não invente: diga só o que de fato aconteceu.
 
 ## Antes de gravar
-- `docker start encomendei-pg`, `mix phx.server`, `mix run priv/repo/demo.exs`, `mix run priv/repo/demo_photos.exs`.
 - Abra o **site publicado** (https://encomendei.onrender.com) uns 5 minutos antes, para ele não estar dormindo.
-- Abas prontas: cardápio, painel (já logado), GitHub do projeto, slides.
-- **Slides prontos:** `~/Projetos/univesp/docs/apresentacao_encomendei.pptx` (11 slides, abre no PowerPoint, LibreOffice ou Google Slides). Preencha em laranja: curso, polo e a validação com a Sra. Michele.
+- Cadastre alguns produtos em `/admin/produtos` (o banco publicado começa vazio), para a demonstração ter o que mostrar.
+- Abas prontas: slides (PDF em tela cheia), GitHub do projeto, cardápio publicado, painel (já logado em outra aba).
+- **Slides:** `~/Projetos/univesp/docs/apresentacao_encomendei.pdf` (14 slides). Preencha em laranja: curso, polo (slide 1) e a validação com a Sra. Michele (slide 12).
+- Deixe a **câmera visível no canto** da tela (OBS), como no vídeo de referência.
 
-## Roteiro por bloco
+## Roteiro por slide
 
-| Tempo | Slide / tela | O que dizer |
+| Tempo | Slide | O que dizer |
 |---|---|---|
-| 0:00–0:50 | Slide 1: Título | "Olá. Eu sou o Plinio Henrique Sgobi Marinho, RA 24202364, do Projeto Integrador em Computação II, grupo 5, turma A2026S2N4, do polo [POLO]. O grupo é formado por Danilo Henrique Scateloni, Fernando Donizeti Abachi, Paulo Patrick Rodrigues Martins e por mim. Nossa tutora é a Elaine Cecilia Gomes Macagnan. Nosso trabalho se chama Encomendei, uma aplicação web para automação de encomendas de bolos caseiros." |
-| 0:50–1:50 | Slide 2: Problema | "A comunidade é o negócio de bolos caseiros da Sra. Michele. Hoje os pedidos chegam por mensagens e são anotados no papel. Isso causa sobrecarga, risco de esquecer pedidos e dificuldade para organizar as entregas. Nossa pergunta foi: como uma aplicação web com banco de dados pode reduzir essa sobrecarga e melhorar a gestão das encomendas?" |
-| 1:50–2:40 | Slides 3 e 4: Objetivos e etapas | "O objetivo foi criar um sistema em que o cliente faz a encomenda pela internet e a confeiteira acompanha tudo em um painel. Seguimos as etapas da Univesp: **ouvir** a comunidade e levantar as necessidades, **criar** a solução e **implementar** o sistema funcionando." |
-| 2:40–3:40 | Slides 5 e 6: Tecnologias e banco | "Usamos Elixir com o framework Phoenix, banco de dados PostgreSQL, e o código fica no GitHub. Este diagrama mostra o banco: clientes, pedidos, itens de pedido e produtos. Um cliente faz vários pedidos, um pedido tem vários itens, e cada item é um produto." |
-| 3:40–4:20 | Slides 7 e 8: Telas e celular | "Estas são as telas principais: o cardápio com o carrinho, a confirmação do pedido, o painel da confeiteira e os relatórios. Também funciona bem no celular." |
-| 4:20–5:00 | Slide 9: Resultados | "**[DIGA O QUE DE FATO ACONTECEU com a Sra. Michele: quando mostraram, o que ela achou, ajustes.]** Se ainda não foi validado: "A validação com a Sra. Michele está prevista para [DATA]. O sistema está funcionando, publicado na internet, com 124 testes automatizados e sem problemas de acessibilidade nas verificações automáticas."" |
-| 5:00–5:40 | Slide 10: Disciplinas | "Aplicamos programação web, banco de dados, engenharia de software, com levantamento de requisitos e testes, e interface humano-máquina, na acessibilidade e no uso pelo celular." |
-| 5:40–6:20 | Slides 10 e 11: Melhorias e agradecimentos | "Como melhorias futuras: avisos automáticos por mensagem, pagamento online e atender mais de uma confeitaria. Agradeço à Sra. Michele, que cedeu a ideia do projeto, à tutora Elaine e ao meu grupo. O sistema está publicado neste endereço." (URL na tela) |
-| 6:20–8:30 | **Demonstração** | Roteiro abaixo |
+| 0:00–0:40 | 1. Título | "Olá. Eu sou o Plinio Henrique Sgobi Marinho, RA 24202364, do curso [CURSO], polo [POLO]. Este é o Projeto Integrador em Computação II, grupo 5, turma A2026S2N4. O grupo é formado por Danilo Henrique Scateloni, Fernando Donizeti Abachi, Paulo Patrick Rodrigues Martins e por mim. Nossa tutora é a Elaine Cecilia Gomes Macagnan. O trabalho se chama Encomendei, uma aplicação web para automação de encomendas de bolos caseiros." |
+| 0:40–1:25 | 2. Problema | "A comunidade é o negócio de bolos caseiros da Sra. Michele. Hoje os pedidos chegam por mensagens e são anotados no papel. Isso causa sobrecarga, risco de esquecer pedidos e dificuldade para organizar as entregas. Nossa pergunta foi: como uma aplicação web com banco de dados pode reduzir essa sobrecarga e melhorar a gestão das encomendas?" |
+| 1:25–1:55 | 3. Objetivos | "O objetivo foi criar um sistema em que o cliente faz a encomenda pela internet e a confeiteira acompanha tudo em um painel, sem depender de papel e de mensagens soltas." |
+| 1:55–2:20 | 4. Etapas | "Seguimos as etapas da Univesp: **ouvir** a comunidade e levantar as necessidades, **criar** a solução e **implementar** o sistema funcionando." |
+| 2:20–3:00 | 5. Tecnologias | "Usamos Elixir com o framework Phoenix, banco de dados PostgreSQL, Docker para empacotar, GitHub para guardar o código e Render para publicar na internet. O sistema tem 124 testes automatizados, passou na verificação automática de acessibilidade e tem login para o painel." |
+| 3:00–3:30 | 6. Banco de dados | "Este é o banco: clientes, pedidos, itens de pedido e produtos. Um cliente faz vários pedidos, um pedido tem vários itens, e cada item é um produto." |
+| 3:30–3:50 | 7. Cardápio | "Esta é a tela do cliente: ele escolhe os produtos, vê o carrinho e preenche nome, telefone e data de entrega." |
+| 3:50–4:10 | 8. Pedido enviado | "Ao enviar, o cliente recebe o número do pedido e pode acompanhar depois, informando o número e o telefone." |
+| 4:10–4:30 | 9. Painel | "Esta é a tela da confeiteira: os pedidos aparecem separados por situação, e ela muda o andamento com um clique." |
+| 4:30–4:50 | 10. Relatórios | "Nos relatórios, ela vê o total vendido, os pedidos em aberto e pode baixar os dados em planilha." |
+| 4:50–5:10 | 11. Celular | "Tudo funciona bem no celular, que é onde a maioria dos clientes vai usar." |
+| 5:10–5:50 | 12. Resultados | "**[DIGA O QUE DE FATO ACONTECEU com a Sra. Michele: quando mostraram, o que ela achou, ajustes.]** Se ainda não foi validado: "A validação com a Sra. Michele está prevista para [DATA]. O sistema está funcionando, publicado na internet, com 124 testes automatizados e sem problemas nas verificações automáticas de acessibilidade."" |
+| 5:50–6:30 | 13. Disciplinas e melhorias | "Aplicamos programação web, banco de dados, engenharia de software, com levantamento de requisitos e testes, e interface humano-máquina, na acessibilidade e no uso pelo celular. Como melhorias futuras: avisos automáticos por mensagem, pagamento online e atender mais de uma confeitaria." |
+| 6:30–7:00 | 14. Obrigado | "Agradeço à Sra. Michele, que cedeu a ideia do projeto, à tutora Elaine e ao meu grupo. O sistema está publicado neste endereço, e o código está no GitHub. Agora vou mostrar o sistema funcionando." (URL e QR code na tela) |
+| 7:00–9:00 | **Demonstração** | Roteiro abaixo |
+
+Os slides 7 a 10 são rápidos de propósito (20 segundos cada): o tempo é para a demonstração ao vivo.
 
 ## Demonstração (2 minutos)
 1. **GitHub**: "O código está no GitHub, com o histórico de alterações e o README." Mostrar a lista de arquivos e os commits. *(Veja a nota no final sobre autoria.)*
@@ -39,5 +48,5 @@ fazer uma contribuição **de verdade** (ex.: o próprio texto do relatório, os
 
 ## Dicas
 - Grave com OBS Studio ou o Google Meet (gravando a tela), microfone ligado. Teste de 20 segundos antes.
-- Zoom do navegador em 125%. Se errar, continue; se passar de 10 minutos, corte o item 5 da demonstração.
+- Zoom do navegador em 125% na demonstração. Se errar, continue; se passar de 10 minutos, corte o item 5 da demonstração.
 - Suba no YouTube como **Não listado**, copie o link para a capa do relatório e para o AVA, e abra em janela anônima para conferir.
